@@ -39,7 +39,6 @@ fig.add_layout_image(
             y=3,
             sizex=2,
             sizey=4,
-            sizing="stretch",
             opacity=0.7,
             layer="below")
 
