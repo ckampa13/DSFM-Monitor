@@ -7,6 +7,10 @@ from nptdms import TdmsWriter, RootObject, GroupObject, ChannelObject
 
 df = pd.read_pickle("/Users/Lillie/Downloads/DSFM_Test_Data/DSFM_test_data_v3.pkl")
 
+group = GroupObject("Step:1.1.1", properties={
+            "name": "FMSSystemTest_v2",
+            "Time": "start_time",})
+
 
 def write_NMR(index, dataframe):
     ProbeName = "NMR"
@@ -15,7 +19,9 @@ def write_NMR(index, dataframe):
     Timestamp = dataframe['TIMESTAMP'].loc[index]
     Fluxdensity = dataframe['B_NMR'].loc[index]
     NMR_array = np.array([f'ProbeName:{ProbeName}', f"ProbeID:{ProbeID}",f"FluxDensity:{Fluxdensity}", f"Status:{Status}", f"Timestamp:{Timestamp}" ])
-    return NMR_array
+    NMRchannel = ChannelObject('Step:1.1.1','NMRProbe', NMR_array)
+    return NMRchannel
+
 
 def write_Hall(index, dataframe):
     SP1address = ''
@@ -128,31 +134,68 @@ def write_Hall(index, dataframe):
                           f'Address:{BP1address}', f'Temperature:{BP1temp}', f'Z.field:{BP1_Z_field}', f'Y.field:{BP1_Y_field}', f'X.field:{BP1_X_field}', f'Z.zolt:{BP1_Z_volt}',f'Y.volt:{BP1_Y_volt}', f'X.volt:{BP1_X_volt}', f'Status:{BP1_status}', f'Sensor.name:{BP1_Sensorname}', f'Sensor.ID:{BP1_SensorID}', f'Timestamp:{BP1_Timestamp}',
                           f'Address:{BP2address}', f'Temperature:{BP2temp}', f'Z.field:{BP2_Z_field}', f'Y.field:{BP2_Y_field}', f'X.field:{BP2_X_field}', f'Z.zolt:{BP2_Z_volt}',f'Y.volt:{BP2_Y_volt}', f'X.volt:{BP2_X_volt}', f'Status:{BP2_status}', f'Sensor.name:{BP2_Sensorname}', f'Sensor.ID:{BP2_SensorID}', f'Timestamp:{BP2_Timestamp}',
                           f'Address:{BP3address}', f'Temperature:{BP3temp}', f'Z.field:{BP3_Z_field}', f'Y.field:{BP3_Y_field}', f'X.field:{BP3_X_field}', f'Z.zolt:{BP3_Z_volt}',f'Y.volt:{BP3_Y_volt}', f'X.volt:{BP3_X_volt}', f'Status:{BP3_status}', f'Sensor.name:{BP3_Sensorname}', f'Sensor.ID:{BP3_SensorID}', f'Timestamp:{BP3_Timestamp}',
-                          f'Address:{SP1address}', f'Temperature:{SP1temp}', f'Z.field:{BP4_Z_field}', f'Y.field:{BP4_Y_field}', f'X.field:{BP4_X_field}', f'Z.zolt:{BP4_Z_volt}',f'Y.volt:{BP4_Y_volt}', f'X.volt:{BP4_X_volt}', f'Status:{BP4_status}', f'Sensor.name:{BP4_Sensorname}', f'Sensor.ID:{BP4_SensorID}', f'Timestamp:{BP4_Timestamp}',
-                          f'Address:{SP1address}', f'Temperature:{SP1temp}', f'Z.field:{BP5_Z_field}', f'Y.field:{BP5_Y_field}', f'X.field:{BP5_X_field}', f'Z.zolt:{BP5_Z_volt}',f'Y.volt:{BP5_Y_volt}', f'X.volt:{BP5_X_volt}', f'Status:{BP5_status}', f'Sensor.name:{BP5_Sensorname}', f'Sensor.ID:{BP5_SensorID}', f'Timestamp:{BP5_Timestamp}'])
-    return Hall_array
+                          f'Address:{BP4address}', f'Temperature:{BP4temp}', f'Z.field:{BP4_Z_field}', f'Y.field:{BP4_Y_field}', f'X.field:{BP4_X_field}', f'Z.zolt:{BP4_Z_volt}',f'Y.volt:{BP4_Y_volt}', f'X.volt:{BP4_X_volt}', f'Status:{BP4_status}', f'Sensor.name:{BP4_Sensorname}', f'Sensor.ID:{BP4_SensorID}', f'Timestamp:{BP4_Timestamp}',
+                          f'Address:{BP4address}', f'Temperature:{BP4temp}', f'Z.field:{BP5_Z_field}', f'Y.field:{BP5_Y_field}', f'X.field:{BP5_X_field}', f'Z.zolt:{BP5_Z_volt}',f'Y.volt:{BP5_Y_volt}', f'X.volt:{BP5_X_volt}', f'Status:{BP5_status}', f'Sensor.name:{BP5_Sensorname}', f'Sensor.ID:{BP5_SensorID}', f'Timestamp:{BP5_Timestamp}'])
+    HALLchannel = ChannelObject('Step:1.1.1', 'HallProbes', Hall_array)
+    return HALLchannel
 
 def write_Timestamp(index, dataframe):
     timestamp = dataframe['TIMESTAMP'].loc[index]
     Timestamp_array = np.array(f'Timestamp:{timestamp}')
     return Timestamp_array
 
+def write_Mapper(index,dataframe):
+    timestamp = dataframe['TIMESTAMP'].loc[index]
+    requestedangle = ''
+    home = ''
+    angle = dataframe['Mapper_Angle'].loc[index]
+    mapperposition = dataframe['X_NMR'].loc[index]
+    Mapper_array = np.array([f'Timestamp:{timestamp}', f'RequestedAngle:{requestedangle}', f'Home:{home}', f'Angle:{angle}', f'Position:{mapperposition}'])
+    return Mapper_array
+
+def write_Current(index, dataframe):
+    timestamp = ''
+    requestedcurrent = '0.000000'
+    current ='0.000000'
+    Current_array = np.array([f'Timestamp:{timestamp}', f'RequestedCurrent:{requestedcurrent}', f'Current:{current}'])
+    return Current_array
+
+def write_QC(index, dataframe):
+    item1 = ''
+    item2 = ''
+    QC_array = np.array([f'{item1}', f'{item2}'])
+    return QC_arrayt
+
+def write_group(index, dataframe):
+    group = GroupObject("Sep:1.1.1", properties={
+        "name": "FMSSystemTest_v2",
+        "Time": "start_time", })
+    return group
+
 
 ########
+steplist = []
 
 with TdmsWriter("TestDataV2.tdms") as tdms_writer:
-    dff = df.to_numpy()
+    dataframe = df
+    dataframe["digit_one"]=0
+    dataframe["digit_two"]=0
+    dataframe["GroupID"]= 'Step:0.0.0'
+    for index, row in df.iterrows():
+        idlastrow = df.loc[index-1, "digit_one"]
+        if idlastrow == 16:
+            number=1
+            df.loc[index, "digit_two"] = df.loc[index-1, "digit_two"] + 1
+        else:
+            number = idlastrow+1
+        df.loc[index,"GroupID"] = f'Step:1.{}.{}'
 
-    for i in range((len(dff))):
-        group = GroupObject("Step_X_Z", properties={
-            "name": "FMSSystemTest_v2",
-            "Time": "start_time",
-        })
-        channel1 = ChannelObject('Step_X_Z', 'Timestamp', dff[i,[0]], )
-        #    channel2 = ChannelObject('group_name', 'StepID', dff[1,[0]]
-        channel3 = ChannelObject('Step_X_Z', 'NMRProbe', dff[i,[1,2,3,4]])
-        channel4 = ChannelObject('Step_X_Z', 'HallProbes', dff[i,[6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,10,71,72,73,74,75,76]])
-        tdms_writer.write_segment([group,channel1,channel3,channel4])
+    for i in df:
+        steptheta = f'Step:1.1.{i}'
+        steplist.append(steptheta)
+        index = i
+        tdms_writer.write_segment([write_group(index, dataframe),write_Timestamp(index, dataframe),write_Mapper(index, dataframe), write_NMR(index, dataframe),write_Hall(index, dataframe),
+                                   write_QC(index, dataframe),write_Current(index, dataframe)])
 
 
 
