@@ -3,14 +3,9 @@
 import pandas as pd
 from nptdms import TdmsFile
 import numpy as np
-from nptdms import TdmsWriter, RootObject, GroupObject, ChannelObject
+from nptdms import TdmsWriter, GroupObject, ChannelObject
 
 df = pd.read_pickle("/Users/Lillie/Downloads/DSFM_Test_Data/DSFM_test_data_v3.pkl")
-
-group = GroupObject("Step:1.1.1", properties={
-            "name": "FMSSystemTest_v2",
-            "Time": "start_time",})
-
 
 def write_NMR(index, dataframe):
     ProbeName = "NMR"
@@ -19,7 +14,7 @@ def write_NMR(index, dataframe):
     Timestamp = dataframe['TIMESTAMP'].loc[index]
     Fluxdensity = dataframe['B_NMR'].loc[index]
     NMR_array = np.array([f'ProbeName:{ProbeName}', f"ProbeID:{ProbeID}",f"FluxDensity:{Fluxdensity}", f"Status:{Status}", f"Timestamp:{Timestamp}" ])
-    NMRchannel = ChannelObject('Step:1.1.1','NMRProbe', NMR_array)
+    NMRchannel = ChannelObject(f'{step}','NMRProbe', NMR_array)
     return NMRchannel
 
 
@@ -124,7 +119,7 @@ def write_Hall(index, dataframe):
     BP5_Y_volt = dataframe['HP_BP5_Vy'].loc[index]
     BP5_X_volt = dataframe['HP_BP5_Vx'].loc[index]
     BP5_status = 'OK'
-    BP5_Sensorname = 'BP1'
+    BP5_Sensorname = 'BP5'
     BP5_SensorID = dataframe['HP_BP5_ID'].loc[index]
     BP5_Timestamp = dataframe['TIMESTAMP'].loc[index]
 
@@ -135,14 +130,15 @@ def write_Hall(index, dataframe):
                           f'Address:{BP2address}', f'Temperature:{BP2temp}', f'Z.field:{BP2_Z_field}', f'Y.field:{BP2_Y_field}', f'X.field:{BP2_X_field}', f'Z.zolt:{BP2_Z_volt}',f'Y.volt:{BP2_Y_volt}', f'X.volt:{BP2_X_volt}', f'Status:{BP2_status}', f'Sensor.name:{BP2_Sensorname}', f'Sensor.ID:{BP2_SensorID}', f'Timestamp:{BP2_Timestamp}',
                           f'Address:{BP3address}', f'Temperature:{BP3temp}', f'Z.field:{BP3_Z_field}', f'Y.field:{BP3_Y_field}', f'X.field:{BP3_X_field}', f'Z.zolt:{BP3_Z_volt}',f'Y.volt:{BP3_Y_volt}', f'X.volt:{BP3_X_volt}', f'Status:{BP3_status}', f'Sensor.name:{BP3_Sensorname}', f'Sensor.ID:{BP3_SensorID}', f'Timestamp:{BP3_Timestamp}',
                           f'Address:{BP4address}', f'Temperature:{BP4temp}', f'Z.field:{BP4_Z_field}', f'Y.field:{BP4_Y_field}', f'X.field:{BP4_X_field}', f'Z.zolt:{BP4_Z_volt}',f'Y.volt:{BP4_Y_volt}', f'X.volt:{BP4_X_volt}', f'Status:{BP4_status}', f'Sensor.name:{BP4_Sensorname}', f'Sensor.ID:{BP4_SensorID}', f'Timestamp:{BP4_Timestamp}',
-                          f'Address:{BP4address}', f'Temperature:{BP4temp}', f'Z.field:{BP5_Z_field}', f'Y.field:{BP5_Y_field}', f'X.field:{BP5_X_field}', f'Z.zolt:{BP5_Z_volt}',f'Y.volt:{BP5_Y_volt}', f'X.volt:{BP5_X_volt}', f'Status:{BP5_status}', f'Sensor.name:{BP5_Sensorname}', f'Sensor.ID:{BP5_SensorID}', f'Timestamp:{BP5_Timestamp}'])
-    HALLchannel = ChannelObject('Step:1.1.1', 'HallProbes', Hall_array)
+                          f'Address:{BP5address}', f'Temperature:{BP5temp}', f'Z.field:{BP5_Z_field}', f'Y.field:{BP5_Y_field}', f'X.field:{BP5_X_field}', f'Z.zolt:{BP5_Z_volt}',f'Y.volt:{BP5_Y_volt}', f'X.volt:{BP5_X_volt}', f'Status:{BP5_status}', f'Sensor.name:{BP5_Sensorname}', f'Sensor.ID:{BP5_SensorID}', f'Timestamp:{BP5_Timestamp}'])
+    HALLchannel = ChannelObject(f'{step}', 'HallProbes', Hall_array)
     return HALLchannel
 
 def write_Timestamp(index, dataframe):
     timestamp = dataframe['TIMESTAMP'].loc[index]
-    Timestamp_array = np.array(f'Timestamp:{timestamp}')
-    return Timestamp_array
+    Timestamp_array = np.array([f'Timestamp:{timestamp}'])
+    Timestampchannel = ChannelObject(f'{step}', 'Timestamp', Timestamp_array)
+    return Timestampchannel
 
 def write_Mapper(index,dataframe):
     timestamp = dataframe['TIMESTAMP'].loc[index]
@@ -151,69 +147,144 @@ def write_Mapper(index,dataframe):
     angle = dataframe['Mapper_Angle'].loc[index]
     mapperposition = dataframe['X_NMR'].loc[index]
     Mapper_array = np.array([f'Timestamp:{timestamp}', f'RequestedAngle:{requestedangle}', f'Home:{home}', f'Angle:{angle}', f'Position:{mapperposition}'])
-    return Mapper_array
+    Mapperchannel = ChannelObject(f'{step}','Mapper',Mapper_array)
+    return Mapperchannel
 
 def write_Current(index, dataframe):
     timestamp = ''
     requestedcurrent = '0.000000'
     current ='0.000000'
     Current_array = np.array([f'Timestamp:{timestamp}', f'RequestedCurrent:{requestedcurrent}', f'Current:{current}'])
-    return Current_array
+    Currentchannel = ChannelObject(f'{step}', 'Current', Current_array)
+    return Currentchannel
 
 def write_QC(index, dataframe):
     item1 = ''
     item2 = ''
     QC_array = np.array([f'{item1}', f'{item2}'])
-    return QC_arrayt
+    QCchannel = ChannelObject(f'{step}', 'QC', QC_array)
+    return QCchannel
+
+def write_stepID(index, dataframe):
+    Step_array = np.array([f"{step}"])
+    StepIDchannel = ChannelObject(f'{step}', 'StepID', Step_array)
+    return StepIDchannel
 
 def write_group(index, dataframe):
-    group = GroupObject("Sep:1.1.1", properties={
+    timestamp = dataframe['TIMESTAMP'].loc[index]
+    group = GroupObject(f"{step}", properties={
         "name": "FMSSystemTest_v2",
-        "Time": "start_time", })
-    return group
+        "Time": f"{timestamp}", })
+    wholegroup = tdms_writer.write_segment(
+        [group, write_stepID(index, dataframe), write_Timestamp(index, dataframe), write_Mapper(index, dataframe),
+         write_NMR(index, dataframe), write_Hall(index, dataframe),
+         write_QC(index, dataframe), write_Current(index, dataframe)])
+    return wholegroup
+
+def write_ID(dataframe):
+    id = 'R_2021'
+    id_array = np.array([f'{id}'])
+    IDchannel = ChannelObject('run:R_2021', 'ID', id_array)
+    return IDchannel
+
+def write_Time(dataframe):
+    timestamp = dataframe['TIMESTAMP'].loc[0]
+    time_array = np.array([f'{timestamp}'])
+    Timechannel = ChannelObject('run:R_2021', 'Time',time_array)
+    return Timechannel
+
+def write_magnet(dataframe):
+    magnet = 'Argonne'
+    magnet_array = np.array([f'{magnet}'])
+    Magnetchannel = ChannelObject('run:R_2021', 'magnet', magnet_array)
+    return Magnetchannel
+
+def write_measurement(dataframe):
+    meas = 'FMS'
+    measurement_array = np.array([f'{meas}'])
+    Measurementchannel = ChannelObject('run:R_2021', 'measurement', measurement_array)
+    return Measurementchannel
+
+def write_configuration(dataframe):
+    config = 'C:\\Users\\fms-local\\Development\\FMS\\emma_daq\\Property\\Config\\Devel\\FMS_SystemTestNorthwestern2021.ini'
+    config_array = np.array([f'{config}'])
+    Configchannel = ChannelObject('run:R_2021', 'configuration', config_array)
+    return Configchannel
+
+def write_user(dataframe):
+    user = 'Northwestern'
+    user_array = np.array([f'{user}'])
+    Userchannel = ChannelObject('run:R_2021', 'user', user_array)
+    return Userchannel
+
+def write_script(dataframe):
+    script = 'FMS_SystemTestNorthwestern2021.py'
+    script_array = np.array([f'{script}'])
+    scriptchannel = ChannelObject('run:R_2021', 'script', script_array)
+    return scriptchannel
+
+def write_scriptparameters(dataframe):
+    sp = 'FMS.dat'
+    sp_array = np.array([f'{sp}'])
+    spchannel = ChannelObject('run:R_2021', 'scriptParameters', sp_array)
+    return spchannel
+
+def write_scriptfolder(dataframe):
+    sf = 'C:\\Users\\fms-local\\Development\\FMS\\emma_daq\\Script\\Scripts'
+    sf_array = np.array([f'{sf}'])
+    sfchannel = ChannelObject('run:R_2021', 'scriptFolder', sf_array)
+    return sfchannel
+
+def write_file(dataframe):
+    file = 'C:\\FMS\\data\\Northwestern\\FMSSystemTest_R_2021.tdms'
+    file_array = np.array([f'{file}'])
+    filechannel = ChannelObject('run:R_2021', 'File', file_array)
+    return filechannel
+
+def write_system(dataframe):
+    system = 'FMS'
+    system_array = np.array([f'{system}'])
+    systemchannel = ChannelObject('run:R_2021', 'system', system_array)
+    return systemchannel
+
+def write_initalilizationgroup(dataframe):
+    group = GroupObject("run:R_2021", properties={
+       })
+    wholegroup = tdms_writer.write_segment([group, write_ID(dataframe), write_Time(dataframe), write_magnet(dataframe),
+                                            write_measurement(dataframe), write_configuration(dataframe), write_user(dataframe),
+                                            write_script(dataframe), write_scriptparameters(dataframe), write_scriptfolder(dataframe),
+                                            write_file(dataframe), write_system(dataframe)])
+    return wholegroup
 
 
-########
-steplist = []
+######## Write file
+
 
 with TdmsWriter("TestDataV2.tdms") as tdms_writer:
     dataframe = df
     dataframe["digit_one"]=0
     dataframe["digit_two"]=0
-    dataframe["GroupID"]= 'Step:0.0.0'
+    dataframe["GroupID"]= 'Step:0.0.0' # Step.digittwo.digitone
+    write_initalilizationgroup(dataframe)
+
     for index, row in df.iterrows():
-        idlastrow = df.loc[index-1, "digit_one"]
+        #create the stepID, stored in new column GroupID
+        if index == 0:
+            idlastrow = 0
+        else:
+            idlastrow = df.loc[index-1, "digit_one"]
+        if index == 0:
+            df.loc[index, "digit_two"] = 1
         if idlastrow == 16:
-            number=1
+            df.loc[index,"digit_one"] = number = 1
             df.loc[index, "digit_two"] = df.loc[index-1, "digit_two"] + 1
         else:
-            number = idlastrow+1
-        df.loc[index,"GroupID"] = f'Step:1.{}.{}'
+            df.loc[index, "digit_one"] = number = idlastrow+1
+        if index != 0 and idlastrow != 16:
+            df.loc[index, "digit_two"] = df.loc[index-1, "digit_two"]
+        seconddigit = df["digit_two"].loc[index]
+        df.loc[index,"GroupID"] = f'Step:1.{seconddigit}.{number}'
+        #write the group for the GroupID
+        step = df["GroupID"].loc[index]
+        write_group(index, df)
 
-    for i in df:
-        steptheta = f'Step:1.1.{i}'
-        steplist.append(steptheta)
-        index = i
-        tdms_writer.write_segment([write_group(index, dataframe),write_Timestamp(index, dataframe),write_Mapper(index, dataframe), write_NMR(index, dataframe),write_Hall(index, dataframe),
-                                   write_QC(index, dataframe),write_Current(index, dataframe)])
-
-
-
-
-with TdmsFile.open("TestDataV2.tdms") as tdms_file:
-    all_groups = tdms_file.groups()
-    print(all_groups)
-    #Accessing a group which for now is Step_X_Z with no numbers
-    print(tdms_file["Step_X_Z"].channels())
-    print("This is contents of Timestamp Channel:", tdms_file["Step_X_Z"]["Timestamp"][:])
-    print("this is contents of NMRProbe Channel:", tdms_file["Step_X_Z"]["NMRProbe"][:])
-    print("This is contents of HallProbes Channel:", tdms_file["Step_X_Z"]["HallProbes"][:])
-#    print(tdms_file["group_name"].properties["prop2"]) #accessing properties
-
-#New Section
-#
-# my_df.reset_index(drop=True, inplace=True)
-#
-# for index, row in my_df.iterrows():
-#     if index % 16 == 0:
-#         my_df.loc[index, "value"] = value_I_want
