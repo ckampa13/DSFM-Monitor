@@ -6,5 +6,5 @@ from nptdms import TdmsWriter, GroupObject, ChannelObject
 with TdmsFile.open("../data/TestDataV2.tdms") as tdms_file:
     all_groups = tdms_file.groups()
     #print(all_groups)
-    print(tdms_file["Step:1.1.4"].channels())
+    print(tdms_file["step:1.1.4"]['StepID'][:])
     #print(tdms_file["Step:1.1.4"]["Mapper"][:])
