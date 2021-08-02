@@ -19,10 +19,12 @@ datadir = os.path.join(scriptdir, '..', 'data/')
 print(datadir)
 
 # create map interpolation functions
-DS_cyl = get_df_interp_func(filename='/home/shared_data/Bmaps/Mu2e_DSMap_V13.p',
-                            gauss=False, mm=False, Blabels=['Br', 'Bphi', 'Bz'])
-DS_car = get_df_interp_func(filename='/home/shared_data/Bmaps/Mu2e_DSMap_V13.p',
-                            gauss=False, mm=False, Blabels=['Bx', 'By', 'Bz'])
+DS_cyl = get_df_interp_func(filename=datadir+'Mu2e_DSMap_V13.p',
+                            gauss=False, mm=False,
+                            Blabels=['Br', 'Bphi', 'Bz'])
+DS_car = get_df_interp_func(filename=datadir+'Mu2e_DSMap_V13.p',
+                            gauss=False, mm=False,
+                            Blabels=['Bx', 'By', 'Bz'])
 
 '''
 - Coordinates for now:
@@ -33,6 +35,14 @@ DS_car = get_df_interp_func(filename='/home/shared_data/Bmaps/Mu2e_DSMap_V13.p',
 '''
 
 # Globals for DSFM locations and probe orientations
+# reflector radius
+# counter-clockwise
+# Phi is w.r.t. BP up (i.e. defines Phi=0)
+Rs_reflect_BP = 1e-3*np.array([1450./2., 700./2., 1450./2., 700./2.])
+Phis_reflect_BP = np.pi*np.array([1., 1.5, 0., 0.5]) # CHECK
+Rs_reflect_SP = 1e-3*np.array(4*[241./2.]) # CHECK NUMBER!!
+Phis_reflect_SP = np.pi/4. + np.pi*np.array([1., 1.5, 0., 0.5]) # CHECK
+
 # radius on propeller, signed by which side of the propeller
 Rs_small = 1e-3*np.array([0., 54., -95.,]) # CHECK SIGNS!!
 Rs_large = 1e-3*np.array([44., -319., 488., -656., 800.])
@@ -125,6 +135,17 @@ Zs_NMR = Zs_SP - delta_Z_NMR_SP
 # HP_1_Bx_Meas, HP_1_Bx_Mu2e, HP_1_By_Meas, HP_1_By_Mu2e, HP_1_Bz_Meas, HP_1_Bz_Mu2e,
 # HP_1_V1, HP_1_V2, HP_1_V3, ... ALL Hall probes - 7 , 8 , 9
 
+single_reflect_cols = ['rho', 'theta', 'z']
+_ = list(np.concatenate([[f'Reflect_SP_{j}_{i}' for i in single_reflect_cols]
+                        for j in ['A', 'B', 'C', 'D']]))
+reflect_SP_col_list = _
+_ = list(np.concatenate([[f'Reflect_BP_{j}_{i}' for i in single_reflect_cols]
+                        for j in ['A', 'B', 'C', 'D']]))
+reflect_BP_col_list = _
+
+# print(reflect_SP_col_list)
+# print(reflect_BP_col_list)
+
 single_HP_cols = ['ID', 'X', 'Y', 'Z', 'Vx', 'Vy', 'Vz', 'Temperature',
                   'Bx_Meas', 'By_Meas', 'Bz_Meas', 'Br', 'Bphi', 'Bz']
 HP_SP_col_list = list(np.concatenate([[f'HP_SP{j}_{i}' for i in single_HP_cols]
@@ -132,7 +153,8 @@ HP_SP_col_list = list(np.concatenate([[f'HP_SP{j}_{i}' for i in single_HP_cols]
 HP_BP_col_list = list(np.concatenate([[f'HP_BP{j}_{i}' for i in single_HP_cols]
                                       for j in [1, 2, 3, 4, 5]]))
 col_list = ['TIMESTAMP', 'Mapper_Angle', 'Mapper_Z', 'X_NMR', 'Y_NMR', 'Z_NMR',
-            'B_NMR'] + HP_SP_col_list + HP_BP_col_list
+            'B_NMR'] + HP_SP_col_list + HP_BP_col_list \
+            + reflect_BP_col_list + reflect_SP_col_list
 
 # define an empty dataframe
 # df_EMMA = pd.DataFrame(columns=col_list)
@@ -241,6 +263,37 @@ def return_row(time, Z_ind, Phi_ind, ):
         row[f'{pre}_Br'] = Br
         row[f'{pre}_Bphi'] = Bphi
         row[f'{pre}_Bz'] = Bz
+    # reflectors
+    ref_labs = ['A', 'B', 'C', 'D']
+    base_width = 75. # [mm], ESTIMATE!! CHECK BASE WIDTH
+    # BP
+    for i, lab in enumerate(ref_labs):
+        r = Rs_reflect_BP[i]*1e3
+        t = Phi + Phis_reflect_BP[i]
+        z = Zs_NMR[Z_ind]*1e3
+        x = r * np.cos(t)
+        y = r * np.sin(t)
+        if (x > -base_width/2) and (x < base_width/2) and (y < 0):
+            r = np.nan
+            t = np.nan
+            z = np.nan
+        row[f'Reflect_BP_{lab}_rho'] = r # [mm] in TDMS
+        row[f'Reflect_BP_{lab}_theta'] = t # [rad] in TDMS
+        row[f'Reflect_BP_{lab}_z'] = z # [mm] in TDMS
+    # SP
+    for i, lab in enumerate(ref_labs):
+        r = Rs_reflect_SP[i]*1e3
+        t = Phi + Phis_reflect_SP[i]
+        z = Zs_SP[Z_ind]*1e3
+        x = r * np.cos(t)
+        y = r * np.sin(t)
+        if (x > -base_width/2) and (x < base_width/2) and (y < 0):
+            r = np.nan
+            t = np.nan
+            z = np.nan
+        row[f'Reflect_SP_{lab}_rho'] = r # [mm] in TDMS
+        row[f'Reflect_SP_{lab}_theta'] = t # [rad] in TDMS
+        row[f'Reflect_SP_{lab}_z'] = z # [mm] in TDMS
 
     return row
 
@@ -270,8 +323,10 @@ if __name__ == '__main__':
     # df_EMMA.to_pickle(datadir+'TEST.pkl')
     # df_EMMA.to_csv(datadir+'TEST.csv')
     # save
-    df_EMMA.to_pickle(datadir+'DSFM_test_data_v3.pkl')
-    df_EMMA.to_csv(datadir+'DSFM_test_data_v3.csv')
+    # testfile_version = "3"
+    testfile_version = "4"
+    df_EMMA.to_pickle(datadir+f'DSFM_test_data_v{testfile_version}.pkl')
+    df_EMMA.to_csv(datadir+f'DSFM_test_data_v{testfile_version}.csv')
 
     # some basic plots
     # NMR vs. Z
