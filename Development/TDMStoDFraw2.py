@@ -28,7 +28,7 @@ def write_timestamp(groupname, tdms_file):
     timestamp = tdms_file[f'{groupname}']['Timestamp'].read_data()[0]
     lineelements = timestamp.split(':')
     if lineelements[0] == 'Timestamp':
-        column_value = lineelements[1]+ ':'+ lineelements[2]
+        column_value = lineelements[1]+ ':'+ lineelements[2] + ':' + lineelements[3]
         timestamp_values.append(column_value)
 #do both step ID columns
 def write_stepID(groupname, tdms_file):
@@ -165,6 +165,8 @@ BP5_Bz = []
 BP5_Br = []
 BP5_Bphi = []
 
+
+
 def write_HallProbe(groupname, tdms_file):
     hallprobes = {'SP1': [0, SP1_ID, 0, SP1_X, 0, SP1_Y, 0, SP1_Z, 0, SP1_Vx, 0, SP1_Vy, 0, SP1_Vz, 0, SP1_Temperature, 0, SP1_Bx, 0, SP1_By, 0, SP1_Bz, 0, SP1_Br, 0, SP1_Bphi],
                   'SP2': [17, SP2_ID, 17, SP2_X, 17, SP2_Y, 17, SP2_Z, 17, SP2_Vx, 17, SP2_Vy, 17, SP2_Vz, 17, SP2_Temperature, 17, SP2_Bx, 17, SP2_By, 17, SP2_Bz, 17, SP2_Br, 17, SP2_Bphi],
@@ -284,7 +286,7 @@ bnmr_dict = {"B_NMR": bnmr_values}
 #HALL PROBE DICTIONARIES
 idsp1_dict = {"HP_SP1_ID": SP1_ID}
 sp1x_dict = {"HP_SP1_X": SP1_X}
-sp1y_dict = {"HP_SP1_Y": SP3_Y}
+sp1y_dict = {"HP_SP1_Y": SP1_Y}
 sp1z_dict = {"HP_SP1_Z": SP1_Z}
 sp1vx_dict = {"HP_SP1_Vx": SP1_Vx}
 sp1vy_dict = {"HP_SP1_Vy": SP1_Vy}
@@ -306,7 +308,7 @@ sp2vz_dict = {"HP_SP2_Vz": SP2_Vz}
 sp2temp_dict = {"HP_SP2_Temperature": SP2_Temperature}
 sp2bx_dict = {"HP_SP2_Bx_Meas": SP2_Bx}
 sp2by_dict = {"HP_SP2_By_Meas": SP2_By}
-sp2bz_dict = {"HP_SP2_Bz_Meas": SP2_Z}
+sp2bz_dict = {"HP_SP2_Bz_Meas": SP2_Bz}
 sp2br_dict = {"HP_SP2_Br": SP2_Br}
 sp2bphi_dict = {"HP_SP2_Bphi": SP2_Bphi}
 
@@ -329,8 +331,8 @@ bp1x_dict = {"HP_BP1_X": BP1_X}
 bp1y_dict = {"HP_BP1_Y": BP1_Y}
 bp1z_dict = {"HP_BP1_Z": BP1_Z}
 bp1vx_dict = {"HP_BP1_Vx": BP1_Vx}
-bp1vy_dict = {"HP_BP1_Vy": BP1_By}
-bp1vz_dict = {"HP_BP1_Vz": BP1_Bz}
+bp1vy_dict = {"HP_BP1_Vy": BP1_Vy}
+bp1vz_dict = {"HP_BP1_Vz": BP1_Vz}
 bp1temp_dict = {"HP_BP1_Temperature": BP1_Temperature}
 bp1bx_dict = {"HP_BP1_Bx_Meas": BP1_Bx}
 bp1by_dict = {"HP_BP1_By_Meas": BP1_By}
@@ -347,8 +349,8 @@ bp2vy_dict = {"HP_BP2_Vy": BP2_Vy}
 bp2vz_dict = {"HP_BP2_Vz": BP2_Vz}
 bp2temp_dict = {"HP_BP2_Temperature": BP2_Temperature}
 bp2bx_dict = {"HP_BP2_Bx_Meas": BP2_Bx}
-bp2by_dict = {"HP_BP2_By_Meas": BP2_Vy}
-bp2bz_dict = {"HP_BP2_Bz_Meas": BP2_Vz}
+bp2by_dict = {"HP_BP2_By_Meas": BP2_By}
+bp2bz_dict = {"HP_BP2_Bz_Meas": BP2_Bz}
 bp2br_dict = {"HP_BP2_Br": BP2_Br}
 bp2bphi_dict = {"HP_BP2_Bphi": BP2_Bphi}
 
@@ -361,9 +363,9 @@ bp3vx_dict = {"HP_BP3_Vx": BP3_Vx}
 bp3vy_dict = {"HP_BP3_Vy": BP3_Vy}
 bp3vz_dict = {"HP_BP3_Vz": BP3_Vz}
 bp3temp_dict = {"HP_BP3_Temperature": BP3_Temperature}
-bp3bx_dict = {"HP_BP3_Bx_Meas": BP3_Vx}
-bp3by_dict = {"HP_BP3_By_Meas": BP3_Vy}
-bp3bz_dict = {"HP_BP3_Bz_Meas": BP3_Vz}
+bp3bx_dict = {"HP_BP3_Bx_Meas": BP3_Bx}
+bp3by_dict = {"HP_BP3_By_Meas": BP3_By}
+bp3bz_dict = {"HP_BP3_Bz_Meas": BP3_Bz}
 bp3br_dict = {"HP_BP3_Br": BP3_Br}
 bp3bphi_dict = {"HP_BP3_Bphi": BP3_Bphi}
 
@@ -462,11 +464,11 @@ for key in dict.keys():
         dataframe[f'{key}'] = dataframe[f'{key}'].astype(str).astype(float)
 
 #write to datatime
-pd.to_datetime(dataframe['TIMESTAMP'])
+pd.to_datetime(dataframe['TIMESTAMP'],format= '%m/%d/%Y %I:%M:%S %p' )
+
+
 
 #dump into pickle
-with open("/Users/Lillie/Documents/GitHub/DSFM-Monitor/Development/Newpickle.pkl", 'wb') as f:
+with open("/Users/Lillie/Documents/GitHub/DSFM-Monitor/Development/8-9.pkl", 'wb') as f:
     pickle.dump(dataframe, f)
 
-print(dataframe)
-print(dataframe['TIMESTAMP'])
