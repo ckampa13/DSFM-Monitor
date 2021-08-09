@@ -3,23 +3,26 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import pandas as pd
-import pickle
 import numpy as np
 import base64
+import os
+
+
 
 #opening the pickle file
-picklefile = open("/Users/Lillie/Documents/GitHub/DSFM-Monitor/Development/Newpickle.pkl", 'rb')
-df_raw = pickle.load(picklefile)
-picklefile.close()
+scriptdir = os.path.dirname(os.path.realpath(__file__))
+datadir = os.path.join(scriptdir, '..', 'data/')
+df_raw = pd.read_pickle(datadir + "Newpickle.pkl")
 
 #formatting new dataframes
-df_NMR = df_raw[['TIMESTAMP', 'B_NMR']].copy() #'X_NMR', 'Y_NMR', 'Z_NMR',
+df_NMR = df_raw[['TIMESTAMP', 'B_NMR']].copy()  #'X_NMR', 'Y_NMR', 'Z_NMR',
 hall_probe_cols = []
 
 for name in df_raw.columns:
     if "HP_" in name:
         hall_probe_cols.append(name)
 df_Hall = df_raw[['TIMESTAMP']+hall_probe_cols]
+
 print(df_Hall)
 probe_ids = ['SP1', 'SP2', 'SP3', 'BP1', 'BP2', 'BP3', 'BP4', 'BP5']
 new_column_names = ['ID', 'X', 'Y', 'Z', 'Vx', 'Vy', 'Vz', 'Temperature',
@@ -38,7 +41,7 @@ for key in results_dict.keys():
 
 
 df_Bfield = pd.DataFrame(results_dict)
-
+print("this is B_field dataframe", df_Bfield)
 
 df_dict = {'raw': df_raw, 'NMR': df_NMR, 'Hall Probes': df_Hall, 'Field at Location': df_Bfield, 'test': 0.}
 
@@ -133,8 +136,8 @@ def update_output1(value):
     hall_probe = value
     fig1 = px.scatter_3d(df_dict['Hall Probes'], x=f'HP_{hall_probe}_X', y=f'HP_{hall_probe}_Y', z=f'HP_{hall_probe}_Z',
                          color=f'HP_{hall_probe}_Bx_Meas')
-
     return  fig1
+
 #Callback 2 for plot By
 @app.callback(
     dash.dependencies.Output('display-selected-values2', 'figure'),
