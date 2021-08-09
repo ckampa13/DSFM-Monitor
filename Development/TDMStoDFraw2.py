@@ -469,4 +469,4 @@ with open("/Users/Lillie/Documents/GitHub/DSFM-Monitor/Development/Newpickle.pkl
     pickle.dump(dataframe, f)
 
 print(dataframe)
-print(dataframe.columns[:60])
+print(dataframe['TIMESTAMP'])
