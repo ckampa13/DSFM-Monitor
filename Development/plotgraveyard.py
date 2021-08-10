@@ -132,3 +132,24 @@ picklefile = pd.read_pickle('/Users/Lillie/Documents/GitHub/DSFM-Monitor/Develop
 fig = px.scatter(picklefile, x = picklefile['TIMESTAMP'], y = [picklefile[f'HP_BP5_{value}'],picklefile[f'HP_BP4_{value}'], picklefile[f'HP_BP3_{value}'],picklefile[f'HP_BP2_{value}'], picklefile[f'HP_BP1_{value}']] )
 fig2 = px.scatter(picklefile, x = picklefile['TIMESTAMP'], y = [picklefile[f'HP_SP1_{value}'],picklefile[f'HP_SP2_{value}'], picklefile[f'HP_SP3_{value}']] )
 
+################################################Old coil image plot
+with open('/Users/Lillie/Desktop/DSFM_Test_Data/dsfm overhead image.png', "rb") as image_file:
+    encoded_string = base64.b64encode(image_file.read()).decode()
+
+add the prefix that plotly will want when using the string as source
+encoded_imagenew = "data:image/png;base64," + encoded_string
+
+
+trying to do the plot of the image on the graph
+pic = px.line(df_Hall, x = np.arange(0,2), y= np.repeat(15,2))
+pic.update_layout(images=[dict(
+                  source= encoded_imagenew,
+                  xref= "x",
+                  yref= "y",
+                  x= 0,
+                  y= 15,
+                  sizex= 50,
+                  sizey= 10,
+                  sizing= "stretch",
+                  opacity= 0.7,
+                  layer= "above")])

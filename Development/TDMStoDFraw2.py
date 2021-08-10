@@ -199,7 +199,7 @@ def write_HallProbe(groupname, tdms_file):
         hallprobes[f'{hallprobe}'][17].append(sp1bx.split(':')[1])
         sp1by = tdms_file[f'{groupname}']['HallProbes'].read_data()[5 + hallprobes[f'{hallprobe}'][18]]
         hallprobes[f'{hallprobe}'][19].append(sp1by.split(':')[1])
-        sp1bz = tdms_file[f'{groupname}']['HallProbes'].read_data()[7 + hallprobes[f'{hallprobe}'][20]]
+        sp1bz = tdms_file[f'{groupname}']['HallProbes'].read_data()[2 + hallprobes[f'{hallprobe}'][20]]
         hallprobes[f'{hallprobe}'][21].append(sp1bz.split(':')[1])
         sp1br = tdms_file[f'{groupname}']['HallProbes'].read_data()[5 + hallprobes[f'{hallprobe}'][22]]
         hallprobes[f'{hallprobe}'][23].append(sp1br.split(':')[1])
