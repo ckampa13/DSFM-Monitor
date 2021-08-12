@@ -8,7 +8,6 @@ import base64
 import os
 import dash_table
 import plotly.express as px
-import plotly.graph_objects as go
 from PIL import Image
 
 #opening the pickle file
@@ -146,6 +145,7 @@ figimgpropeller.update_layout_images(dict(
 figimgpropeller.update_layout(yaxis = {'visible': False, 'showticklabels': False}, xaxis = {'visible': False, 'showticklabels': False})
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+stylesheet_href= ["https://s3-us-west-2.amazonaws.com/colors-css/2.2.0/colors.min.css"]
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.layout = html.Div([
@@ -153,11 +153,97 @@ app.layout = html.Div([
         html.H1(children = 'State of the FMS Display')])]),
         html.Div([
         html.Div([html.Img(src='data:image/png;base64,{}'.format(encoded_probes.decode()))], className="four columns"),
+
         dash_table.DataTable(
         id='table',
-        columns=[{"name": i, "id": i} for i in df_FMS.columns],
-        data=df_FMS.to_dict('records'),
-     ),]),
+        data= df_FMS.to_dict('records'),
+        columns=[{"name": i, "id": i, "type": 'numeric'} for i in df_FMS.columns],
+        sort_action='native',
+        editable=True,
+        style_data_conditional=[
+             {
+                 'if': {
+                     'column_id': 'Probe_Name',
+                     'filter_query' : "{Probe_Name} eq 'SP1'",
+
+                 },
+                 'backgroundColor': 'green',
+                 'color': 'white'
+             },
+            {
+                'if': {
+                    'column_id': 'Probe_Name',
+                    'filter_query': "{Probe_Name} eq 'SP2'",
+
+                },
+                'backgroundColor': 'green',
+                'color': 'white'
+            },
+            {
+                'if': {
+                    'column_id': 'Probe_Name',
+                    'filter_query': "{Probe_Name} eq 'SP3'",
+
+                },
+                'backgroundColor': 'green',
+                'color': 'white'
+            },
+            {
+                'if': {
+                    'column_id': 'Probe_Name',
+                    'filter_query': "{Probe_Name} eq 'BP1'",
+
+                },
+                'backgroundColor': 'green',
+                'color': 'white'
+            },
+            {
+                'if': {
+                    'column_id': 'Probe_Name',
+                    'filter_query': "{Probe_Name} eq 'BP2'",
+
+                },
+                'backgroundColor': 'green',
+                'color': 'white'
+            },
+            {
+                'if': {
+                    'column_id': 'Probe_Name',
+                    'filter_query': "{Probe_Name} eq 'BP3'",
+
+                },
+                'backgroundColor': 'green',
+                'color': 'white'
+            },
+            {
+                'if': {
+                    'column_id': 'Probe_Name',
+                    'filter_query': "{Probe_Name} eq 'BP4'",
+
+                },
+                'backgroundColor': 'green',
+                'color': 'white'
+            },
+            {
+                'if': {
+                    'column_id': 'Probe_Name',
+                    'filter_query': "{Probe_Name} eq 'BP5'",
+
+                },
+                'backgroundColor': 'green',
+                'color': 'white'
+            }
+        ]
+
+        ),
+        ])
+
+
+
+
+
+
+    ,
         html.Div([
         html.Div([
             html.H3('Mapper Z Location'),
@@ -216,6 +302,11 @@ def update_output1(value):
 
     fig1 = px.scatter(df_dict['Hall Probes'], x= 'TIMESTAMP', y = f'HP_{hall_probe}_Bz_Meas')
     fig1.update_traces(marker=dict(color='purple'))
+    fig1.update_xaxes(
+            tickangle = 60,
+            title_text = "Time",
+            title_font = {"size": 20},
+            title_standoff = 25)
     return  fig1
 
 #Callback 2 for plot Br
@@ -226,7 +317,12 @@ def update_layout2(value):
     hall_probe = value
 
     fig2 = px.scatter(df_dict['Hall Probes'], x='TIMESTAMP', y = f'HP_{hall_probe}_Br')
-    fig2.update_traces(marker=dict(color='red'))
+    fig2.update_traces(marker=dict(color='maroon'))
+    fig2.update_xaxes(
+            tickangle = 60,
+            title_text = "Time",
+            title_font = {"size": 20},
+            title_standoff = 25)
     return fig2
 
 #Callback 3 for plot Bphi
@@ -237,7 +333,12 @@ def update_layout3(value):
     hall_probe = value
 
     fig3 = px.scatter(df_dict['Hall Probes'], x='TIMESTAMP', y=f'HP_{hall_probe}_Bphi')
-    fig3.update_traces(marker=dict(color='green'))
+    fig3.update_traces(marker=dict(color='lime'))
+    fig3.update_xaxes(
+            tickangle = 60,
+            title_text = "Time",
+            title_font = {"size": 20},
+            title_standoff = 25)
     return fig3
 
 #Callback 4 for plot temperature
@@ -248,6 +349,11 @@ def update_layout3(value):
     hall_probe = value
     fig4 = px.scatter(df_dict['Hall Probes'], x='TIMESTAMP', y=f'HP_{hall_probe}_Temperature')
     fig4.update_traces(marker=dict(color='orange'))
+    fig4.update_xaxes(
+            tickangle = 60,
+            title_text = "Time",
+            title_font = {"size": 20},
+            title_standoff = 25)
     return fig4
 
 #Callback 5 for Solenoid img----Come back to this when using live data
