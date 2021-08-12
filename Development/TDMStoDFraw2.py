@@ -1,11 +1,12 @@
 import pandas as pd
 from nptdms import TdmsFile
 import pickle
+import numpy as np
 
 #Edits will be made to clean this up!!  yes it is not concise at the moment
 
-tdms_file = TdmsFile.read("../data/TestDataV2.tdms")
-groups = tdms_file.groups()
+#tdms_file = TdmsFile.read("../data/TestDataV2.tdms")
+#groups = tdms_file.groups()
 
 
 #Bunch of lists
@@ -19,9 +20,9 @@ bnmr_values = []
 
 
 #add groupnames to group name list
-for group in groups:
-    groupname = group.name
-    groupnamelist.append(groupname)
+# for group in groups:
+#     groupname = group.name
+#     groupnamelist.append(groupname)
 
 #do timestamp columns
 def write_timestamp(groupname, tdms_file):
@@ -264,17 +265,57 @@ def write_reflector(groupname, tdms_file):
 
 
 
+# with TdmsFile.open("../data/TestDataV2.tdms") as tdms_file:
+#     groups = tdms_file.groups()
+#     for group in groups:
+#         groupname = group.name
+#         groupnamelist.append(groupname)
+#
+#     for groupname in groupnamelist:
+#         if groupname == 'run:R_2021' or groupname[2] == 'q':
+#             pass
+#         else:
+#             write_timestamp(groupname, tdms_file)
+#             write_stepID(groupname, tdms_file)
+#             write_mapper(groupname, tdms_file)
+#             write_NMR(groupname, tdms_file)
+#             write_HallProbe(groupname, tdms_file)
+#             write_reflector(groupname, tdms_file)
 
-for groupname in groupnamelist:
-    if groupname == 'run:R_2021' or groupname[2] == 'q':
-        pass
-    else:
-        write_timestamp(groupname, tdms_file)
-        write_stepID(groupname, tdms_file)
-        write_mapper(groupname, tdms_file)
-        write_NMR(groupname, tdms_file)
-        write_HallProbe(groupname, tdms_file)
-        write_reflector(groupname, tdms_file)
+with TdmsFile.open("../data/TestDataV2.tdms") as tdms_file:
+        groups = tdms_file.groups()
+        for group in groups:
+            groupname = group.name
+            if groupname == 'run:R_2021' or groupname[2] == 'q':
+                pass
+            else:
+                groupnamelist.append(groupname)
+        df_halls = pd.DataFrame()
+        column_array = np.array([])
+        for name in groupnamelist:
+            for chunk in tdms_file.data_chunks():
+                channel_chunk = chunk[f'{name}']['HallProbes']
+                array = np.array(channel_chunk[:])
+                if array.size > 0:
+                    new_array = np.array([])
+                    print(channel_chunk[:])
+                    for item in array:
+                        x = item.split(':')[1]
+                        y = item.split(':')[0]
+                        np.append(arr = new_array, values = x)
+                        if name == 'step:1.1.1':
+                            np.append(arr = column_array,values = y)
+                        else:
+                            pass
+                    dict = {column: value for (column, value) in zip(column_array, new_array)}
+                    print(column_array)
+                    print(new_array)
+                    print(dict)
+                    #df_halls.append(dict)
+        #print(df_halls)
+
+
+
 
 time_stamp_dict = {"TIMESTAMP": timestamp_values}
 stepID_dict = {'StepID': stepid_values}
