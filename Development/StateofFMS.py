@@ -156,7 +156,7 @@ stylesheet_href= ["https://s3-us-west-2.amazonaws.com/colors-css/2.2.0/colors.mi
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.layout = html.Div([
         html.Div(children=[html.Div([
-        html.H1(children = 'State of the FMS Display')])]),
+        html.H1(children = 'State of the FMS')])]),
         dcc.Interval(
             id='interval-component',
             interval=1*100
@@ -425,7 +425,8 @@ def update_table(interval):
 def update_mapperplot(interval):
     df_raw = load_data("liveupdates.pkl.py")
     figimgpropeller = px.imshow(img_xy)
-    angle = df_raw['Mapper_Angle'].iloc[-1] % 360.0
+    angle = int(float(df_raw['Mapper_Angle'].iloc[-1]))
+    angle = angle * 360.0
     img_prop = Image.open(datadir + 'Reflector Map Sketch.png')
     img_prop = img_prop.rotate(angle)
     figimgpropeller.add_layout_image(dict(

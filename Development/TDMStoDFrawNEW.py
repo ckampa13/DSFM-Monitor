@@ -150,7 +150,7 @@ with TdmsFile.open("../data/TestDataV2.tdms") as tdms_file:
         #print(dict_halls)
         df = pd.DataFrame(dict_halls)
         print(df)
-        print(df["Mapper_Angle"])
+        #print(df["Mapper_Angle"])
         time.sleep(5)
         with open(filename, 'wb') as file:
             pickle.dump(df, file)
@@ -166,3 +166,4 @@ with TdmsFile.open("../data/TestDataV2.tdms") as tdms_file:
                 #print(dict)
                 #df_halls = df_halls.append(dict, ignore_index=True)
     #print(df_halls)
+
