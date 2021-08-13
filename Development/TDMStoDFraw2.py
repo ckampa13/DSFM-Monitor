@@ -265,54 +265,22 @@ def write_reflector(groupname, tdms_file):
 
 
 
-# with TdmsFile.open("../data/TestDataV2.tdms") as tdms_file:
-#     groups = tdms_file.groups()
-#     for group in groups:
-#         groupname = group.name
-#         groupnamelist.append(groupname)
-#
-#     for groupname in groupnamelist:
-#         if groupname == 'run:R_2021' or groupname[2] == 'q':
-#             pass
-#         else:
-#             write_timestamp(groupname, tdms_file)
-#             write_stepID(groupname, tdms_file)
-#             write_mapper(groupname, tdms_file)
-#             write_NMR(groupname, tdms_file)
-#             write_HallProbe(groupname, tdms_file)
-#             write_reflector(groupname, tdms_file)
-
 with TdmsFile.open("../data/TestDataV2.tdms") as tdms_file:
-        groups = tdms_file.groups()
-        for group in groups:
-            groupname = group.name
-            if groupname == 'run:R_2021' or groupname[2] == 'q':
-                pass
-            else:
-                groupnamelist.append(groupname)
-        df_halls = pd.DataFrame()
-        column_array = np.array([])
-        for name in groupnamelist:
-            for chunk in tdms_file.data_chunks():
-                channel_chunk = chunk[f'{name}']['HallProbes']
-                array = np.array(channel_chunk[:])
-                if array.size > 0:
-                    new_array = np.array([])
-                    print(channel_chunk[:])
-                    for item in array:
-                        x = item.split(':')[1]
-                        y = item.split(':')[0]
-                        np.append(arr = new_array, values = x)
-                        if name == 'step:1.1.1':
-                            np.append(arr = column_array,values = y)
-                        else:
-                            pass
-                    dict = {column: value for (column, value) in zip(column_array, new_array)}
-                    print(column_array)
-                    print(new_array)
-                    print(dict)
-                    #df_halls.append(dict)
-        #print(df_halls)
+    groups = tdms_file.groups()
+    for group in groups:
+        groupname = group.name
+        groupnamelist.append(groupname)
+
+    for groupname in groupnamelist:
+        if groupname == 'run:R_2021' or groupname[2] == 'q':
+            pass
+        else:
+            write_timestamp(groupname, tdms_file)
+            write_stepID(groupname, tdms_file)
+            write_mapper(groupname, tdms_file)
+            write_NMR(groupname, tdms_file)
+            write_HallProbe(groupname, tdms_file)
+            write_reflector(groupname, tdms_file)
 
 
 

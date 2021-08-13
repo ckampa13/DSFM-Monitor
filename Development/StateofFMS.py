@@ -13,7 +13,7 @@ from PIL import Image
 #opening the pickle file
 scriptdir = os.path.dirname(os.path.realpath(__file__))
 datadir = os.path.join(scriptdir, '..', 'data/')
-df_raw = pd.read_pickle(datadir + "8-10.pkl")
+df_raw = pd.read_pickle(datadir + "liveupdates.pkl.py")
 
 #formatting new dataframes
 df_NMR = df_raw[['TIMESTAMP', 'B_NMR']].copy()  #'X_NMR', 'Y_NMR', 'Z_NMR',
