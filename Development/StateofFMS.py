@@ -13,9 +13,15 @@ from PIL import Image
 #opening the pickle file
 scriptdir = os.path.dirname(os.path.realpath(__file__))
 datadir = os.path.join(scriptdir, '..', 'data/')
-df_raw = pd.read_pickle(datadir + "liveupdates.pkl.py")
+#df_raw = pd.read_pickle(datadir + "liveupdates.pkl.py")
+
+def load_data(filename):
+    df_raw = pd.read_pickle(datadir + f"{filename}")
+    return df_raw
+df_raw = load_data("liveupdates.pkl.py")
 
 #formatting new dataframes
+
 df_NMR = df_raw[['TIMESTAMP', 'B_NMR']].copy()  #'X_NMR', 'Y_NMR', 'Z_NMR',
 hall_probe_cols = []
 
@@ -45,23 +51,24 @@ for key in results_dict.keys():
 
 df_Bfield = pd.DataFrame(results_dict)
 #print("this is B_field dataframe", df_Bfield)
+def load_FMS_df(df_raw):
+    columns_in_FMS = [ 'Probe_Name', 'Vx', 'Vy', 'Vz', 'Br', 'Bphi', 'Bz_Meas', 'Temperature', 'X', 'Y', 'Z']
 
-columns_in_FMS = [ 'Probe_Name', 'Vx', 'Vy', 'Vz', 'Br', 'Bphi', 'Bz_Meas', 'Temperature', 'X', 'Y', 'Z']
-
-fms_dict = {key: [] for key in columns_in_FMS}
-for probe in probe_ids:
-    fms_dict['Probe_Name'].append(probe)
-    for col in columns_in_FMS:
-        if col == 'Probe_Name':
-            pass
-        else:
-            fms_dict[col].append(df_raw[f'HP_{probe}_{col}'].iloc[-1])
+    fms_dict = {key: [] for key in columns_in_FMS}
+    for probe in probe_ids:
+        fms_dict['Probe_Name'].append(probe)
+        for col in columns_in_FMS:
+            if col == 'Probe_Name':
+               pass
+            else:
+               fms_dict[col].append(df_raw[f'HP_{probe}_{col}'].iloc[-1])
 # for key in fms_dict.keys():
 #     fms_dict[key] = np.concatenate(fms_dict[key])
 
-df_FMS = pd.DataFrame(fms_dict)
-print(df_FMS)
-
+    df_FMS = pd.DataFrame(fms_dict)
+    return df_FMS
+#print(df_FMS)
+df_FMS = load_FMS_df(df_raw)
 
 df_dict = {'raw': df_raw, 'NMR': df_NMR, 'Hall Probes': df_Hall, 'Field at Location': df_Bfield, 'State of FMS': df_FMS}
 
@@ -73,7 +80,7 @@ probes = datadir + 'probes.png'
 encoded_probes = base64.b64encode(open(probes, 'rb').read())
 
 z_loc = 400
-
+df_FMS.to_dict('records')
 
 #load images
 img_coil = Image.open(datadir + 'coils.png')
@@ -81,15 +88,15 @@ img_mapper = Image.open(datadir + 'DSFM_YZ_sketch.png')
 img_xy = Image.open(datadir + 'X-Y coords.png')
 img_prop = Image.open(datadir + 'Reflector Map Sketch.png')
 
-figimg = px.imshow(img_coil)
-
-# plot mapper towards tracker
-figimg.add_layout_image(dict(
-    source=img_mapper,
-    x=0.9,
-    y=0.35,
-    )
-)
+# figimg = px.imshow(img_coil)
+#
+# # plot mapper towards tracker
+# figimg.add_layout_image(dict(
+#     source=img_mapper,
+#     x=0.9,
+#     y=0.35,
+#     )
+# )
 
 # plot mapper towards TS
 # figimg.add_layout_image(dict(
@@ -109,40 +116,39 @@ figimg.add_layout_image(dict(
 # )
 
 # update size and reference location for mapper
-figimg.update_layout_images(dict(
-    xref='paper',
-    yref='paper',
-    sizex=0.3,
-    sizey=0.3,
-    xanchor='right',
-    yanchor='bottom',
-))
+# figimg.update_layout_images(dict(
+#     xref='paper',
+#     yref='paper',
+#     sizex=0.3,
+#     sizey=0.3,
+#     xanchor='right',
+#     yanchor='bottom',
+# ))
 
 # don't allow zooming
-figimg.update_layout(
-    xaxis={'fixedrange':True},
-    yaxis={'fixedrange':True}
-)
-figimg.update_layout(yaxis = {'visible': False, 'showticklabels': False}, xaxis = {'visible': False, 'showticklabels': False})
+# figimg.update_layout(
+#     xaxis={'fixedrange':True},
+#     yaxis={'fixedrange':True}
+# )
+#figimg.update_layout(yaxis = {'visible': False, 'showticklabels': False}, xaxis = {'visible': False, 'showticklabels': False})
 
-figimgpropeller = px.imshow(img_xy)
-
-img_prop = img_prop.rotate(60)
-figimgpropeller.add_layout_image(dict(
-    source=img_prop,
-    x=0.75,
-    y=0.03,
-    )
-)
-figimgpropeller.update_layout_images(dict(
-    xref='paper',
-    yref='paper',
-    sizex= 0.9,
-    sizey=0.9,
-    xanchor='right',
-    yanchor='bottom',
-))
-figimgpropeller.update_layout(yaxis = {'visible': False, 'showticklabels': False}, xaxis = {'visible': False, 'showticklabels': False})
+# figimgpropeller = px.imshow(img_xy)
+# img_prop = img_prop.rotate(45)
+# figimgpropeller.add_layout_image(dict(
+#     source=img_prop,
+#     x=0.75,
+#     y=0.03,
+#     )
+# )
+# figimgpropeller.update_layout_images(dict(
+#     xref='paper',
+#     yref='paper',
+#     sizex= 0.9,
+#     sizey=0.9,
+#     xanchor='right',
+#     yanchor='bottom',
+# ))
+# figimgpropeller.update_layout(yaxis = {'visible': False, 'showticklabels': False}, xaxis = {'visible': False, 'showticklabels': False})
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 stylesheet_href= ["https://s3-us-west-2.amazonaws.com/colors-css/2.2.0/colors.min.css"]
@@ -151,12 +157,16 @@ app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
 app.layout = html.Div([
         html.Div(children=[html.Div([
         html.H1(children = 'State of the FMS Display')])]),
+        dcc.Interval(
+            id='interval-component',
+            interval=1*100
+        ),
         html.Div([
         html.Div([html.Img(src='data:image/png;base64,{}'.format(encoded_probes.decode()))], className="four columns"),
 
         dash_table.DataTable(
         id='table',
-        data= df_FMS.to_dict('records'),
+        #data= data,
         columns=[{"name": i, "id": i, "type": 'numeric'} for i in df_FMS.columns],
         sort_action='native',
         editable=True,
@@ -247,11 +257,11 @@ app.layout = html.Div([
         html.Div([
         html.Div([
             html.H3('Mapper Z Location'),
-            dcc.Graph(id='solenoid-mapper', figure = figimg)
+            dcc.Graph(id='solenoid-mapper')
         ], className="six columns"),
         html.Div([
             html.H3('Mapper Angle'),
-            dcc.Graph(id='mapper-angle', figure = figimgpropeller)
+            dcc.Graph(id='mapper-angle')
         ], className="six columns"),]),
 
         dcc.Dropdown(
@@ -309,6 +319,13 @@ def update_output1(value):
             title_standoff = 25)
     return  fig1
 
+# @app.callback(Output('display-selected-values', 'figure'),
+#               [Input('interval-component', 'interval')])
+# def update_graph_scatter():
+#
+#     return {'data': traces}
+
+
 #Callback 2 for plot Br
 @app.callback(
     dash.dependencies.Output('display-selected-values2', 'figure'),
@@ -357,24 +374,77 @@ def update_layout3(value):
     return fig4
 
 #Callback 5 for Solenoid img----Come back to this when using live data
-# @app.callback(
-#     dash.dependencies.Output('solenoid-mapper', 'figure'),
-#     [dash.dependencies.Input('df_raw', 'z_loc')])
-# def update_layout3(z_loc):
-#     # plot coils
-#     figimg = px.imshow(img_coil)
-#
-#     # plot mapper towards tracker
-#     figimg.add_layout_image(dict(
-#         source=img_mapper,
-#         x=z_loc,
-#         y=0.35,
-#     )
-#     )
-#
-#
-#
-#     return figimg
+@app.callback(
+    dash.dependencies.Output('solenoid-mapper', 'figure'),
+    [dash.dependencies.Input('interval-component', 'interval')])
+def update_layout3(time):
+    # plot coils
+    df_raw = load_data("liveupdates.pkl.py")
+
+    figimg = px.imshow(img_coil)
+    z_loc = df_raw['Mapper_Z'].iloc[-1].split('.')
+    z_loc_convert = '0.' + z_loc[0] + z_loc[1]
+    # plot mapper towards tracker
+    figimg.add_layout_image(dict(
+        source=img_mapper,
+        x=z_loc_convert,
+        y=0.35,
+    )
+    )
+    figimg.update_layout_images(dict(
+        xref='paper',
+        yref='paper',
+        sizex=0.3,
+        sizey=0.3,
+        xanchor='right',
+        yanchor='bottom',
+    ))
+    figimg.update_layout(
+        xaxis={'fixedrange': True},
+        yaxis={'fixedrange': True}
+    )
+    figimg.update_layout(yaxis={'visible': False, 'showticklabels': False},
+                         xaxis={'visible': False, 'showticklabels': False})
+
+    return figimg
+# Datatable callback
+@app.callback(
+    dash.dependencies.Output('table', 'data'),
+    [dash.dependencies.Input('interval-component', 'interval')])
+def update_table(interval):
+    df_raw = load_data("liveupdates.pkl.py")
+    df_FMS = load_FMS_df(df_raw)
+    data = df_FMS.to_dict('records')
+    return data
+
+#Callback for Mapper Angle plot
+@app.callback(
+    dash.dependencies.Output('mapper-angle', 'figure'),
+    [dash.dependencies.Input('interval-component', 'interval')]
+)
+def update_mapperplot(interval):
+    df_raw = load_data("liveupdates.pkl.py")
+    figimgpropeller = px.imshow(img_xy)
+    angle = df_raw['Mapper_Angle'].iloc[-1] % 360.0
+    img_prop = Image.open(datadir + 'Reflector Map Sketch.png')
+    img_prop = img_prop.rotate(angle)
+    figimgpropeller.add_layout_image(dict(
+        source=img_prop,
+        x=0.75,
+        y=0.03,
+    )
+    )
+    figimgpropeller.update_layout_images(dict(
+        xref='paper',
+        yref='paper',
+        sizex=0.9,
+        sizey=0.9,
+        xanchor='right',
+        yanchor='bottom',
+    ))
+    figimgpropeller.update_layout(yaxis={'visible': False, 'showticklabels': False},
+                                  xaxis={'visible': False, 'showticklabels': False})
+    return figimgpropeller
 
 #Running the dashboard
 if __name__ == "__main__":

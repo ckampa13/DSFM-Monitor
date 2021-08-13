@@ -18,7 +18,7 @@ with TdmsFile.open("../data/TestDataV2.tdms") as tdms_file:
     #print(all_groups)
     #print(tdms_file["step:1.1.4"]["Measured Coordinates"][:])
     print(tdms_file["step:1.2.11"].channels())
-    print(tdms_file["step:1.1.1"]['HallProbes'][:])
+    print(tdms_file["step:1.200.16"]['Mapper'][:])
 
 # df_raw = pd.read_pickle('../data/')
 # print(df_raw.columns[110:])
