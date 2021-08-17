@@ -41,8 +41,9 @@ for key in results_dict.keys():
 
 df_Bfield = pd.DataFrame(results_dict)
 
-# Dash app
 
+
+# Dash app
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
@@ -94,9 +95,30 @@ app.layout = html.Div([
                 html.H3('Plot of Measured minus Expected Field'),
                 dcc.Graph(id='display-delta-values')
             ], className="six columns"),
+        ]),
+        dcc.Dropdown(
+        id='probe-dropdown2',
+        options=[
+            {'label': 'Hall Probe 1 (SP1)', 'value': 'SP1'},
+            {'label': 'Hall Probe 2 (SP2)', 'value': 'SP2'},
+            {'label': 'Hall Probe 3 (SP3)', 'value': 'SP3'},
+            {'label': 'Hall Probe 4 (BP1)', 'value': 'BP1'},
+            {'label': 'Hall Probe 5 (BP2)', 'value': 'BP2'},
+            {'label': 'Hall Probe 6 (BP3)', 'value': 'BP3'},
+            {'label': 'Hall Probe 7 (BP4)', 'value': 'BP4'},
+            {'label': 'Hall Probe 8 (BP5)', 'value': 'BP5'}
+        ] ),
+        html.Div([
+        html.Div([
+            html.H3('Histogram of Bz'),
+            dcc.Graph(id='histogram-of-bz')
+        ], className="six columns"),
+        html.Div([
+                html.H3('Histogram of Br'),
+                dcc.Graph(id='histogram-of-br')],
+                className="six columns"),
 
-
-]),
+        ]),
     ])
 
 #Callback for expected values

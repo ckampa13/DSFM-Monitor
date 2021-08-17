@@ -9,16 +9,17 @@ import os
 import dash_table
 import plotly.express as px
 from PIL import Image
+from dash.dependencies import Input, Output
 
 #opening the pickle file
 scriptdir = os.path.dirname(os.path.realpath(__file__))
 datadir = os.path.join(scriptdir, '..', 'data/')
-#df_raw = pd.read_pickle(datadir + "liveupdates.pkl.py")
+#df_raw = pd.read_pickle(datadir + "liveupdates.pkl")
 
 def load_data(filename):
     df_raw = pd.read_pickle(datadir + f"{filename}")
     return df_raw
-df_raw = load_data("liveupdates.pkl.py")
+df_raw = load_data("liveupdates.pkl")
 
 #formatting new dataframes
 
@@ -159,7 +160,8 @@ app.layout = html.Div([
         html.H1(children = 'State of the FMS')])]),
         dcc.Interval(
             id='interval-component',
-            interval=1*100
+            interval=5*1000,
+            n_intervals = 0
         ),
         html.Div([
         html.Div([html.Img(src='data:image/png;base64,{}'.format(encoded_probes.decode()))], className="four columns"),
@@ -306,11 +308,15 @@ app.layout = html.Div([
 #Callback 1 for plot Bxz_Meas
 @app.callback(
     dash.dependencies.Output('display-selected-values', 'figure'),
-    [dash.dependencies.Input('demo-dropdown', 'value')])
-def update_output1(value):
+    [Input('demo-dropdown', 'value'),
+     Input('interval-component', 'n_intervals')])
+def update_output1(value, interval):
+
+    df_raw = load_data("liveupdates.pkl")
+
     hall_probe = value
 
-    fig1 = px.scatter(df_dict['Hall Probes'], x= 'TIMESTAMP', y = f'HP_{hall_probe}_Bz_Meas')
+    fig1 = px.scatter(df_raw, x= 'TIMESTAMP', y = f'HP_{hall_probe}_Bz_Meas')
     fig1.update_traces(marker=dict(color='purple'))
     fig1.update_xaxes(
             tickangle = 60,
@@ -329,11 +335,14 @@ def update_output1(value):
 #Callback 2 for plot Br
 @app.callback(
     dash.dependencies.Output('display-selected-values2', 'figure'),
-    [dash.dependencies.Input('demo-dropdown', 'value')])
-def update_layout2(value):
+    [Input('demo-dropdown', 'value'),
+     Input('interval-component', 'n_intervals')])
+def update_layout2(value, interval):
+    df_raw = load_data("liveupdates.pkl")
+
     hall_probe = value
 
-    fig2 = px.scatter(df_dict['Hall Probes'], x='TIMESTAMP', y = f'HP_{hall_probe}_Br')
+    fig2 = px.scatter(df_raw, x='TIMESTAMP', y = f'HP_{hall_probe}_Br')
     fig2.update_traces(marker=dict(color='maroon'))
     fig2.update_xaxes(
             tickangle = 60,
@@ -345,11 +354,14 @@ def update_layout2(value):
 #Callback 3 for plot Bphi
 @app.callback(
     dash.dependencies.Output('display-selected-values3', 'figure'),
-    [dash.dependencies.Input('demo-dropdown', 'value')])
-def update_layout3(value):
+    [dash.dependencies.Input('demo-dropdown', 'value'), dash.dependencies.Input('interval-component', 'n_intervals')])
+def update_layout3(value, interval):
+    df_raw = load_data("liveupdates.pkl")
+
+
     hall_probe = value
 
-    fig3 = px.scatter(df_dict['Hall Probes'], x='TIMESTAMP', y=f'HP_{hall_probe}_Bphi')
+    fig3 = px.scatter(df_raw, x='TIMESTAMP', y=f'HP_{hall_probe}_Bphi')
     fig3.update_traces(marker=dict(color='lime'))
     fig3.update_xaxes(
             tickangle = 60,
@@ -361,10 +373,12 @@ def update_layout3(value):
 #Callback 4 for plot temperature
 @app.callback(
     dash.dependencies.Output('display-selected-values4', 'figure'),
-    [dash.dependencies.Input('demo-dropdown', 'value')])
-def update_layout3(value):
+    [dash.dependencies.Input('demo-dropdown', 'value'), dash.dependencies.Input('interval-component', 'n_intervals')])
+def update_layout3(value, interval):
+    df_raw = load_data("liveupdates.pkl")
+
     hall_probe = value
-    fig4 = px.scatter(df_dict['Hall Probes'], x='TIMESTAMP', y=f'HP_{hall_probe}_Temperature')
+    fig4 = px.scatter(df_raw, x='TIMESTAMP', y=f'HP_{hall_probe}_Temperature')
     fig4.update_traces(marker=dict(color='orange'))
     fig4.update_xaxes(
             tickangle = 60,
@@ -376,18 +390,20 @@ def update_layout3(value):
 #Callback 5 for Solenoid img----Come back to this when using live data
 @app.callback(
     dash.dependencies.Output('solenoid-mapper', 'figure'),
-    [dash.dependencies.Input('interval-component', 'interval')])
-def update_layout3(time):
+    [dash.dependencies.Input('interval-component', 'n_intervals')])
+def update_layout3(interval):
     # plot coils
-    df_raw = load_data("liveupdates.pkl.py")
+    df_raw = load_data("liveupdates.pkl")
 
     figimg = px.imshow(img_coil)
-    z_loc = df_raw['Mapper_Z'].iloc[-1].split('.')
-    z_loc_convert = '0.' + z_loc[0] + z_loc[1]
+    #z_loc = df_raw['Mapper_Z'].iloc[-1].split('.')
+    z_loc = (float(df_raw['Mapper_Z'].iloc[-1]) - 4)/(14.5 - 4)
+
+    #z_loc_convert = '0.' + z_loc[0] + z_loc[1]
     # plot mapper towards tracker
     figimg.add_layout_image(dict(
         source=img_mapper,
-        x=z_loc_convert,
+        x=z_loc,
         y=0.35,
     )
     )
@@ -403,35 +419,35 @@ def update_layout3(time):
         xaxis={'fixedrange': True},
         yaxis={'fixedrange': True}
     )
-    figimg.update_layout(yaxis={'visible': False, 'showticklabels': False},
-                         xaxis={'visible': False, 'showticklabels': False})
+    # figimg.update_layout(yaxis={'visible': False, 'showticklabels': False},
+    #                      xaxis={'visible': False, 'showticklabels': False})
 
     return figimg
 # Datatable callback
 @app.callback(
     dash.dependencies.Output('table', 'data'),
-    [dash.dependencies.Input('interval-component', 'interval')])
+    [dash.dependencies.Input('interval-component', 'n_intervals')])
 def update_table(interval):
-    df_raw = load_data("liveupdates.pkl.py")
-    df_FMS = load_FMS_df(df_raw)
+    df_raw = load_data("liveupdates.pkl")
+    df_FMS = load_FMS_df(df_raw) #edit
     data = df_FMS.to_dict('records')
     return data
 
 #Callback for Mapper Angle plot
 @app.callback(
     dash.dependencies.Output('mapper-angle', 'figure'),
-    [dash.dependencies.Input('interval-component', 'interval')]
+    [dash.dependencies.Input('interval-component', 'n_intervals')]
 )
-def update_mapperplot(interval):
-    df_raw = load_data("liveupdates.pkl.py")
+def update_mapperplot(n):
+    df_raw = load_data("liveupdates.pkl")
     figimgpropeller = px.imshow(img_xy)
-    angle = int(float(df_raw['Mapper_Angle'].iloc[-1]))
-    angle = angle * 360.0
-    img_prop = Image.open(datadir + 'Reflector Map Sketch.png')
-    img_prop = img_prop.rotate(angle)
+    angle = float(df_raw['Mapper_Angle'].iloc[-1])
+    angle = np.degrees(angle)
+    #img_prop = Image.open(datadir + 'Reflector Map Sketch.png')
+    img = img_prop.rotate(angle)
     figimgpropeller.add_layout_image(dict(
-        source=img_prop,
-        x=0.75,
+        source=img,
+        x=0.65,
         y=0.03,
     )
     )

@@ -10,15 +10,15 @@ import dash
 
 
 #THIS IS TESTING FOR TDMS STUFF
-with TdmsFile.open("../data/TestDataV2.tdms") as tdms_file:
-
-    #all_groups = tdms_file.groups()
-    for group in tdms_file.groups():
-        print(group)
-    #print(all_groups)
-    #print(tdms_file["step:1.1.4"]["Measured Coordinates"][:])
-    print(tdms_file["step:1.2.11"].channels())
-    print(tdms_file["step:1.200.16"]['Mapper'][:])
+# with TdmsFile.open("../data/TestDataV2.tdms") as tdms_file:
+#
+#     #all_groups = tdms_file.groups()
+#     for group in tdms_file.groups():
+#         print(group)
+#     #print(all_groups)
+#     #print(tdms_file["step:1.1.4"]["Measured Coordinates"][:])
+#     print(tdms_file["step:1.2.11"].channels())
+#     print(tdms_file["step:1.200.16"]['Mapper'][:])
 
 # df_raw = pd.read_pickle('../data/')
 # print(df_raw.columns[110:])
@@ -56,8 +56,31 @@ with TdmsFile.open("../data/TestDataV2.tdms") as tdms_file:
 #         title_text = "Time",
 #         title_font = {"size": 20},
 #         title_standoff = 25)
+groupnamelist = []
+with TdmsFile.open("../data/TestDataV2.tdms") as tdms_file:
+    groups = tdms_file.groups()
+    for group in groups:
+        groupname = group.name
+        if groupname == 'run:R_2021' or groupname[2] == 'q':
+            pass
+        # if groupname in previous_group_names:
+        #     pass
+        else:
+            groupnamelist.append(groupname)
+            #previous_group_names.append(groupname)
 
+    for name in groupnamelist:
 
+        for chunk in tdms_file.data_chunks():
+            group_chunk = chunk[f'{name}']
+            print(np.array(group_chunk.channels()[:], dtype=object))
+
+            # channel_chunk = chunk[f'{name}']['HallProbes']
+            # array = np.array(channel_chunk[:])
+            # if array.size > 0:
+            #     print(array)
+
+print(groupnamelist)
 
 #fig2.show()
 
