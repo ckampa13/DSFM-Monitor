@@ -8,7 +8,8 @@ import time
 
 scriptdir = os.path.dirname(os.path.realpath(__file__))
 datadir = os.path.join(scriptdir, '..', 'data/')
-filename = datadir + 'liveupdates.pkl'
+#filename = datadir + 'liveupdates.pkl'
+filename = '/home/shared_data/FMS_Monitor/liveupdates.pkl'
 # with open(filename, 'rb') as file:
 #     variable_dict = pickle.load(file)
 livedata = True
@@ -23,7 +24,8 @@ starttime = time.time()
 while livedata == True:
      previous_group_names = []
 
-     with TdmsFile.open("../data/TestDataV2.tdms") as tdms_file:
+     #with TdmsFile.open("../data/TestDataV2.tdms") as tdms_file:
+     with TdmsFile.open('/home/shared_data/FMS_Monitor/TestDataV2.tdms') as tdms_file:
          groups = tdms_file.groups()
          for group in groups:
             groupname = group.name
