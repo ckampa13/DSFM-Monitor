@@ -12,15 +12,16 @@ from dash.dependencies import Input, Output
 # Framework for DSFM monitoring system Dash #2 page 1 aka Field Plots
 
 #for the soft link to data file
-scriptdir = os.path.dirname(os.path.realpath(__file__))
-datadir = os.path.join(scriptdir, '..', 'data/')
+#scriptdir = os.path.dirname(os.path.realpath(__file__))
+#datadir = os.path.join(scriptdir, '..', 'data/')
+datadir = '/home/shared_data/FMS_Monitor/'
 
 def load_data(filename):
     df_raw = pd.read_pickle(datadir + f"{filename}")
     return df_raw
 
 #open datafile
-df_raw = load_data("8-9.pkl")
+df_raw = load_data("liveupdates.pkl")
 
 #write data frame for field plot
 
@@ -53,7 +54,8 @@ app.layout = html.Div([
         html.H1(children = 'DSFM Monitoring System')])]),
         dcc.Interval(
             id='interval-component',
-            interval=1*100
+            interval=1*100,
+            n_intervals = 0
         ),
 
         dcc.Dropdown(
@@ -125,8 +127,8 @@ app.layout = html.Div([
 @app.callback(
     Output('display-expected-values', 'figure'),
     [Input('probe-dropdown', 'value'),
-     Input('value-dropdown', 'value')])
-def update_output1(input_probe, input_value):
+     Input('value-dropdown', 'value'), Input('interval-component', 'n_intervals')])
+def update_output1(input_probe, input_value, n_intervals):
 
     hall_probe = input_probe
     field_value = input_value
@@ -144,8 +146,9 @@ def update_output1(input_probe, input_value):
 @app.callback(
     Output('display-measured-values', 'figure'),
     [Input('probe-dropdown', 'value'),
-     Input('value-dropdown', 'value')])
-def update_output1(input_probe, input_value):
+     Input('value-dropdown', 'value'),
+     nput('interval-component', 'n_intervals')])
+def update_output1(input_probe, input_value, n_intervals):
     hall_probe = input_probe
     field_value = input_value
 
@@ -162,8 +165,9 @@ def update_output1(input_probe, input_value):
 @app.callback(
     Output('display-delta-values', 'figure'),
     [Input('probe-dropdown', 'value'),
-     Input('value-dropdown', 'value')])
-def update_output1(input_probe, input_value):
+     Input('value-dropdown', 'value'),
+     nput('interval-component', 'n_intervals')])
+def update_output1(input_probe, input_value, n_intervals):
     hall_probe = input_probe
     field_value = input_value
     measured = df_raw[f'HP_{hall_probe}_{field_value}']
