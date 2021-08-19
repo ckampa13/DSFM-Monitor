@@ -78,7 +78,7 @@ df_dict = {'raw': df_raw, 'NMR': df_NMR, 'Hall Probes': df_Hall, 'Field at Locat
 image_filename = datadir + 'DSFMimage1.png'
 encoded_image = base64.b64encode(open(image_filename, 'rb').read())
 
-probes = datadir + 'probes.png'
+probes = datadir + 'Probes.png'
 encoded_probes = base64.b64encode(open(probes, 'rb').read())
 
 z_loc = 400
