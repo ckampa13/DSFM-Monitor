@@ -129,6 +129,7 @@ app.layout = html.Div([
     [Input('probe-dropdown', 'value'),
      Input('value-dropdown', 'value'), Input('interval-component', 'n_intervals')])
 def update_output1(input_probe, input_value, n_intervals):
+    df_raw = load_data("liveupdates.pkl")
 
     hall_probe = input_probe
     field_value = input_value
@@ -149,6 +150,8 @@ def update_output1(input_probe, input_value, n_intervals):
      Input('value-dropdown', 'value'),
      Input('interval-component', 'n_intervals')])
 def update_output1(input_probe, input_value, n_intervals):
+    df_raw = load_data("liveupdates.pkl")
+
     hall_probe = input_probe
     field_value = input_value
 
@@ -168,6 +171,8 @@ def update_output1(input_probe, input_value, n_intervals):
      Input('value-dropdown', 'value'),
      Input('interval-component', 'n_intervals')])
 def update_output1(input_probe, input_value, n_intervals):
+    df_raw = load_data("liveupdates.pkl")
+
     hall_probe = input_probe
     field_value = input_value
     measured = df_raw[f'HP_{hall_probe}_{field_value}']
