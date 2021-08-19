@@ -147,7 +147,7 @@ def update_output1(input_probe, input_value, n_intervals):
     Output('display-measured-values', 'figure'),
     [Input('probe-dropdown', 'value'),
      Input('value-dropdown', 'value'),
-     nput('interval-component', 'n_intervals')])
+     Input('interval-component', 'n_intervals')])
 def update_output1(input_probe, input_value, n_intervals):
     hall_probe = input_probe
     field_value = input_value
@@ -166,7 +166,7 @@ def update_output1(input_probe, input_value, n_intervals):
     Output('display-delta-values', 'figure'),
     [Input('probe-dropdown', 'value'),
      Input('value-dropdown', 'value'),
-     nput('interval-component', 'n_intervals')])
+     Input('interval-component', 'n_intervals')])
 def update_output1(input_probe, input_value, n_intervals):
     hall_probe = input_probe
     field_value = input_value
