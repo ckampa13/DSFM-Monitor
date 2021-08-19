@@ -54,7 +54,7 @@ app.layout = html.Div([
         html.H1(children = 'DSFM Monitoring System')])]),
         dcc.Interval(
             id='interval-component',
-            interval=1*100,
+            interval=5*1000,
             n_intervals = 0
         ),
 
