@@ -172,7 +172,7 @@ def update_output1(input_probe, input_value, n_intervals):
     field_value = input_value
     measured = df_raw[f'HP_{hall_probe}_{field_value}']
     expected = df_raw[f'HP_{hall_probe}_{field_value}']
-    delta = int(measured) - int(expected)
+    delta = float(measured) - float(expected)
 
     fig3 = px.line(df_raw, x='TIMESTAMP', y= delta)
     fig3.update_traces(marker=dict(color='purple'))
