@@ -75,7 +75,7 @@ df_FMS = load_FMS_df(df_raw)
 df_dict = {'raw': df_raw, 'NMR': df_NMR, 'Hall Probes': df_Hall, 'Field at Location': df_Bfield, 'State of FMS': df_FMS}
 
 ####Images
-image_filename = '/Users/Lillie/Desktop/Mu2e/DSFMimage1.png'
+image_filename = datadir + 'DSFMimage1.png'
 encoded_image = base64.b64encode(open(image_filename, 'rb').read())
 
 probes = datadir + 'probes.png'
