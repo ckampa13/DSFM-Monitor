@@ -178,7 +178,7 @@ while livedata == True:
             #print(df["Mapper_Angle"])
             #time.sleep(5)
          df.to_pickle(filename)
-         time.sleep(7)
+         time.sleep(10)
             # with open(filename, 'wb') as file:
             #     pickle.dump(df, file)
 
