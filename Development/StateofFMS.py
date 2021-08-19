@@ -12,8 +12,9 @@ from PIL import Image
 from dash.dependencies import Input, Output
 
 #opening the pickle file
-scriptdir = os.path.dirname(os.path.realpath(__file__))
-datadir = os.path.join(scriptdir, '..', 'data/')
+#scriptdir = os.path.dirname(os.path.realpath(__file__))
+#datadir = os.path.join(scriptdir, '..', 'data/')
+datadir = '/home/shared_data/FMS_Monitor/'
 #df_raw = pd.read_pickle(datadir + "liveupdates.pkl")
 
 def load_data(filename):
