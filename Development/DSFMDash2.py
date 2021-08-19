@@ -156,7 +156,7 @@ def update_output1(input_probe, input_value, n_intervals):
     field_value = input_value
 
     fig2 = px.scatter(df_raw, x='TIMESTAMP', y=f'HP_{hall_probe}_{field_value}')
-    fig2.update_traces(marker=dict(color='purple'))
+    fig2.update_traces(marker=dict(color='orange'))
     fig2.update_xaxes(
         tickangle=60,
         title_text="Time",
@@ -176,11 +176,13 @@ def update_output1(input_probe, input_value, n_intervals):
     hall_probe = input_probe
     field_value = input_value
     measured = df_raw[f'HP_{hall_probe}_{field_value}']
+    measured = measured.astype(np.float)
     expected = df_raw[f'HP_{hall_probe}_{field_value}']
+    expected = expected.astype(np.float)
     delta = measured - expected
 
     fig3 = px.line(df_raw, x='TIMESTAMP', y= delta)
-    fig3.update_traces(marker=dict(color='purple'))
+    fig3.update_traces(marker=dict(color='yellow'))
     fig3.update_xaxes(
         tickangle=60,
         title_text="Time",
