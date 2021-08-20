@@ -86,13 +86,13 @@ app.layout = html.Div([
 
         html.Div([
         html.Div([
-            html.H3('Plot of Expected Field'),
+            html.H3('Plot of Expected and Measured Field'),
             dcc.Graph(id='display-expected-values')
         ], className="six columns"),
-        html.Div([
-            html.H3('Plot of Measured Values'),
-            dcc.Graph(id='display-measured-values') ],
-         className="six columns"),
+        # html.Div([
+        #     html.H3('Plot of Measured Values'),
+        #     dcc.Graph(id='display-measured-values') ],
+        #  className="six columns"),
         html.Div([
                 html.H3('Plot of Measured minus Expected Field'),
                 dcc.Graph(id='display-delta-values')
@@ -119,6 +119,18 @@ app.layout = html.Div([
                 html.H3('Histogram of Br'),
                 dcc.Graph(id='histogram-of-br')],
                 className="six columns"),
+        html.Div([
+                html.H3('Histogram of Bx'),
+                dcc.Graph(id='histogram-of-bx')],
+                className="six columns"),
+        html.Div([
+                html.H3('Histogram of By'),
+                dcc.Graph(id='histogram-of-by')],
+                className="six columns"),
+        html.Div([
+                html.H3('Histogram of B_NMR'),
+                dcc.Graph(id='histogram-of-bnmr')],
+                className="six columns"),
 
         ]),
     ])
@@ -133,8 +145,11 @@ def update_output1(input_probe, input_value, n_intervals):
 
     hall_probe = input_probe
     field_value = input_value
-
-    fig1 = px.scatter(df_raw, x= 'TIMESTAMP', y = f'HP_{hall_probe}_{field_value}')
+    expected_field = f'HP_{hall_probe}_{field_value}'
+    expected_field = expected_field.astype(np.float)
+    measured_field = f'HP_{hall_probe}_{field_value}'
+    measured_field = measured_field.astype(np.float) + 1
+    fig1 = px.scatter(df_raw, x= 'TIMESTAMP', y = [expected_field, measured_field])
     fig1.update_traces(marker=dict(color='purple'))
     fig1.update_xaxes(
             tickangle = 60,
@@ -144,25 +159,25 @@ def update_output1(input_probe, input_value, n_intervals):
     return  fig1
 
 #Callback for measured values
-@app.callback(
-    Output('display-measured-values', 'figure'),
-    [Input('probe-dropdown', 'value'),
-     Input('value-dropdown', 'value'),
-     Input('interval-component', 'n_intervals')])
-def update_output1(input_probe, input_value, n_intervals):
-    df_raw = load_data("liveupdates.pkl")
-
-    hall_probe = input_probe
-    field_value = input_value
-
-    fig2 = px.scatter(df_raw, x='TIMESTAMP', y=f'HP_{hall_probe}_{field_value}')
-    fig2.update_traces(marker=dict(color='orange'))
-    fig2.update_xaxes(
-        tickangle=60,
-        title_text="Time",
-        title_font={"size": 20},
-        title_standoff=25)
-    return fig2
+# @app.callback(
+#     Output('display-measured-values', 'figure'),
+#     [Input('probe-dropdown', 'value'),
+#      Input('value-dropdown', 'value'),
+#      Input('interval-component', 'n_intervals')])
+# def update_output1(input_probe, input_value, n_intervals):
+#     df_raw = load_data("liveupdates.pkl")
+#
+#     hall_probe = input_probe
+#     field_value = input_value
+#
+#     fig2 = px.scatter(df_raw, x='TIMESTAMP', y=f'HP_{hall_probe}_{field_value}')
+#     fig2.update_traces(marker=dict(color='orange'))
+#     fig2.update_xaxes(
+#         tickangle=60,
+#         title_text="Time",
+#         title_font={"size": 20},
+#         title_standoff=25)
+#     return fig2
 
 #Callback for delta
 @app.callback(
@@ -193,6 +208,142 @@ def update_output1(input_probe, input_value, n_intervals):
         title_font={"size": 20},
         title_standoff=25)
     return fig3
+
+##Histogram of Bz
+@app.callback(
+    Output('histogram-of-bz', 'figure'),
+    [Input('probe-dropdown2', 'value'),
+     Input('interval-component', 'n_intervals')])
+def update_output1(input_probe, n_intervals):
+    df_raw = load_data("liveupdates.pkl")
+    hall_probe = input_probe
+    measured = df_raw[f'HP_{hall_probe}_Bz_Meas']
+    measured = measured.astype(np.float)
+    expected = df_raw[f'HP_{hall_probe}_Bz_Meas']
+    expected = expected.astype(np.float)
+    delta = measured - expected
+
+    fig4 = px.histogram(df_raw, x='TIMESTAMP', y= delta)
+    fig4.update_traces(marker=dict(color='yellow'))
+    fig4.update_xaxes(
+        tickangle=60,
+        title_text="Time",
+        title_font={"size": 20},
+        title_standoff=25)
+    fig4.update_yaxes(
+        title_text=f"Delta Bz",
+        title_font={"size": 20},
+        title_standoff=25)
+    return fig4
+
+##Histogram of Br
+@app.callback(
+    Output('histogram-of-br', 'figure'),
+    [Input('probe-dropdown2', 'value'),
+     Input('interval-component', 'n_intervals')])
+def update_output1(input_probe, n_intervals):
+    df_raw = load_data("liveupdates.pkl")
+    hall_probe = input_probe
+    measured = df_raw[f'HP_{hall_probe}_Br']
+    measured = measured.astype(np.float)
+    expected = df_raw[f'HP_{hall_probe}_Br']
+    expected = expected.astype(np.float)
+    delta = measured - expected
+
+    fig5 = px.histogram(df_raw, x='TIMESTAMP', y= delta)
+    fig5.update_traces(marker=dict(color='yellow'))
+    fig5.update_xaxes(
+        tickangle=60,
+        title_text="Time",
+        title_font={"size": 20},
+        title_standoff=25)
+    fig5.update_yaxes(
+        title_text=f"Delta Br",
+        title_font={"size": 20},
+        title_standoff=25)
+    return fig5
+##Histogram of Bx
+@app.callback(
+    Output('histogram-of-bx', 'figure'),
+    [Input('probe-dropdown2', 'value'),
+     Input('interval-component', 'n_intervals')])
+def update_output1(input_probe, n_intervals):
+    df_raw = load_data("liveupdates.pkl")
+    hall_probe = input_probe
+    measured = df_raw[f'HP_{hall_probe}_Bx_Meas']
+    measured = measured.astype(np.float)
+    expected = df_raw[f'HP_{hall_probe}_Bx_Meas']
+    expected = expected.astype(np.float)
+    delta = measured - expected
+
+    fig6 = px.histogram(df_raw, x='TIMESTAMP', y= delta)
+    fig6.update_traces(marker=dict(color='yellow'))
+    fig6.update_xaxes(
+        tickangle=60,
+        title_text="Time",
+        title_font={"size": 20},
+        title_standoff=25)
+    fig6.update_yaxes(
+        title_text=f"Delta Bx",
+        title_font={"size": 20},
+        title_standoff=25)
+    return fig6
+
+##Histogram of By
+@app.callback(
+        Output('histogram-of-by', 'figure'),
+        [Input('probe-dropdown2', 'value'),
+         Input('interval-component', 'n_intervals')])
+def update_output1(input_probe, n_intervals):
+    df_raw = load_data("liveupdates.pkl")
+    hall_probe = input_probe
+    measured = df_raw[f'HP_{hall_probe}_By_Meas']
+    measured = measured.astype(np.float)
+    expected = df_raw[f'HP_{hall_probe}_By_Meas']
+    expected = expected.astype(np.float)
+    delta = measured - expected
+
+    fig7 = px.histogram(df_raw, x='TIMESTAMP', y= delta)
+    fig7.update_traces(marker=dict(color='yellow'))
+    fig7.update_xaxes(
+        tickangle=60,
+        title_text="Time",
+        title_font={"size": 20},
+        title_standoff=25)
+    fig7.update_yaxes(
+        title_text=f"Delta By",
+        title_font={"size": 20},
+        title_standoff=25)
+    return fig7
+
+#Histogram of B_NMR
+@app.callback(Output('histogram-of-bnmr', 'figure'),
+        [Input('probe-dropdown2', 'value'),
+         Input('interval-component', 'n_intervals')])
+def update_output1(input_probe, n_intervals):
+    df_raw = load_data("liveupdates.pkl")
+    hall_probe = input_probe
+    measured = df_raw[f'HP_{hall_probe}_B_NMR']
+    measured = measured.astype(np.float)
+    expected = df_raw[f'HP_{hall_probe}_B_NMR']
+    expected = expected.astype(np.float)
+    delta = measured - expected
+
+    fig7 = px.histogram(df_raw, x='TIMESTAMP', y= delta)
+    fig7.update_traces(marker=dict(color='yellow'))
+    fig7.update_xaxes(
+        tickangle=60,
+        title_text="Time",
+        title_font={"size": 20},
+        title_standoff=25)
+    fig7.update_yaxes(
+        title_text=f"Delta B_NMR",
+        title_font={"size": 20},
+        title_standoff=25)
+    return fig7
+
+
+
 
 if __name__ == "__main__":
     app.run_server(host='0.0.0.0', debug=True, port=8030)
