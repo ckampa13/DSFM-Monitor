@@ -80,6 +80,7 @@ while livedata == True:
                     column_list.append(y)  # np.append(arr = column_array,values = y)
                 column_array = np.array(column_list)
                 new_array = np.array(new_list)
+                print("HallProbe new_array", new_array)
             #print(column_array)
             #print(new_array)
             #print(len(new_array))
