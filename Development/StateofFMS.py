@@ -385,7 +385,7 @@ def update_layout3(value, interval):
     df_raw = load_data("liveupdates.pkl")
 
     hall_probe = value
-    fig4 = px.scatter(df_raw, x='TIMESTAMP', y=f'HP_{hall_probe}_Temperature')
+    fig4 = px.scatter(df_raw, x='TIMESTAMP', y= f'HP_{hall_probe}_Temperature')
     fig4.update_traces(marker=dict(color='orange'))
     fig4.update_xaxes(
             tickangle = 60,

@@ -179,6 +179,11 @@ while livedata == True:
             #print(dict_halls)
 
          df = pd.DataFrame(dict_halls)
+         for column in df.columns:
+             if column != 'TIMESTAMP':
+                 df[column] = df[column].astype(float)
+         df['TIMESTAMP'] = pd.to_datetime(df['TIMESTAMP'])
+
 
          print(dict_halls['TIMESTAMP'])
          #print(df['HP_BP1_Br'])
