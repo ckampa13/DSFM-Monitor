@@ -118,7 +118,8 @@ app.layout = html.Div([
         html.Div([
                 html.H3('Histogram of Br'),
                 dcc.Graph(id='histogram-of-br')],
-                className="six columns"),
+                className="six columns"),], ),
+        html.Div([
         html.Div([
                 html.H3('Histogram of Bx'),
                 dcc.Graph(id='histogram-of-bx')],
@@ -126,13 +127,14 @@ app.layout = html.Div([
         html.Div([
                 html.H3('Histogram of By'),
                 dcc.Graph(id='histogram-of-by')],
-                className="six columns"),
+                className="six columns"),], ),
+        html.Div([
         html.Div([
                 html.H3('Histogram of B_NMR'),
                 dcc.Graph(id='histogram-of-bnmr')],
-                className="six columns"),
+                className="six columns"),])
 
-        ]),
+
     ])
 
 #Callback for expected values
@@ -224,7 +226,7 @@ def update_output1(input_probe, n_intervals):
     delta = measured - expected
 
     fig4 = px.histogram(df_raw, x='TIMESTAMP', y= delta)
-    fig4.update_traces(marker=dict(color='yellow'))
+    fig4.update_traces(marker=dict(color='red'))
     fig4.update_xaxes(
         tickangle=60,
         title_text="Time",
@@ -251,7 +253,7 @@ def update_output1(input_probe, n_intervals):
     # delta = measured - expected
 
     fig5 = px.histogram(df_raw, x='TIMESTAMP', y= measured)
-    fig5.update_traces(marker=dict(color='yellow'))
+    fig5.update_traces(marker=dict(color='blue'))
     fig5.update_xaxes(
         tickangle=60,
         title_text="Time",
@@ -277,7 +279,7 @@ def update_output1(input_probe, n_intervals):
     delta = measured - expected
 
     fig6 = px.histogram(df_raw, x='TIMESTAMP', y= delta)
-    fig6.update_traces(marker=dict(color='yellow'))
+    fig6.update_traces(marker=dict(color='green'))
     fig6.update_xaxes(
         tickangle=60,
         title_text="Time",
@@ -304,7 +306,7 @@ def update_output1(input_probe, n_intervals):
     delta = measured - expected
 
     fig7 = px.histogram(df_raw, x='TIMESTAMP', y= delta)
-    fig7.update_traces(marker=dict(color='yellow'))
+    fig7.update_traces(marker=dict(color='purple'))
     fig7.update_xaxes(
         tickangle=60,
         title_text="Time",
@@ -330,7 +332,7 @@ def update_output1(input_probe, n_intervals):
     delta = measured - expected
 
     fig7 = px.histogram(df_raw, x='TIMESTAMP', y= delta)
-    fig7.update_traces(marker=dict(color='yellow'))
+    fig7.update_traces(marker=dict(color='brown'))
     fig7.update_xaxes(
         tickangle=60,
         title_text="Time",

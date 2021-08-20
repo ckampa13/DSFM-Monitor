@@ -83,12 +83,12 @@ encoded_probes = base64.b64encode(open(probes, 'rb').read())
 
 z_loc = 400
 df_FMS.to_dict('records')
-
+datadir2 = r'/home/shared_data/FMS_Monitor/'
 #load images
-img_coil = Image.open(datadir + 'coils.png')
-img_mapper = Image.open(datadir + 'DSFM_YZ_sketch.png')
-img_xy = Image.open(datadir + 'X-Y coords.png')
-img_prop = Image.open(datadir + 'Reflector Map Sketch.png')
+img_coil = Image.open(datadir2 + 'coils.png')
+img_mapper = Image.open(datadir2 + 'DSFM_YZ_sketch.png')
+img_xy = Image.open(datadir2 + 'X-Y coords.png')
+img_prop = Image.open(datadir2 + 'Reflector Map Sketch.png')
 
 # figimg = px.imshow(img_coil)
 #
