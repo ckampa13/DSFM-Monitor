@@ -80,8 +80,7 @@ app.layout = html.Div([
             {'label': 'Bx', 'value': 'Bx_Meas'},
             {'label': 'Br', 'value': 'Br'},
             {'label': 'Bphi', 'value': 'Bphi'}
-        ], value = 'Bz'
-
+        ], value = 'Bz_Meas'
     ),
 
         html.Div([
