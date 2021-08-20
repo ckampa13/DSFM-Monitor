@@ -99,7 +99,7 @@ datadir2 = r'/home/shared_data/FMS_Monitor/'
 img_coil = Image.open(datadir2 + 'coils.png')
 img_mapper = Image.open(datadir2 + 'DSFM_YZ_sketch.png')
 img_xy = Image.open(datadir2 + 'X-Y coords.png')
-img_prop = Image.open(datadir2 + 'Reflector Map Sketch.png')
+img_prop = Image.open(datadir2 + 'Reflector Map Sketch New')
 
 # figimg = px.imshow(img_coil)
 #
