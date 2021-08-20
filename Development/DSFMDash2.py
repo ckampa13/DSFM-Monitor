@@ -245,12 +245,12 @@ def update_output1(input_probe, n_intervals):
     df_raw = load_data("liveupdates.pkl")
     hall_probe = input_probe
     measured = df_raw[f'HP_{hall_probe}_Br']
-    measured = measured.astype(float)
-    expected = df_raw[f'HP_{hall_probe}_Br']
-    expected = expected.astype(float)
-    delta = measured - expected
+    # measured = measured.astype(float)
+    # expected = df_raw[f'HP_{hall_probe}_Br']
+    # expected = expected.astype(float)
+    # delta = measured - expected
 
-    fig5 = px.histogram(df_raw, x='TIMESTAMP', y= delta)
+    fig5 = px.histogram(df_raw, x='TIMESTAMP', y= measured)
     fig5.update_traces(marker=dict(color='yellow'))
     fig5.update_xaxes(
         tickangle=60,
