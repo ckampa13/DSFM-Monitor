@@ -73,8 +73,8 @@ def load_FMS_df(df_raw):
                 #     x = x.astype(np.float)
                 #     y = '{:.3e}'.format(x)
                 #     fms_dict[col].append(y)
-                else:
-                    fms_dict[col].append(x)
+
+                fms_dict[col].append(x)
 # for key in fms_dict.keys():
 #     fms_dict[key] = np.concatenate(fms_dict[key])
 
