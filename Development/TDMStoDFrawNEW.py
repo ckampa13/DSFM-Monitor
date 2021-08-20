@@ -183,7 +183,9 @@ while livedata == True:
              if column != 'TIMESTAMP' and 'ID' not in column:
                  df[column] = df[column].astype(float)
 
-         df['TIMESTAMP'] = pd.to_datetime(df['TIMESTAMP'])
+         #df['TIMESTAMP'] = pd.to_datetime(df['TIMESTAMP'])
+         #df["TIMESTAMP"] = pd.as_datetime([str(i) for i in df["TIMESTAMP"]])
+         df["TIMESTAMP"] = pd.as_datetime(df["TIMESTAMP"].astype(str))
 
 
          print(dict_halls['TIMESTAMP'])
