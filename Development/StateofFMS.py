@@ -402,7 +402,7 @@ def update_layout3(interval):
 
     #z_loc_convert = '0.' + z_loc[0] + z_loc[1]
     # plot mapper towards tracker
-    figimg.add_layout_images(dict(
+    figimg.add_layout_image(dict(
         source=img_mapper,
         x=z_loc,
         y=0.35,
@@ -448,7 +448,7 @@ def update_mapperplot(n):
     angle = np.degrees(angle)
     #img_prop = Image.open(datadir + 'Reflector Map Sketch.png')
     img = img_prop.rotate(angle)
-    figimgpropeller.add_layout_images(dict(
+    figimgpropeller.add_layout_image(dict(
         source=img,
         x=0.65,
         y=0.03,
