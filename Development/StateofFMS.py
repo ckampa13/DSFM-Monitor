@@ -63,11 +63,14 @@ def load_FMS_df(df_raw):
             if col == 'Probe_Name':
                pass
             else:
+                name = f'HP_{probe}_{col}'
                 x = df_raw[f'HP_{probe}_{col}'].iloc[-1]
-                if 'Temperature' in x:
+                if 'Temperature' in name:
+                    x  = x.astype(np.float)
                     y = round(x, 2)
                     fms_dict[col].append(y)
-                if 'Br' or 'Bphi' or 'Bz_Meas' in x:
+                if 'Br' or 'Bphi' or 'Bz_Meas' in name:
+                    x = x.astype(np.float)
                     y = '{:.3e}'.format(x)
                     fms_dict[col].append(y)
                 else:
