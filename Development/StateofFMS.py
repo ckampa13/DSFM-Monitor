@@ -409,7 +409,7 @@ def update_layout3(interval):
 
     figimg = px.imshow(img_coil)
     #z_loc = df_raw['Mapper_Z'].iloc[-1].split('.')
-    z_loc = (float(df_raw['Mapper_Z'].iloc[-1]) - 4)/(14.5 - 4)
+    z_loc = (float(df_raw['Mapper_Z'].iloc[-1]) - 3.75)/(14.5 - 3.75)
 
     #z_loc_convert = '0.' + z_loc[0] + z_loc[1]
     # plot mapper towards tracker
@@ -461,7 +461,7 @@ def update_mapperplot(n):
     img = img_prop.rotate(angle)
     figimgpropeller.add_layout_image(dict(
         source=img,
-        x=0.65,
+        x=0.7,
         y=0.03,
     )
     )
