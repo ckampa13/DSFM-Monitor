@@ -14,7 +14,7 @@ filename = '/home/shared_data/FMS_Monitor/liveupdates.pkl'
 #     variable_dict = pickle.load(file)
 livedata = True
 
-groupnamelist = []
+
 starttime = time.time()
 
 
@@ -23,6 +23,7 @@ starttime = time.time()
 
 while livedata == True:
      previous_group_names = []
+     groupnamelist = []
 
      #with TdmsFile.open("../data/TestDataV2.tdms") as tdms_file:
      with TdmsFile.open('/home/shared_data/FMS_Monitor/TestDataV2.tdms') as tdms_file:
