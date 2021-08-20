@@ -174,7 +174,7 @@ while livedata == True:
             #print(dict_halls)
 
          df = pd.DataFrame(dict_halls)
-         print(df)
+         print(df['HP_SP1_Br'])
             #print(df)
             #print(df["Mapper_Angle"])
             #time.sleep(5)
