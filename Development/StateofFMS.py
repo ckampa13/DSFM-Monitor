@@ -292,20 +292,20 @@ app.layout = html.Div([
 
        html.Div([
         html.Div([
-            html.H3('Bz'), html.H4('Units: Tesla'),
+            html.H3('Bz [T]'),
             dcc.Graph(id='display-selected-values')
         ], className="six columns"),
         html.Div([
-            html.H3('Br'), html.H4('Units: Tesla'),
+            html.H3('Br [T]'),
             dcc.Graph(id='display-selected-values2')
         ], className="six columns"), ], className="row"),
         html.Div([
             html.Div([
-                html.H3('Bphi'),html.H4('Units: Tesla'),
+                html.H3('Bphi [T]'),
                 dcc.Graph(id='display-selected-values3')
             ], className="six columns"),
             html.Div([
-                html.H3('Temperature'), html.H4('Units: Celcius'),
+                html.H3('Temperature [C]'),
                 dcc.Graph(id='display-selected-values4')
             ], className="six columns"), ],className = "row"),
 
