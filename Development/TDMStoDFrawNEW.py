@@ -52,6 +52,7 @@ while livedata == True:
                 'HP_BP4_Br' : [],'HP_BP4_Bphi' : [], 'HP_BP5_ID' : [], 'HP_BP5_X' : [], 'HP_BP5_Y' : [], 'HP_BP5_Z' : [],'HP_BP5_Vx' : [], 'HP_BP5_Vy' : [],
                 'HP_BP5_Vz' : [], 'HP_BP5_Temperature' : [],'HP_BP5_Bx_Meas' : [], 'HP_BP5_By_Meas' : [], 'HP_BP5_Bz_Meas' : [], 'HP_BP5_Br' : [], 'HP_BP5_Bphi' : []}
                 #df_halls = pd.DataFrame(dict_halls)
+         print("this is dict_halls-should be empty", dict_halls)
 
          for name in groupnamelist:
             print(name)
@@ -84,7 +85,7 @@ while livedata == True:
             #print(new_array)
             #print(len(new_array))
                 dictH = {'TIMESTAMP': new_array[-1], 'HP_SP1_ID' : new_array[15], 'HP_SP1_X' : new_array[12], 'HP_SP1_Y' : new_array[11], 'HP_SP1_Z' : new_array[10], 'HP_SP1_Vx' : new_array[9],
-            'HP_SP1_Vy' : new_array[8], 'HP_SP1_Vz' : new_array[7], 'HP_SP1_Temperature' : new_array[1], 'HP_SP1_Bx_Meas' : new_array[4], 'HP_SP1_By_Meas' : new_array[3], 'HP_SP1_Bz_Meas' : new_array[2],
+                'HP_SP1_Vy' : new_array[8], 'HP_SP1_Vz' : new_array[7], 'HP_SP1_Temperature' : new_array[1], 'HP_SP1_Bx_Meas' : new_array[4], 'HP_SP1_By_Meas' : new_array[3], 'HP_SP1_Bz_Meas' : new_array[2],
             'HP_SP1_Br' : new_array[5], 'HP_SP1_Bphi' : new_array[6], 'HP_SP2_ID' : new_array[32], 'HP_SP2_X' : new_array[29], 'HP_SP2_Y' : new_array[28], 'HP_SP2_Z' : new_array[27], 'HP_SP2_Vx' : new_array[26],
             'HP_SP2_Vy' : new_array[25], 'HP_SP2_Vz' : new_array[24], 'HP_SP2_Temperature' : new_array[18], 'HP_SP2_Bx_Meas' : new_array[21], 'HP_SP2_By_Meas' : new_list[20], 'HP_SP2_Bz_Meas' : new_array[19],
             'HP_SP2_Br' : new_array[22], 'HP_SP2_Bphi' : new_array[23], 'HP_SP3_ID' : new_array[49], 'HP_SP3_X' : new_array[46], 'HP_SP3_Y' : new_array[45], 'HP_SP3_Z' : new_array[44], 'HP_SP3_Vx' : new_array[43],
@@ -177,8 +178,9 @@ while livedata == True:
             #print(dict_halls)
 
          df = pd.DataFrame(dict_halls)
+
          print(dict_halls['TIMESTAMP'])
-         print(df['HP_BP1_Br'])
+         #print(df['HP_BP1_Br'])
 
          df.to_pickle(filename)
          time.sleep(10)
