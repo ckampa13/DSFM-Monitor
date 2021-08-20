@@ -422,7 +422,7 @@ def update_layout3(interval):
     )
     # figimg.update_layout(yaxis={'visible': False, 'showticklabels': False},
     #                      xaxis={'visible': False, 'showticklabels': False})
-    figimg = figimg.show()
+
 
 
     return figimg
@@ -464,7 +464,7 @@ def update_mapperplot(n):
     ))
     figimgpropeller.update_layout(yaxis={'visible': False, 'showticklabels': False},
                                   xaxis={'visible': False, 'showticklabels': False})
-    figimgpropeller = figimgpropeller.show()
+
 
     return figimgpropeller
 
