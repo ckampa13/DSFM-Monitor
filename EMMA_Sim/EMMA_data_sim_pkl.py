@@ -303,10 +303,12 @@ if __name__ == '__main__':
     rows_list = []
     t = t0
     for Z_ind in range(len(Zs_NMR)):
-        t += dt_Z
+        # t += dt_Z
         for Phi_ind in range(len(Phis)):
             row = return_row(t, Z_ind, Phi_ind)
             rows_list.append(row)
+            t += dt_Phi
+        t += dt_Z
 
     df_EMMA = pd.DataFrame(rows_list)
 
@@ -324,7 +326,8 @@ if __name__ == '__main__':
     # df_EMMA.to_csv(datadir+'TEST.csv')
     # save
     # testfile_version = "3"
-    testfile_version = "4"
+    # testfile_version = "4"
+    testfile_version = "5"
     df_EMMA.to_pickle(datadir+f'DSFM_test_data_v{testfile_version}.pkl')
     df_EMMA.to_csv(datadir+f'DSFM_test_data_v{testfile_version}.csv')
 
