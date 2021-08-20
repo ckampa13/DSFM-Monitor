@@ -285,7 +285,7 @@ app.layout = html.Div([
             {'label': 'Hall Probe 7 (BP4)', 'value': 'BP4'},
             {'label': 'Hall Probe 8 (BP5)', 'value': 'BP5'}
         ],
-        #value='SP1'
+        value='SP1'
     ),
 
 

@@ -69,7 +69,7 @@ app.layout = html.Div([
             {'label': 'Hall Probe 6 (BP3)', 'value': 'BP3'},
             {'label': 'Hall Probe 7 (BP4)', 'value': 'BP4'},
             {'label': 'Hall Probe 8 (BP5)', 'value': 'BP5'}
-        ],
+        ],value = 'SP1'
 
     ),
     dcc.Dropdown(
@@ -80,7 +80,7 @@ app.layout = html.Div([
             {'label': 'Bx', 'value': 'Bx_Meas'},
             {'label': 'Br', 'value': 'Br'},
             {'label': 'Bphi', 'value': 'Bphi'}
-        ],
+        ], value = 'Bz'
 
     ),
 
@@ -109,7 +109,8 @@ app.layout = html.Div([
             {'label': 'Hall Probe 6 (BP3)', 'value': 'BP3'},
             {'label': 'Hall Probe 7 (BP4)', 'value': 'BP4'},
             {'label': 'Hall Probe 8 (BP5)', 'value': 'BP5'}
-        ] ),
+        ], value = 'SP1'
+     ),
         html.Div([
         html.Div([
             html.H3('Histogram of Bz'),
