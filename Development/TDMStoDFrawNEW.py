@@ -60,14 +60,13 @@ while livedata == True:
             print("in chunk loop")
             channel_chunk = tdms_file[f'{name}']['HallProbes']
  #channel_chunk = chunk[f'{name}']['HallProbes']
-
  #print(channel_chunk)
-            array = np.array(channel_chunk[:])
+            array = channel_chunk[:]
             #print(array)
-            if array.size > 0:
+            if array.size > 0: #remove
                 new_list = []
                 column_list = []  # column_array = np.array([])
-                #print(channel_chunk[:])
+
                 for item in array:
                     x = item.split(':')[1]
                     y = item.split(':')[0]
@@ -102,10 +101,11 @@ while livedata == True:
             #dict_halls.concatenate(dict)
                 for key, val in dict.items():
                     if key in dict_halls :
-                        if type(dict_halls[key]) == list:
-                            dict_halls[key].append(val)
-                        else:
-                            dict_halls[key] = (dict_halls[key], val)
+                        #if type(dict_halls[key]) == list:
+                        dict_halls[key].append(val)
+                        # else:
+                        #     dict_halls[key] = (dict_halls[key], val)
+
             #print(dict)
             channel_chunk_NMR = tdms_file[f'{name}']['NMRProbe']
             arrayNMR = np.array(channel_chunk_NMR[:])
@@ -120,16 +120,18 @@ while livedata == True:
                         z = x + ':' + item.split(':')[2] + ':' + item.split(':')[3]
                     else:
                         new_list_nmr.append(x)  # np.append(arr = new_array, values = x)
-                    column_list_nmr.append(y)  # np.append(arr = column_array,values = y)
+                        column_list_nmr.append(y)  # np.append(arr = column_array,values = y)
+
                 column_array_nmr = np.array(column_list_nmr)
                 new_array_nmr = np.array(new_list_nmr)
-                dict_NMR = {"B_NMR": new_array_nmr[2]}
+
+                dict_NMR = {"B_NMR": new_array_nmr[2]}  #save NMR location
                 for key, val in dict_NMR.items():
-                    if key in dict_halls:
-                        if type(dict_halls[key]) == list:
-                            dict_halls[key].append(val)
-                        else:
-                            dict_halls[key] = (dict_halls[key], val)
+                    if key in dict_halls: #add else for errors
+                        #if type(dict_halls[key]) == list:
+                        dict_halls[key].append(val)
+                        # else:
+                        #     dict_halls[key] = (dict_halls[key], val)
 
                     #print(dict_NMR)
                 channel_chunk_mapper = tdms_file[f'{name}']['Mapper']
@@ -145,7 +147,7 @@ while livedata == True:
                             z = x + ':' + item.split(':')[2] + ':' + item.split(':')[3]
                         else:
                             new_list_map.append(x)  # np.append(arr = new_array, values = x)
-                        column_list_map.append(y)  # np.append(arr = column_array,values = y)
+                            column_list_map.append(y)  # np.append(arr = column_array,values = y)
                     column_array_map = np.array(column_list_map)
                     new_array_map = np.array(new_list_map)
 
@@ -165,20 +167,22 @@ while livedata == True:
             #             dict_halls[key] = (dict_halls[key], val)
                     for key, val in dict_MAPPER.items():
                         if key in dict_halls :
-                            if type(dict_halls[key]) == list:
-                                dict_halls[key].append(val)
-                            else:
-                                dict_halls[key] = (dict_halls[key], val)
+                            #if type(dict_halls[key]) == list:
+                            dict_halls[key].append(val)
+                            # else:
+                            #     dict_halls[key] = (dict_halls[key], val)
                 #print(dict_halls)
 
                 #print(dict_MAPPER)
             #print(dict_halls)
 
          df = pd.DataFrame(dict_halls)
+         print(dict_halls['TIMESTAMP'])
          print(df['HP_BP1_Br'])
 
          df.to_pickle(filename)
          time.sleep(10)
+
             # with open(filename, 'wb') as file:
             #     pickle.dump(df, file)
 
