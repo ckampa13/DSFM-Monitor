@@ -145,9 +145,9 @@ def update_output1(input_probe, input_value, n_intervals):
 
     hall_probe = input_probe
     field_value = input_value
-    expected_field = f'HP_{hall_probe}_{field_value}'
+    expected_field = df_raw[f'HP_{hall_probe}_{field_value}']
     expected_field = float(expected_field)
-    measured_field = f'HP_{hall_probe}_{field_value}'
+    measured_field = df_raw[f'HP_{hall_probe}_{field_value}']
     measured_field = float(measured_field) + .5
     fig1 = px.scatter(df_raw, x= 'TIMESTAMP', y = [expected_field, measured_field])
     fig1.update_traces(marker=dict(color='purple'))
