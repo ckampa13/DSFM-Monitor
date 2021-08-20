@@ -176,8 +176,8 @@ app.layout = html.Div([
             n_intervals = 0
         ),
         html.Div([
-        html.Div([html.Img(src='data:image/png;base64,{}'.format(encoded_probes.decode()))], className="four columns"),
-
+        html.Div([html.Img(src='data:image/png;base64,{}'.format(encoded_probes.decode()))], className="four columns")]),
+        html.Div([ html.H1(children = 'Hall Probe Status Datatable'),
         dash_table.DataTable(
         id='table',
         #data= data,
@@ -259,15 +259,9 @@ app.layout = html.Div([
             }
         ]
 
-        ),
-        ])
+        ),]),
 
 
-
-
-
-
-    ,
         html.Div([
         html.Div([
             html.H3('Mapper Z Location'),
@@ -277,6 +271,7 @@ app.layout = html.Div([
             html.H3('Mapper Angle'),
             dcc.Graph(id='mapper-angle')
         ], className="six columns"),]),
+
 
         dcc.Dropdown(
         id='demo-dropdown',
@@ -456,7 +451,7 @@ def update_mapperplot(n):
     df_raw = load_data("liveupdates.pkl")
     figimgpropeller = px.imshow(img_xy)
     angle = float(df_raw['Mapper_Angle'].iloc[-1])
-    angle = np.degrees(angle)
+    angle = np.degrees(angle) - 45
     #img_prop = Image.open(datadir + 'Reflector Map Sketch.png')
     img = img_prop.rotate(angle)
     figimgpropeller.add_layout_image(dict(
