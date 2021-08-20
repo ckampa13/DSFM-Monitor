@@ -146,9 +146,9 @@ def update_output1(input_probe, input_value, n_intervals):
     hall_probe = input_probe
     field_value = input_value
     expected_field = f'HP_{hall_probe}_{field_value}'
-    expected_field = expected_field.astype(float)
+    expected_field = float(expected_field)
     measured_field = f'HP_{hall_probe}_{field_value}'
-    measured_field = measured_field.astype(float) + .5
+    measured_field = float(measured_field) + .5
     fig1 = px.scatter(df_raw, x= 'TIMESTAMP', y = [expected_field, measured_field])
     fig1.update_traces(marker=dict(color='purple'))
     fig1.update_xaxes(
@@ -341,9 +341,6 @@ def update_output1(input_probe, n_intervals):
         title_font={"size": 20},
         title_standoff=25)
     return fig7
-
-
-
 
 if __name__ == "__main__":
     app.run_server(host='0.0.0.0', debug=True, port=8030)
