@@ -175,8 +175,8 @@ app.layout = html.Div([
             interval=5*1000,
             n_intervals = 0
         ),
-        html.Div([
-        html.Div([html.Img(src='data:image/png;base64,{}'.format(encoded_probes.decode()))], className="four columns")]),
+
+        html.Div([html.Img(src='data:image/png;base64,{}'.format(encoded_probes.decode()))], className="four columns"),
         html.Div([ html.H3(children = 'Hall Probe Status Datatable'),
         dash_table.DataTable(
         id='table',
