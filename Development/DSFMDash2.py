@@ -146,9 +146,9 @@ def update_output1(input_probe, input_value, n_intervals):
     hall_probe = input_probe
     field_value = input_value
     expected_field = f'HP_{hall_probe}_{field_value}'
-    expected_field = expected_field.astype(np.float)
+    expected_field = expected_field.astype(float)
     measured_field = f'HP_{hall_probe}_{field_value}'
-    measured_field = measured_field.astype(np.float) + 1
+    measured_field = measured_field.astype(float) + .5
     fig1 = px.scatter(df_raw, x= 'TIMESTAMP', y = [expected_field, measured_field])
     fig1.update_traces(marker=dict(color='purple'))
     fig1.update_xaxes(
@@ -245,9 +245,9 @@ def update_output1(input_probe, n_intervals):
     df_raw = load_data("liveupdates.pkl")
     hall_probe = input_probe
     measured = df_raw[f'HP_{hall_probe}_Br']
-    measured = measured.astype(np.float)
+    measured = measured.astype(float)
     expected = df_raw[f'HP_{hall_probe}_Br']
-    expected = expected.astype(np.float)
+    expected = expected.astype(float)
     delta = measured - expected
 
     fig5 = px.histogram(df_raw, x='TIMESTAMP', y= delta)
@@ -271,9 +271,9 @@ def update_output1(input_probe, n_intervals):
     df_raw = load_data("liveupdates.pkl")
     hall_probe = input_probe
     measured = df_raw[f'HP_{hall_probe}_Bx_Meas']
-    measured = measured.astype(np.float)
+    measured = measured.astype(float)
     expected = df_raw[f'HP_{hall_probe}_Bx_Meas']
-    expected = expected.astype(np.float)
+    expected = expected.astype(float)
     delta = measured - expected
 
     fig6 = px.histogram(df_raw, x='TIMESTAMP', y= delta)
@@ -323,9 +323,9 @@ def update_output1(input_probe, n_intervals):
 def update_output1(input_probe, n_intervals):
     df_raw = load_data("liveupdates.pkl")
     hall_probe = input_probe
-    measured = df_raw[f'HP_{hall_probe}_B_NMR']
+    measured = df_raw['B_NMR']
     measured = measured.astype(np.float)
-    expected = df_raw[f'HP_{hall_probe}_B_NMR']
+    expected = df_raw['B_NMR']
     expected = expected.astype(np.float)
     delta = measured - expected
 
