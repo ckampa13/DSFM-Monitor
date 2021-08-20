@@ -422,9 +422,9 @@ def update_layout3(interval):
     )
     # figimg.update_layout(yaxis={'visible': False, 'showticklabels': False},
     #                      xaxis={'visible': False, 'showticklabels': False})
-    figimg.show()
 
-    return figimg
+
+    return figimg.show()
 # Datatable callback
 @app.callback(
     dash.dependencies.Output('table', 'data'),
@@ -463,8 +463,8 @@ def update_mapperplot(n):
     ))
     figimgpropeller.update_layout(yaxis={'visible': False, 'showticklabels': False},
                                   xaxis={'visible': False, 'showticklabels': False})
-    figimgpropeller.show()
-    return figimgpropeller
+
+    return figimgpropeller.show()
 
 #Running the dashboard
 if __name__ == "__main__":
