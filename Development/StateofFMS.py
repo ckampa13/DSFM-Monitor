@@ -286,20 +286,20 @@ app.layout = html.Div([
 
        html.Div([
         html.Div([
-            html.H3('Bz'),
+            html.H3('Bz'), html.H4('Units: Tesla'),
             dcc.Graph(id='display-selected-values')
         ], className="six columns"),
         html.Div([
-            html.H3('Br'),
+            html.H3('Br'), html.H4('Units: Tesla'),
             dcc.Graph(id='display-selected-values2')
         ], className="six columns"), ], className="row"),
         html.Div([
             html.Div([
-                html.H3('Bphi'),
+                html.H3('Bphi'),html.H4('Units: Tesla'),
                 dcc.Graph(id='display-selected-values3')
             ], className="six columns"),
             html.Div([
-                html.H3('Temperature'),
+                html.H3('Temperature'), html.H4('Units: Celcius'),
                 dcc.Graph(id='display-selected-values4')
             ], className="six columns"), ],className = "row"),
 
@@ -422,6 +422,7 @@ def update_layout3(interval):
     )
     # figimg.update_layout(yaxis={'visible': False, 'showticklabels': False},
     #                      xaxis={'visible': False, 'showticklabels': False})
+    figimg.show()
 
     return figimg
 # Datatable callback
@@ -462,6 +463,7 @@ def update_mapperplot(n):
     ))
     figimgpropeller.update_layout(yaxis={'visible': False, 'showticklabels': False},
                                   xaxis={'visible': False, 'showticklabels': False})
+    figimgpropeller.show()
     return figimgpropeller
 
 #Running the dashboard
