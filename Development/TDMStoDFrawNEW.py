@@ -174,10 +174,8 @@ while livedata == True:
             #print(dict_halls)
 
          df = pd.DataFrame(dict_halls)
-         print(df['HP_SP1_Br'])
-            #print(df)
-            #print(df["Mapper_Angle"])
-            #time.sleep(5)
+         print(df['HP_BP1_Br'])
+
          df.to_pickle(filename)
          time.sleep(10)
             # with open(filename, 'wb') as file:

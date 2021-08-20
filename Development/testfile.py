@@ -70,10 +70,11 @@ with TdmsFile.open("../data/TestDataV2.tdms") as tdms_file:
             #previous_group_names.append(groupname)
 
     for name in groupnamelist:
+        print(tdms_file[f'{name}']['HallProbes'][:])
 
-        for chunk in tdms_file.data_chunks():
-            group_chunk = chunk[f'{name}']
-            print(np.array(group_chunk.channels()[:], dtype=object))
+        # for chunk in tdms_file.data_chunks():
+        #     group_chunk = chunk[f'{name}']
+        #     print(np.array(group_chunk.channels()[:], dtype=object))
 
             # channel_chunk = chunk[f'{name}']['HallProbes']
             # array = np.array(channel_chunk[:])
