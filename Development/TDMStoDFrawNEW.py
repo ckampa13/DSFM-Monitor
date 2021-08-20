@@ -184,7 +184,7 @@ while livedata == True:
                  df[column] = df[column].astype(float)
 
          #df['TIMESTAMP'] = pd.to_datetime(df['TIMESTAMP'])
-         df["TIMESTAMP"] = pd.as_datetime([str(i) for i in df["TIMESTAMP"]])
+         df["TIMESTAMP"] = pd.to_datetime([str(i) for i in df["TIMESTAMP"]])
          #df["TIMESTAMP"] = pd.to_datetime(df["TIMESTAMP"].astype(str))
 
 
