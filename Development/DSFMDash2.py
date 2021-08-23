@@ -201,7 +201,7 @@ def update_output1(input_probe, input_value, n_intervals):
     measured = df_raw[f'HP_{hall_probe}_{field_value}']
     measured = measured.astype(np.float)
     numb = len(measured)
-    expected = df_expected[f'HP_{hall_probe}_{field_value}'][: numb +1]
+    expected = df_expected[f'HP_{hall_probe}_{field_value}'][: numb]
     expected = expected.astype(np.float)
     delta = measured - expected
 
@@ -231,7 +231,7 @@ def update_output1(input_probe, n_intervals):
     measured = df_raw[f'HP_{hall_probe}_Bz_Meas']
     measured = measured.astype(np.float)
     numb = len(measured)
-    expected = df_expected[f'HP_{hall_probe}_Bz_Meas'][: numb +1]
+    expected = df_expected[f'HP_{hall_probe}_Bz_Meas'][: numb]
     expected = expected.astype(np.float)
     delta = measured - expected
 
@@ -290,7 +290,7 @@ def update_output1(input_probe, n_intervals):
     measured = df_raw[f'HP_{hall_probe}_Bx_Meas']
     measured = measured.astype(float)
     numb = len(measured)
-    expected = df_expected[f'HP_{hall_probe}_Bx_Meas'][:numb +1]
+    expected = df_expected[f'HP_{hall_probe}_Bx_Meas'][:numb]
     expected = expected.astype(float)
     delta = measured - expected
 
@@ -321,7 +321,7 @@ def update_output1(input_probe, n_intervals):
     measured = df_raw[f'HP_{hall_probe}_By_Meas']
     measured = measured.astype(np.float)
     numb = len(measured)
-    expected = df_expected[f'HP_{hall_probe}_By_Meas'][: numb +1]
+    expected = df_expected[f'HP_{hall_probe}_By_Meas'][: numb]
     expected = expected.astype(np.float)
     delta = measured - expected
 
@@ -350,7 +350,7 @@ def update_output1(input_probe, n_intervals):
     measured = df_raw['B_NMR']
     measured = measured.astype(np.float)
     numb = len(measured)
-    expected = df_expected['B_NMR'][:numb +1]
+    expected = df_expected['B_NMR'][:numb]
     expected = expected.astype(np.float)
     delta = measured - expected
 
