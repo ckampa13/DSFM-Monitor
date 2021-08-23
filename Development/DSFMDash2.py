@@ -235,7 +235,7 @@ def update_output1(input_probe, n_intervals):
     expected = expected.astype(np.float)
     delta = measured - expected
 
-    fig4 = px.histogram(df_raw, x= delta, y= delta)
+    fig4 = px.histogram(df_raw, x= delta)
     fig4.update_traces(marker=dict(color='red'))
     fig4.update_xaxes(
         tickangle=60,
@@ -265,7 +265,7 @@ def update_output1(input_probe, n_intervals):
     expected = expected.astype(float)
     delta = measured - expected
 
-    fig5 = px.histogram(df_raw, x= delta, y= delta)
+    fig5 = px.histogram(df_raw, x= delta)
     fig5.update_traces(marker=dict(color='blue'))
     fig5.update_xaxes(
         tickangle=60,
@@ -294,7 +294,7 @@ def update_output1(input_probe, n_intervals):
     expected = expected.astype(float)
     delta = measured - expected
 
-    fig6 = px.histogram(df_raw, x= delta, y= delta)
+    fig6 = px.histogram(df_raw, x= delta)
     fig6.update_traces(marker=dict(color='green'))
     fig6.update_xaxes(
         tickangle=60,
@@ -325,7 +325,7 @@ def update_output1(input_probe, n_intervals):
     expected = expected.astype(np.float)
     delta = measured - expected
 
-    fig7 = px.histogram(df_raw, x=delta, y= delta)
+    fig7 = px.histogram(df_raw, x=delta)
     fig7.update_traces(marker=dict(color='purple'))
     fig7.update_xaxes(
         tickangle=60,
@@ -354,7 +354,7 @@ def update_output1(input_probe, n_intervals):
     expected = expected.astype(np.float)
     delta = measured - expected
 
-    fig7 = px.histogram(df_raw, x= delta, y= delta)
+    fig7 = px.histogram(df_raw, x= delta)
     fig7.update_traces(marker=dict(color='brown'))
     fig7.update_xaxes(
         tickangle=60,
