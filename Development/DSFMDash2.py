@@ -5,6 +5,7 @@ import plotly.express as px
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+from itertools import cycle
 import os
 from dash.dependencies import Input, Output
 
@@ -162,6 +163,8 @@ def update_output1(input_probe, input_value, n_intervals):
             title_text = "Time",
             title_font = {"size": 20},
             title_standoff = 25)
+    names = cycle(['Expected Value', 'Measured Value'])
+    fig1.for_each_trace(lambda t: t.update(name=next(names)))
     return  fig1
 
 #Callback for measured values
