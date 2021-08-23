@@ -274,7 +274,7 @@ def update_output1(input_probe, n_intervals):
     expected = expected.astype(float)
     delta = measured - expected
 
-    fig5 = px.histogram(df_raw, x= delta, marginal = 'box')
+    fig5 = px.histogram(df_raw, x= delta, marginal = 'rug')
     fig5.update_traces(marker=dict(color='blue'))
     fig5.update_xaxes(
         tickangle=60,
@@ -285,6 +285,7 @@ def update_output1(input_probe, n_intervals):
         title_text= "Count",
         title_font={"size": 20},
         title_standoff=25)
+    fig5.update_traces(alignmentgroup=0, selector=dict(type='histogram'))
     return fig5
 ##Histogram of Bx
 @app.callback(
@@ -314,6 +315,7 @@ def update_output1(input_probe, n_intervals):
         title_text= "Count",
         title_font={"size": 20},
         title_standoff=25)
+    fig6.update_traces(alignmentgroup=0, selector=dict(type='histogram'))
     return fig6
 
 ##Histogram of By
@@ -345,6 +347,7 @@ def update_output1(input_probe, n_intervals):
         title_text=f"Count",
         title_font={"size": 20},
         title_standoff=25)
+    fig7.update_traces(alignmentgroup=0, selector=dict(type='histogram'))
     return fig7
 
 #Histogram of B_NMR
@@ -363,18 +366,19 @@ def update_output1(input_probe, n_intervals):
     expected = expected.astype(np.float)
     delta = measured - expected
 
-    fig7 = px.histogram(df_raw, x= delta)
-    fig7.update_traces(marker=dict(color='brown'))
-    fig7.update_xaxes(
+    fig8 = px.histogram(df_raw, x= delta)
+    fig8.update_traces(marker=dict(color='brown'))
+    fig8.update_xaxes(
         tickangle=60,
         title_text="Delta B_NMR",
         title_font={"size": 20},
         title_standoff=25)
-    fig7.update_yaxes(
+    fig8.update_yaxes(
         title_text=f"Count",
         title_font={"size": 20},
         title_standoff=25)
-    return fig7
+    fig8.update_traces(alignmentgroup=0, selector=dict(type='histogram'))
+    return fig8
 
 if __name__ == "__main__":
     app.run_server(host='0.0.0.0', debug=True, port=8030)
