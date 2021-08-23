@@ -149,12 +149,14 @@ def update_output1(input_probe, input_value, n_intervals):
 
     hall_probe = input_probe
     field_value = input_value
-    expected_field = df_expected[f'HP_{hall_probe}_{field_value}']
-    expected_field = expected_field.astype(np.float)
     measured_field = df_raw[f'HP_{hall_probe}_{field_value}']
-    measured_field = measured_field.astype(np.float) + .5
+    measured_field = measured_field.astype(np.float)
+    numb = len(measured_field)
+    expected_field = df_expected[f'HP_{hall_probe}_{field_value}'][numb]
+    expected_field = expected_field.astype(np.float)
+
     fig1 = px.scatter(df_raw, x= 'TIMESTAMP', y = [expected_field, measured_field])
-    fig1.update_traces(marker=dict(color='purple'))
+    #fig1.update_traces(marker=dict(color='purple'))
     fig1.update_xaxes(
             tickangle = 60,
             title_text = "Time",
@@ -196,9 +198,10 @@ def update_output1(input_probe, input_value, n_intervals):
 
     hall_probe = input_probe
     field_value = input_value
-    measured = df_expected[f'HP_{hall_probe}_{field_value}']
+    measured = df_raw[f'HP_{hall_probe}_{field_value}']
     measured = measured.astype(np.float)
-    expected = df_raw[f'HP_{hall_probe}_{field_value}']
+    numb = len(measured)
+    expected = df_expected[f'HP_{hall_probe}_{field_value}'][numb]
     expected = expected.astype(np.float)
     delta = measured - expected
 
@@ -260,7 +263,7 @@ def update_output1(input_probe, n_intervals):
     expected = expected.astype(float)
     delta = measured - expected
 
-    fig5 = px.histogram(df_raw, x='TIMESTAMP', y= measured)
+    fig5 = px.histogram(df_raw, x= delta, y= delta)
     fig5.update_traces(marker=dict(color='blue'))
     fig5.update_xaxes(
         tickangle=60,
@@ -288,7 +291,7 @@ def update_output1(input_probe, n_intervals):
     expected = expected.astype(float)
     delta = measured - expected
 
-    fig6 = px.histogram(df_raw, x='TIMESTAMP', y= delta)
+    fig6 = px.histogram(df_raw, x= delta, y= delta)
     fig6.update_traces(marker=dict(color='green'))
     fig6.update_xaxes(
         tickangle=60,
@@ -346,7 +349,7 @@ def update_output1(input_probe, n_intervals):
     expected = expected.astype(np.float)
     delta = measured - expected
 
-    fig7 = px.histogram(df_raw, x='TIMESTAMP', y= delta)
+    fig7 = px.histogram(df_raw, x= delta, y= delta)
     fig7.update_traces(marker=dict(color='brown'))
     fig7.update_xaxes(
         tickangle=60,
