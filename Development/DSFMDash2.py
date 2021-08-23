@@ -163,6 +163,11 @@ def update_output1(input_probe, input_value, n_intervals):
             title_text = "Time",
             title_font = {"size": 20},
             title_standoff = 25)
+    fig1.update_yaxes(
+        tickangle=60,
+        title_text=f"{field_value}",
+        title_font={"size": 20},
+        title_standoff=25)
     names = cycle(['Expected Value', 'Measured Value'])
     fig1.for_each_trace(lambda t: t.update(name=next(names)))
     return  fig1
