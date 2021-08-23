@@ -58,9 +58,19 @@ app.layout = html.Div([
             id='interval-component',
             interval=5*1000,
             n_intervals = 0
-        ), dcc.Dropdown(
-        id='time-dropdown',
-        options=[
+        ),
+       html.Div(
+        [
+            html.Div(
+                [
+                    html.H6("""Select the length of time""",
+                            style={'margin-right': '2em'})
+                ],
+
+            ),
+            dcc.Dropdown(
+                 id='time-dropdown',
+                options=[
             {'label': 'Last Minute', 'value': '60'},
             {'label': 'Last Three Minutes', 'value': '180'},
             {'label': 'Last Five Minutes', 'value': '300'},
@@ -69,10 +79,16 @@ app.layout = html.Div([
             {'label': 'Last Hour', 'value': '3600'},
             {'label': 'Last Two Hours', 'value': '7200'},
             {'label': 'All Time', 'value': ':'}
-        ],value = ':'
-
+        ],
+                placeholder="Time Interval",
+                style=dict(
+                    width='40%',
+                    verticalAlign="middle"
+                )
+            )
+        ],
+        style=dict(display='flex')
     ),
-
         dcc.Dropdown(
         id='probe-dropdown',
         options=[
