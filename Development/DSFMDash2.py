@@ -152,7 +152,7 @@ def update_output1(input_probe, input_value, n_intervals):
     measured_field = df_raw[f'HP_{hall_probe}_{field_value}']
     measured_field = measured_field.astype(np.float)
     numb = len(measured_field)
-    expected_field = df_expected[f'HP_{hall_probe}_{field_value}'][numb]
+    expected_field = df_expected[f'HP_{hall_probe}_{field_value}'][:numb + 1]
     expected_field = expected_field.astype(np.float)
 
     fig1 = px.scatter(df_raw, x= 'TIMESTAMP', y = [expected_field, measured_field])
@@ -201,7 +201,7 @@ def update_output1(input_probe, input_value, n_intervals):
     measured = df_raw[f'HP_{hall_probe}_{field_value}']
     measured = measured.astype(np.float)
     numb = len(measured)
-    expected = df_expected[f'HP_{hall_probe}_{field_value}'][numb]
+    expected = df_expected[f'HP_{hall_probe}_{field_value}'][: numb +1]
     expected = expected.astype(np.float)
     delta = measured - expected
 
@@ -230,7 +230,8 @@ def update_output1(input_probe, n_intervals):
     hall_probe = input_probe
     measured = df_raw[f'HP_{hall_probe}_Bz_Meas']
     measured = measured.astype(np.float)
-    expected = df_expected[f'HP_{hall_probe}_Bz_Meas']
+    numb = len(measured)
+    expected = df_expected[f'HP_{hall_probe}_Bz_Meas'][: numb +1]
     expected = expected.astype(np.float)
     delta = measured - expected
 
@@ -259,7 +260,8 @@ def update_output1(input_probe, n_intervals):
     hall_probe = input_probe
     measured = df_raw[f'HP_{hall_probe}_Br']
     measured = measured.astype(float)
-    expected = df_expected[f'HP_{hall_probe}_Br']
+    numb = len(measured)
+    expected = df_expected[f'HP_{hall_probe}_Br'][:numb +1]
     expected = expected.astype(float)
     delta = measured - expected
 
@@ -287,7 +289,8 @@ def update_output1(input_probe, n_intervals):
     hall_probe = input_probe
     measured = df_raw[f'HP_{hall_probe}_Bx_Meas']
     measured = measured.astype(float)
-    expected = df_expected[f'HP_{hall_probe}_Bx_Meas']
+    numb = len(measured)
+    expected = df_expected[f'HP_{hall_probe}_Bx_Meas'][:numb +1]
     expected = expected.astype(float)
     delta = measured - expected
 
@@ -317,11 +320,12 @@ def update_output1(input_probe, n_intervals):
     hall_probe = input_probe
     measured = df_raw[f'HP_{hall_probe}_By_Meas']
     measured = measured.astype(np.float)
-    expected = df_expected[f'HP_{hall_probe}_By_Meas']
+    numb = len(measured)
+    expected = df_expected[f'HP_{hall_probe}_By_Meas'][: numb +1]
     expected = expected.astype(np.float)
     delta = measured - expected
 
-    fig7 = px.histogram(df_raw, x='TIMESTAMP', y= delta)
+    fig7 = px.histogram(df_raw, x=delta, y= delta)
     fig7.update_traces(marker=dict(color='purple'))
     fig7.update_xaxes(
         tickangle=60,
@@ -345,7 +349,8 @@ def update_output1(input_probe, n_intervals):
     hall_probe = input_probe
     measured = df_raw['B_NMR']
     measured = measured.astype(np.float)
-    expected = df_expected['B_NMR']
+    numb = len(measured)
+    expected = df_expected['B_NMR'][:numb +1]
     expected = expected.astype(np.float)
     delta = measured - expected
 
