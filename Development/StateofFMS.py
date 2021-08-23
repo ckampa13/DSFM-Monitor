@@ -83,6 +83,9 @@ def load_FMS_df(df_raw):
 #print(df_FMS)
 df_FMS = load_FMS_df(df_raw)
 
+def load_magnet_df(df_raw):
+    columns_in_df = ['NMR', 'PS_Current', 'TS_Current', "DS_Current"]
+
 df_dict = {'raw': df_raw, 'NMR': df_NMR, 'Hall Probes': df_Hall, 'Field at Location': df_Bfield, 'State of FMS': df_FMS}
 
 ####Images
@@ -175,6 +178,13 @@ app.layout = html.Div([
             interval=5*1000,
             n_intervals = 0
         ),
+        html.Div([  # html.H3(children = 'Hall Probe Status Datatable'),
+        dash_table.DataTable(
+            id='table',
+            # data= data,
+            columns=[{"name": i, "id": i, "type": 'numeric'} for i in df_magnet.columns],
+            sort_action='native',
+            editable=True,) ]),
 
        # html.Div([html.Img(src='data:image/png;base64,{}'.format(encoded_probes.decode()))], className="four columns"),
         html.Div([     #html.H3(children = 'Hall Probe Status Datatable'),

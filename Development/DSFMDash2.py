@@ -243,7 +243,7 @@ def update_output1(input_probe, input_value, n_intervals):
     delta = measured - expected
 
     fig3 = px.scatter(df_raw, x='TIMESTAMP', y= delta)
-    fig3.update_traces(marker=dict(color='yellow'))
+    fig3.update_traces(marker=dict(color='orange'))
     fig3.update_xaxes(
         tickangle=60,
         title_text="Time",
