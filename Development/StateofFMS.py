@@ -456,7 +456,7 @@ def update_mapperplot(n):
     img = img_prop.rotate(angle)
     figimgpropeller.add_layout_image(dict(
         source=img,
-        x=0.73,
+        x=0.70,
         y=0.03,
     )
     )
