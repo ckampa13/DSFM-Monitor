@@ -20,6 +20,7 @@ def load_data(filename):
     df_raw = pd.read_pickle(datadir + f"{filename}")
     return df_raw
 
+
 #open datafile
 df_raw = load_data("liveupdates.pkl")
 
@@ -144,10 +145,11 @@ app.layout = html.Div([
      Input('value-dropdown', 'value'), Input('interval-component', 'n_intervals')])
 def update_output1(input_probe, input_value, n_intervals):
     df_raw = load_data("liveupdates.pkl")
+    df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
 
     hall_probe = input_probe
     field_value = input_value
-    expected_field = df_raw[f'HP_{hall_probe}_{field_value}']
+    expected_field = df_expected[f'HP_{hall_probe}_{field_value}']
     expected_field = expected_field.astype(np.float)
     measured_field = df_raw[f'HP_{hall_probe}_{field_value}']
     measured_field = measured_field.astype(np.float) + .5
@@ -189,10 +191,12 @@ def update_output1(input_probe, input_value, n_intervals):
      Input('interval-component', 'n_intervals')])
 def update_output1(input_probe, input_value, n_intervals):
     df_raw = load_data("liveupdates.pkl")
+    df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
+
 
     hall_probe = input_probe
     field_value = input_value
-    measured = df_raw[f'HP_{hall_probe}_{field_value}']
+    measured = df_expected[f'HP_{hall_probe}_{field_value}']
     measured = measured.astype(np.float)
     expected = df_raw[f'HP_{hall_probe}_{field_value}']
     expected = expected.astype(np.float)
@@ -218,14 +222,16 @@ def update_output1(input_probe, input_value, n_intervals):
      Input('interval-component', 'n_intervals')])
 def update_output1(input_probe, n_intervals):
     df_raw = load_data("liveupdates.pkl")
+    df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
+
     hall_probe = input_probe
     measured = df_raw[f'HP_{hall_probe}_Bz_Meas']
     measured = measured.astype(np.float)
-    expected = df_raw[f'HP_{hall_probe}_Bz_Meas']
+    expected = df_expected[f'HP_{hall_probe}_Bz_Meas']
     expected = expected.astype(np.float)
     delta = measured - expected
 
-    fig4 = px.histogram(df_raw, x='TIMESTAMP', y= delta)
+    fig4 = px.histogram(df_raw, x= delta, y= delta)
     fig4.update_traces(marker=dict(color='red'))
     fig4.update_xaxes(
         tickangle=60,
@@ -245,12 +251,14 @@ def update_output1(input_probe, n_intervals):
      Input('interval-component', 'n_intervals')])
 def update_output1(input_probe, n_intervals):
     df_raw = load_data("liveupdates.pkl")
+    df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
+
     hall_probe = input_probe
     measured = df_raw[f'HP_{hall_probe}_Br']
-    # measured = measured.astype(float)
-    # expected = df_raw[f'HP_{hall_probe}_Br']
-    # expected = expected.astype(float)
-    # delta = measured - expected
+    measured = measured.astype(float)
+    expected = df_expected[f'HP_{hall_probe}_Br']
+    expected = expected.astype(float)
+    delta = measured - expected
 
     fig5 = px.histogram(df_raw, x='TIMESTAMP', y= measured)
     fig5.update_traces(marker=dict(color='blue'))
@@ -271,10 +279,12 @@ def update_output1(input_probe, n_intervals):
      Input('interval-component', 'n_intervals')])
 def update_output1(input_probe, n_intervals):
     df_raw = load_data("liveupdates.pkl")
+    df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
+
     hall_probe = input_probe
     measured = df_raw[f'HP_{hall_probe}_Bx_Meas']
     measured = measured.astype(float)
-    expected = df_raw[f'HP_{hall_probe}_Bx_Meas']
+    expected = df_expected[f'HP_{hall_probe}_Bx_Meas']
     expected = expected.astype(float)
     delta = measured - expected
 
@@ -298,10 +308,13 @@ def update_output1(input_probe, n_intervals):
          Input('interval-component', 'n_intervals')])
 def update_output1(input_probe, n_intervals):
     df_raw = load_data("liveupdates.pkl")
+    df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
+
+
     hall_probe = input_probe
     measured = df_raw[f'HP_{hall_probe}_By_Meas']
     measured = measured.astype(np.float)
-    expected = df_raw[f'HP_{hall_probe}_By_Meas']
+    expected = df_expected[f'HP_{hall_probe}_By_Meas']
     expected = expected.astype(np.float)
     delta = measured - expected
 
@@ -324,10 +337,12 @@ def update_output1(input_probe, n_intervals):
          Input('interval-component', 'n_intervals')])
 def update_output1(input_probe, n_intervals):
     df_raw = load_data("liveupdates.pkl")
+    df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
+
     hall_probe = input_probe
     measured = df_raw['B_NMR']
     measured = measured.astype(np.float)
-    expected = df_raw['B_NMR']
+    expected = df_expected['B_NMR']
     expected = expected.astype(np.float)
     delta = measured - expected
 
