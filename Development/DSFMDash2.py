@@ -239,11 +239,11 @@ def update_output1(input_probe, n_intervals):
     fig4.update_traces(marker=dict(color='red'))
     fig4.update_xaxes(
         tickangle=60,
-        title_text="Time",
+        title_text="Delta Bz",
         title_font={"size": 20},
         title_standoff=25)
     fig4.update_yaxes(
-        title_text=f"Delta Bz",
+        title_text=f"Count",
         title_font={"size": 20},
         title_standoff=25)
     return fig4
@@ -261,7 +261,7 @@ def update_output1(input_probe, n_intervals):
     measured = df_raw[f'HP_{hall_probe}_Br']
     measured = measured.astype(float)
     numb = len(measured)
-    expected = df_expected[f'HP_{hall_probe}_Br'][:numb +1]
+    expected = df_expected[f'HP_{hall_probe}_Br'][:numb]
     expected = expected.astype(float)
     delta = measured - expected
 
@@ -269,11 +269,11 @@ def update_output1(input_probe, n_intervals):
     fig5.update_traces(marker=dict(color='blue'))
     fig5.update_xaxes(
         tickangle=60,
-        title_text="Time",
+        title_text="Delta Br",
         title_font={"size": 20},
         title_standoff=25)
     fig5.update_yaxes(
-        title_text=f"Delta Br",
+        title_text= "Count",
         title_font={"size": 20},
         title_standoff=25)
     return fig5
@@ -298,11 +298,11 @@ def update_output1(input_probe, n_intervals):
     fig6.update_traces(marker=dict(color='green'))
     fig6.update_xaxes(
         tickangle=60,
-        title_text="Time",
+        title_text="Delta Bx",
         title_font={"size": 20},
         title_standoff=25)
     fig6.update_yaxes(
-        title_text=f"Delta Bx",
+        title_text= "Count",
         title_font={"size": 20},
         title_standoff=25)
     return fig6
@@ -329,11 +329,11 @@ def update_output1(input_probe, n_intervals):
     fig7.update_traces(marker=dict(color='purple'))
     fig7.update_xaxes(
         tickangle=60,
-        title_text="Time",
+        title_text="Delta By",
         title_font={"size": 20},
         title_standoff=25)
     fig7.update_yaxes(
-        title_text=f"Delta By",
+        title_text=f"Count",
         title_font={"size": 20},
         title_standoff=25)
     return fig7
@@ -358,11 +358,11 @@ def update_output1(input_probe, n_intervals):
     fig7.update_traces(marker=dict(color='brown'))
     fig7.update_xaxes(
         tickangle=60,
-        title_text="Time",
+        title_text="Delta B_NMR",
         title_font={"size": 20},
         title_standoff=25)
     fig7.update_yaxes(
-        title_text=f"Delta B_NMR",
+        title_text=f"Count",
         title_font={"size": 20},
         title_standoff=25)
     return fig7
