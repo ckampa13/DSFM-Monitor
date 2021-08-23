@@ -88,7 +88,7 @@ app.layout = html.Div([
         html.Div([
         html.Div([
             html.H3('Plot of Expected and Measured Field'),
-            dcc.Graph(id='display-expected-values')
+            dcc.Graph(id='display-expected-values', config={'scrollZoom': True})
         ], className="six columns"),
         # html.Div([
         #     html.H3('Plot of Measured Values'),
@@ -96,7 +96,7 @@ app.layout = html.Div([
         #  className="six columns"),
         html.Div([
                 html.H3('Plot of Measured minus Expected Field'),
-                dcc.Graph(id='display-delta-values')
+                dcc.Graph(id='display-delta-values', config={'scrollZoom': True})
             ], className="six columns"),
         ]),
         dcc.Dropdown(
