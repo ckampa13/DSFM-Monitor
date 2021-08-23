@@ -254,6 +254,7 @@ def update_output1(input_probe, n_intervals):
         title_text=f"Count",
         title_font={"size": 20},
         title_standoff=25)
+    fig4.update_traces(alignmentgroup=0, selector=dict(type='histogram'))
     return fig4
 
 ##Histogram of Br
@@ -273,7 +274,7 @@ def update_output1(input_probe, n_intervals):
     expected = expected.astype(float)
     delta = measured - expected
 
-    fig5 = px.histogram(df_raw, x= delta)
+    fig5 = px.histogram(df_raw, x= delta, marginal = 'box')
     fig5.update_traces(marker=dict(color='blue'))
     fig5.update_xaxes(
         tickangle=60,
