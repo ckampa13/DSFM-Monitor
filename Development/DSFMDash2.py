@@ -152,7 +152,7 @@ def update_output1(input_probe, input_value, n_intervals):
     measured_field = df_raw[f'HP_{hall_probe}_{field_value}']
     measured_field = measured_field.astype(np.float)
     numb = len(measured_field)
-    expected_field = df_expected[f'HP_{hall_probe}_{field_value}'][:numb + 1]
+    expected_field = df_expected[f'HP_{hall_probe}_{field_value}'][:numb]
     expected_field = expected_field.astype(np.float)
 
     fig1 = px.scatter(df_raw, x= 'TIMESTAMP', y = [expected_field, measured_field])
