@@ -176,8 +176,8 @@ app.layout = html.Div([
             n_intervals = 0
         ),
 
-        html.Div([html.Img(src='data:image/png;base64,{}'.format(encoded_probes.decode()))], className="four columns"),
-        html.Div([ html.H3(children = 'Hall Probe Status Datatable'),
+       # html.Div([html.Img(src='data:image/png;base64,{}'.format(encoded_probes.decode()))], className="four columns"),
+        html.Div([     #html.H3(children = 'Hall Probe Status Datatable'),
         dash_table.DataTable(
         id='table',
         #data= data,
@@ -404,7 +404,7 @@ def update_layout3(interval):
 
     figimg = px.imshow(img_coil)
     #z_loc = df_raw['Mapper_Z'].iloc[-1].split('.')
-    z_loc = (float(df_raw['Mapper_Z'].iloc[-1]) - 3.75)/(12.5 - 4)
+    z_loc = (float(df_raw['Mapper_Z'].iloc[-1]) - 3.75)/(13.5 - 4)
 
     #z_loc_convert = '0.' + z_loc[0] + z_loc[1]
     # plot mapper towards tracker
