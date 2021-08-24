@@ -128,6 +128,10 @@ app.layout = html.Div([
                 dcc.Graph(id='display-delta-values', config={'scrollZoom': True})
             ], className="six columns"),
         ]),
+        html.Div([
+                html.H3('Plot of 3D contour'),
+                dcc.Graph(id='display-contour', config={'scrollZoom': True})
+            ], className="six columns"),
         dcc.Dropdown(
         id='probe-dropdown2',
         options=[
@@ -201,27 +205,6 @@ def update_output1(input_probe, input_value, n_intervals):
     fig1.for_each_trace(lambda t: t.update(name=next(names)))
     return  fig1
 
-#Callback for measured values
-# @app.callback(
-#     Output('display-measured-values', 'figure'),
-#     [Input('probe-dropdown', 'value'),
-#      Input('value-dropdown', 'value'),
-#      Input('interval-component', 'n_intervals')])
-# def update_output1(input_probe, input_value, n_intervals):
-#     df_raw = load_data("liveupdates.pkl")
-#
-#     hall_probe = input_probe
-#     field_value = input_value
-#
-#     fig2 = px.scatter(df_raw, x='TIMESTAMP', y=f'HP_{hall_probe}_{field_value}')
-#     fig2.update_traces(marker=dict(color='orange'))
-#     fig2.update_xaxes(
-#         tickangle=60,
-#         title_text="Time",
-#         title_font={"size": 20},
-#         title_standoff=25)
-#     return fig2
-
 #Callback for delta
 @app.callback(
     Output('display-delta-values', 'figure'),
@@ -254,6 +237,44 @@ def update_output1(input_probe, input_value, n_intervals):
         title_font={"size": 20},
         title_standoff=25)
     return fig3
+## 2D contour plot
+@app.callback(
+    Output('display-contour', 'figure'),
+    [Input('probe-dropdown', 'value'),
+     Input('value-dropdown', 'value'),
+     Input('interval-component', 'n_intervals')])
+def update_outputcontour(input_probe, input_value, input_intervals):
+    df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
+    hall_probe = input_probe
+    field_value = input_value
+    expected = df_expected[f'HP_{hall_probe}_{field_value}']
+    expected_Z = df_expected[f'HP_{hall_probe}_Z']
+    expected_X = df_expected[f'HP_{hall_probe}_X']
+
+    expected = expected.astype(np.float)
+    fig = px.contour3D(df_expected, x = expected_X, y=expected, z = expected_Z)
+    return fig
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ##Histogram of Bz
 @app.callback(

@@ -84,7 +84,7 @@ def load_FMS_df(df_raw):
 df_FMS = load_FMS_df(df_raw)
 
 def load_magnet_df(df_raw):
-    columns_in_df = ['NMR', 'PS_Current', 'TS_Current', "DS_Current"]
+    columns_in_df = ['B_NMR', 'PS_Current', 'TS_Current', "DS_Current"]
 
 df_dict = {'raw': df_raw, 'NMR': df_NMR, 'Hall Probes': df_Hall, 'Field at Location': df_Bfield, 'State of FMS': df_FMS}
 
