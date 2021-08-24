@@ -252,7 +252,7 @@ def update_outputcontour(input_probe, input_value, input_intervals):
     expected_X = df_expected[f'HP_{hall_probe}_X']
 
     expected = expected.astype(np.float)
-    fig = px.contour3D(df_expected, x = expected_X, y=expected, z = expected_Z)
+    fig = px.density_contour(df_expected, x = expected_X, y=expected, z = expected_Z)
     return fig
 
 
