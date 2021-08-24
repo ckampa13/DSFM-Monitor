@@ -130,8 +130,12 @@ app.layout = html.Div([
             ], className="six columns"),
         ]),
         html.Div([
-                html.H3('Plot of 3D contour'),
+                html.H3('Plot of Expected 3D contour'),
                 dcc.Graph(id='display-contour', config={'scrollZoom': True})
+            ], className="six columns"),
+        html.Div([
+                html.H3('Plot of 2D Contour Measured values'),
+                dcc.Graph(id='display-contour2D', config={'scrollZoom': True})
             ], className="six columns"),
         dcc.Dropdown(
         id='probe-dropdown2',
@@ -238,7 +242,7 @@ def update_output1(input_probe, input_value, n_intervals):
         title_font={"size": 20},
         title_standoff=25)
     return fig3
-## 2D contour plot
+## 3D contour plot
 @app.callback(
     Output('display-contour', 'figure'),
     [Input('probe-dropdown', 'value'),
@@ -259,7 +263,33 @@ def update_outputcontour(input_probe, input_value, input_intervals):
     #fig = px.density_contour(df_expected, x = expected_X, y=expected, z = expected_Z)
     return fig
 
+## 2D Contour plot of measured data
+@app.callback(
+    Output('display-contour2D', 'figure'),
+    [Input('probe-dropdown', 'value'),
+     Input('value-dropdown', 'value'),
+     Input('interval-component', 'n_intervals')])
+def update_outputcontour(input_probe, input_value, input_intervals):
+    df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
+    hall_probe = input_probe
+    field_value = input_value
+    expected = df_expected[f'HP_{hall_probe}_{field_value}']
+    #expected_field = np.reshape(expected, (-1,2))
+    expected_Z = df_expected[f'HP_{hall_probe}_Z']
+    expected_X = df_expected[f'HP_{hall_probe}_X']
+    expected_Y = df_expected[f'HP_{hall_probe}_Y']
 
+    expected = expected.astype(np.float)
+    #fig = go.Figure(data = [go.Surface(x = expected_X, y= expected_Z, z=expected)])
+    fig = px.density_contour(df_expected, x = expected_X, y=expected, z = expected_Z)
+    return fig
+
+
+
+
+
+
+## 3D Scatter plot of measured minus expected values
 
 
 
