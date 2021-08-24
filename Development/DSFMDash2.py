@@ -251,9 +251,10 @@ def update_outputcontour(input_probe, input_value, input_intervals):
     expected = df_expected[f'HP_{hall_probe}_{field_value}']
     expected_Z = df_expected[f'HP_{hall_probe}_Z']
     expected_X = df_expected[f'HP_{hall_probe}_X']
+    expected_Y = df_expected[f'HP_{hall_probe}_Y']
 
     expected = expected.astype(np.float)
-    fig = go.figure(data = [go.Surface(z=expected_Z)])
+    fig = go.figure(data = [go.Surface(x = expected_X, y= expected_Y, z=expected_Z, surfacecolor = expected)])
     #fig = px.density_contour(df_expected, x = expected_X, y=expected, z = expected_Z)
     return fig
 
