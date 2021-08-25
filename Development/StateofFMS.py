@@ -85,8 +85,16 @@ df_FMS = load_FMS_df(df_raw)
 
 def load_magnet_df(df_raw):
     columns_in_df = ['B_NMR', 'PS_Current', 'TS_Current', "DS_Current"]
+    magnet_dict = {key: [] for key in columns_in_df}
+    for col in columns_in_df:
+        x = df_raw[f'{col}'].iloc[-1]
+        magnet_dict[col].append(x)
+    df_magnet = pd.DataFrame(magnet_dict)
+    return df_magnet
 
-df_dict = {'raw': df_raw, 'NMR': df_NMR, 'Hall Probes': df_Hall, 'Field at Location': df_Bfield, 'State of FMS': df_FMS}
+df_magnet = load_magnet_df(df_raw)
+
+df_dict = {'raw': df_raw, 'NMR': df_NMR, 'Hall Probes': df_Hall, 'Field at Location': df_Bfield, 'State of FMS': df_FMS, 'Currents': df_magnet}
 
 ####Images
 image_filename = datadir + 'DSFMimage1.png'
@@ -180,7 +188,7 @@ app.layout = html.Div([
         ),
         html.Div([  # html.H3(children = 'Hall Probe Status Datatable'),
         dash_table.DataTable(
-            id='table',
+            id='table-magnet',
             # data= data,
             columns=[{"name": i, "id": i, "type": 'numeric'} for i in df_magnet.columns],
             sort_action='native',
@@ -450,6 +458,15 @@ def update_table(interval):
     df_raw = load_data("liveupdates.pkl")
     df_FMS = load_FMS_df(df_raw) #edit
     data = df_FMS.to_dict('records')
+    return data
+# magnet data callback
+@app.callback(
+    dash.dependencies.Output('table-magnet', 'data'),
+    [dash.dependencies.Input('interval-component', 'n_intervals')])
+def update_table(interval):
+    df_raw = load_data("liveupdates.pkl")
+    df = load_magnet_df(df_raw) #edit
+    data = df.to_dict('records')
     return data
 
 #Callback for Mapper Angle plot
