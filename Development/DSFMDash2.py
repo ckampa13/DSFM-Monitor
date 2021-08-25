@@ -1,7 +1,10 @@
 import numpy as np
 import pandas as pd
 import pickle
+import plotly.plotly as py
 import plotly.graph_objects as go
+from plotly.graph_objs import *
+from pylab import *
 import plotly.express as px
 import dash
 import dash_core_components as dcc
@@ -278,10 +281,12 @@ def update_outputcontour(input_probe, input_value, input_intervals):
     expected_Z = df_expected[f'HP_{hall_probe}_Z']
     expected_X = df_expected[f'HP_{hall_probe}_X']
     expected_Y = df_expected[f'HP_{hall_probe}_Y']
+    X,Z = meshgrid(expected_X,expected_Z)
 
     expected = expected.astype(np.float)
     #fig = go.Figure(data = [go.Surface(x = expected_X, y= expected_Z, z=expected)])
-    fig = go.Figure(data = go.Contour( z = expected))
+    data = [{ 'x' : X, 'y' :Z, 'z' : expected}]
+    fig = py.plot(data, filename ='liveupdates.pkl')
     #fig = px.density_contour(df_expected, x = expected_X, y=expected, z = expected_Z)
     return fig
 
