@@ -281,11 +281,9 @@ def update_outputcontour(input_probe, input_value, input_intervals):
 
     expected = expected.astype(np.float)
     #fig = go.Figure(data = [go.Surface(x = expected_X, y= expected_Z, z=expected)])
-    fig = px.density_contour(df_expected, x = expected_X, y=expected, z = expected_Z)
+    fig = go.Figure(data = go.Contour( z = expected))
+    #fig = px.density_contour(df_expected, x = expected_X, y=expected, z = expected_Z)
     return fig
-
-
-
 
 
 
