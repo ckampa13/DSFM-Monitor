@@ -284,9 +284,9 @@ def update_outputcontour(input_probe, input_value, input_intervals):
     X,Z = meshgrid(expected_X,expected_Z)
 
     expected = expected.astype(np.float)
-    #fig = go.Figure(data = [go.Surface(x = expected_X, y= expected_Z, z=expected)])
-    data = [{ 'x' : X, 'y' :Z, 'z' : expected}]
-    fig = py.plot(data, filename ='liveupdates.pkl')
+    fig = go.Figure(data = [go.Surface(x = expected_X, y= expected_Z, z=expected)])
+    #data = [{ 'x' : X, 'y' :Z, 'z' : expected}]
+    #fig = py.plot(data, filename ='liveupdates.pkl')
     #fig = px.density_contour(df_expected, x = expected_X, y=expected, z = expected_Z)
     return fig
 
