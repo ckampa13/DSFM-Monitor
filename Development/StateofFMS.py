@@ -87,7 +87,7 @@ def load_magnet_df(df_raw):
     columns_in_df = ['B_NMR', 'PS_Current', 'TS_Current', "DS_Current"]
     magnet_dict = {key: [] for key in columns_in_df}
     for col in columns_in_df:
-        x = df_raw[f'{col}'].iloc[-1]
+        x = df_raw[col].iloc[-1]
         magnet_dict[col].append(x)
     df_magnet = pd.DataFrame(magnet_dict)
     return df_magnet
