@@ -4,7 +4,7 @@ import pickle
 
 import plotly.graph_objects as go
 from plotly.graph_objs import *
-from pylab import *
+
 import plotly.express as px
 import dash
 import dash_core_components as dcc
