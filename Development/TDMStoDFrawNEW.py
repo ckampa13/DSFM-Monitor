@@ -51,7 +51,7 @@ while livedata == True:
                 'HP_BP3_Br' : [], 'HP_BP3_Bphi' : [], 'HP_BP4_ID' : [], 'HP_BP4_X' : [], 'HP_BP4_Y' : [],'HP_BP4_Z' : [],
                 'HP_BP4_Vx' : [], 'HP_BP4_Vy' : [], 'HP_BP4_Vz' : [], 'HP_BP4_Temperature' : [],'HP_BP4_Bx_Meas' : [], 'HP_BP4_By_Meas' : [], 'HP_BP4_Bz_Meas' : [],
                 'HP_BP4_Br' : [],'HP_BP4_Bphi' : [], 'HP_BP5_ID' : [], 'HP_BP5_X' : [], 'HP_BP5_Y' : [], 'HP_BP5_Z' : [],'HP_BP5_Vx' : [], 'HP_BP5_Vy' : [],
-                'HP_BP5_Vz' : [], 'HP_BP5_Temperature' : [],'HP_BP5_Bx_Meas' : [], 'HP_BP5_By_Meas' : [], 'HP_BP5_Bz_Meas' : [], 'HP_BP5_Br' : [], 'HP_BP5_Bphi' : []}
+                'HP_BP5_Vz' : [], 'HP_BP5_Temperature' : [],'HP_BP5_Bx_Meas' : [], 'HP_BP5_By_Meas' : [], 'HP_BP5_Bz_Meas' : [], 'HP_BP5_Br' : [], 'HP_BP5_Bphi' : [], 'PS_Current': [], 'DS_Current': [], 'TS_Current': []}
                 #df_halls = pd.DataFrame(dict_halls)
          print("this is dict_halls-should be empty", dict_halls)
 
@@ -173,15 +173,35 @@ while livedata == True:
                             dict_halls[key].append(val)
                             # else:
                             #     dict_halls[key] = (dict_halls[key], val)
-                #print(dict_halls)
+            channel_chunk_current = tdms_file[f'{name}']['Current']
+            arrayCurrent = np.array(channel_chunk_current[:])
+            if arrayCurrent.size > 0:
+                new_list_cur = []
+                column_list_cur = []  # column_array = np.array([])
+                # print(channel_chunk[:])
+                for item in arrayCurrent:
+                    x = item.split(':')[1]
+                    y = item.split(':')[0]
+                    if y == 'Timestamp':
+                        pass
+                        #z = x + ':' + item.split(':')[2] + ':' + item.split(':')[3]
+                    else:
+                        new_list_cur.append(x)  # np.append(arr = new_array, values = x)
+                        column_list_cur.append(y)  # np.append(arr = column_array,values = y)
 
-                #print(dict_MAPPER)
-            #print(dict_halls)
+                column_array_cur = np.array(column_list_cur)
+                new_array_cur = np.array(new_list_cur)
+                dict_current = {"TS_Current": new_array_cur[3], 'DS_Current': new_array_cur[2] , 'PS_Current': new_array_cur[1] }  # save NMR location
+                for key, val in dict_current.items():
+                    if key in dict_halls:  # add else for errors
+                        # if type(dict_halls[key]) == list:
+                        dict_halls[key].append(val)
 
          df = pd.DataFrame(dict_halls)
          for column in df.columns:
              if column != 'TIMESTAMP' and 'ID' not in column:
                  df[column] = df[column].astype(float)
+         print(df['TIMESTAMP'][:])
 
          #df['TIMESTAMP'] = pd.to_datetime(df['TIMESTAMP'])
          df["TIMESTAMP"] = pd.to_datetime([str(i) for i in df["TIMESTAMP"]])
@@ -189,23 +209,18 @@ while livedata == True:
 
 
          print(dict_halls['TIMESTAMP'])
-         #print(df['HP_BP1_Br'])
 
          df.to_pickle(filename)
          time.sleep(10)
 
+
+
+
+
             # with open(filename, 'wb') as file:
             #     pickle.dump(df, file)
-
      #time.sleep(60.0 - ((time.time()- starttime) % 60.0))
-
-
-
-
-
-
-
-                #dict.update({column: value for (column, value) in zip(column_array, new_array)})
+               #dict.update({column: value for (column, value) in zip(column_array, new_array)})
  #                results_dict = {key: [] for key in column_array}
  #                for col in column_array:
  #                    for value in new_array:

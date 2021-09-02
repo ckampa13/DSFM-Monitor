@@ -2,6 +2,7 @@ import plotly.express as px
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
+import plotly.graph_objects as go
 import pandas as pd
 import numpy as np
 import base64
@@ -112,68 +113,6 @@ img_mapper = Image.open(datadir2 + 'DSFM_YZ_sketch.png')
 img_xy = Image.open(datadir2 + 'X-Y coords.png')
 img_prop = Image.open(datadir2 + 'Reflector Map Sketch New.png')
 
-# figimg = px.imshow(img_coil)
-#
-# # plot mapper towards tracker
-# figimg.add_layout_image(dict(
-#     source=img_mapper,
-#     x=0.9,
-#     y=0.35,
-#     )
-# )
-
-# plot mapper towards TS
-# figimg.add_layout_image(dict(
-#     source=img_mapper,
-#     x=0.3,
-#     y=0.35,
-#     )
-# )
-
-# rotate mapper object and plot again in the middle
-# img_mapper = img_mapper.rotate(90) # rotation counter-clockwise, in degrees
-# figimg.add_layout_image(dict(
-#     source=img_mapper,
-#     x=0.6,
-#     y=0.35,
-#     )
-# )
-
-# update size and reference location for mapper
-# figimg.update_layout_images(dict(
-#     xref='paper',
-#     yref='paper',
-#     sizex=0.3,
-#     sizey=0.3,
-#     xanchor='right',
-#     yanchor='bottom',
-# ))
-
-# don't allow zooming
-# figimg.update_layout(
-#     xaxis={'fixedrange':True},
-#     yaxis={'fixedrange':True}
-# )
-#figimg.update_layout(yaxis = {'visible': False, 'showticklabels': False}, xaxis = {'visible': False, 'showticklabels': False})
-
-# figimgpropeller = px.imshow(img_xy)
-# img_prop = img_prop.rotate(45)
-# figimgpropeller.add_layout_image(dict(
-#     source=img_prop,
-#     x=0.75,
-#     y=0.03,
-#     )
-# )
-# figimgpropeller.update_layout_images(dict(
-#     xref='paper',
-#     yref='paper',
-#     sizex= 0.9,
-#     sizey=0.9,
-#     xanchor='right',
-#     yanchor='bottom',
-# ))
-# figimgpropeller.update_layout(yaxis = {'visible': False, 'showticklabels': False}, xaxis = {'visible': False, 'showticklabels': False})
-
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 stylesheet_href= ["https://s3-us-west-2.amazonaws.com/colors-css/2.2.0/colors.min.css"]
 
@@ -192,7 +131,45 @@ app.layout = html.Div([
             # data= data,
             columns=[{"name": i, "id": i, "type": 'numeric'} for i in df_magnet.columns],
             sort_action='native',
-            editable=True,) ]),
+            editable=True,
+            style_data_conditional= [
+                {
+                    'if' : {
+                        'column_id': 'B_NMR'
+                    }, 'backgroundColor': 'green',
+                        'color' : 'white'
+                    },
+{
+                    'if' : {
+                        'column_id': 'Probe_Name'
+                    }, 'backgroundColor': 'green',
+                        'color' : 'white'
+                    },
+{
+                    'if' : {
+                        'column_id': 'PS_Current'
+                    }, 'backgroundColor': 'green',
+                        'color' : 'white'
+                    },
+{
+                    'if' : {
+                        'column_id': 'DS_Current'
+                    }, 'backgroundColor': 'green',
+                        'color' : 'white'
+                    },
+{
+                    'if' : {
+                        'column_id': 'TS_Current'
+                    }, 'backgroundColor': 'green',
+                        'color' : 'white'
+                    }
+
+            ]
+
+
+
+
+            ) ]),
 
        # html.Div([html.Img(src='data:image/png;base64,{}'.format(encoded_probes.decode()))], className="four columns"),
         html.Div([     #html.H3(children = 'Hall Probe Status Datatable'),
@@ -348,6 +325,7 @@ def update_output1(value, interval):
             title_text = "Time",
             title_font = {"size": 20},
             title_standoff = 25)
+    fig1.update_layout(uirevision='constant')
     return  fig1
 
 # @app.callback(Output('display-selected-values', 'figure'),
@@ -374,6 +352,7 @@ def update_layout2(value, interval):
             title_text = "Time",
             title_font = {"size": 20},
             title_standoff = 25)
+    fig2.update_layout(uirevision='constant')
     return fig2
 
 #Callback 3 for plot Bphi
@@ -393,6 +372,7 @@ def update_layout3(value, interval):
             title_text = "Time",
             title_font = {"size": 20},
             title_standoff = 25)
+    fig3.update_layout(uirevision='constant')
     return fig3
 
 #Callback 4 for plot temperature
@@ -410,6 +390,7 @@ def update_layout3(value, interval):
             title_text = "Time",
             title_font = {"size": 20},
             title_standoff = 25)
+    fig4.update_layout(uirevision='constant')
     return fig4
 
 #Callback 5 for Solenoid img----Come back to this when using live data
@@ -419,13 +400,25 @@ def update_layout3(value, interval):
 def update_layout3(interval):
     # plot coils
     df_raw = load_data("liveupdates.pkl")
-
+    #figimg = go.Figure()
     figimg = px.imshow(img_coil)
     #z_loc = df_raw['Mapper_Z'].iloc[-1].split('.')
     z_loc = (float(df_raw['Mapper_Z'].iloc[-1]) - 3.75)/(16 - 4)
 
     #z_loc_convert = '0.' + z_loc[0] + z_loc[1]
     # plot mapper towards tracker
+    '''
+    figimg.add_layout_image(dict(
+        source=img_coil,
+        x = 0.7,
+        y = 0.3,
+        sizex = 1,
+        sizey = 1,
+        sizing = 'fill'
+
+    )
+    )
+    '''
     figimg.add_layout_image(dict(
         source=img_mapper,
         x=z_loc,
@@ -444,12 +437,16 @@ def update_layout3(interval):
         xaxis={'fixedrange': True},
         yaxis={'fixedrange': True}
     )
+    figimg.update_layout(
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)'
+    )
     # figimg.update_layout(yaxis={'visible': False, 'showticklabels': False},
     #                      xaxis={'visible': False, 'showticklabels': False})
 
-
-
+    figimg.update_layout(uirevision='constant')
     return figimg
+
 # Datatable callback
 @app.callback(
     dash.dependencies.Output('table', 'data'),
@@ -476,14 +473,21 @@ def update_table(interval):
 )
 def update_mapperplot(n):
     df_raw = load_data("liveupdates.pkl")
-    figimgpropeller = px.imshow(img_xy)
+    #figimgpropeller = px.imshow(img_xy)
+    figimgpropeller = go.Figure()
     angle = float(df_raw['Mapper_Angle'].iloc[-1])
     angle = np.degrees(angle) - 45
     #img_prop = Image.open(datadir + 'Reflector Map Sketch.png')
     img = img_prop.rotate(angle)
     figimgpropeller.add_layout_image(dict(
+        source=img_xy,
+        x=0.77,
+        y=0.03,
+        layer='below'
+    ))
+    figimgpropeller.add_layout_image(dict(
         source=img,
-        x=0.69,
+        x=0.74,
         y=0.03,
     )
     )
@@ -494,11 +498,16 @@ def update_mapperplot(n):
         sizey=0.9,
         xanchor='right',
         yanchor='bottom',
+        #uirevision = 'constant'          #Add some property here maybe?
     ))
+    figimgpropeller.update_layout(
+        paper_bgcolor='rgba(0,0,0,0)',
+        plot_bgcolor='rgba(0,0,0,0)'
+    )
     figimgpropeller.update_layout(yaxis={'visible': False, 'showticklabels': False},
                                   xaxis={'visible': False, 'showticklabels': False})
 
-
+    figimgpropeller.update_layout(uirevision='constant')
     return figimgpropeller
 
 #Running the dashboard

@@ -75,14 +75,14 @@ app.layout = html.Div([
             dcc.Dropdown(
                  id='time-dropdown',
                 options=[
-            {'label': 'Last Minute', 'value': '60'},
-            {'label': 'Last Three Minutes', 'value': '180'},
-            {'label': 'Last Five Minutes', 'value': '300'},
-            {'label': 'Last Ten Minutes', 'value': '600'},
-            {'label': 'Last Thirty Minutes', 'value': '1800'},
-            {'label': 'Last Hour', 'value': '3600'},
-            {'label': 'Last Two Hours', 'value': '7200'},
-            {'label': 'All Time', 'value': ':'}
+            {'label': 'Last Two Minutes', 'value': '2'},
+            {'label': 'Last Four Minutes', 'value': '3'},
+            {'label': 'Last Six Minutes', 'value': '4'},
+            {'label': 'Last Ten Minutes', 'value': '6'},
+            {'label': 'Last Thirty Minutes', 'value': '14'},
+            {'label': 'Last Hour', 'value': '29'},
+            {'label': 'Last Two Hours', 'value': '58'},
+            {'label': 'All Time', 'value': '0'}
         ],
                 placeholder="Time Interval",
                 style=dict(
@@ -184,20 +184,22 @@ app.layout = html.Div([
 @app.callback(
     Output('display-expected-values', 'figure'),
     [Input('probe-dropdown', 'value'),
-     Input('value-dropdown', 'value'), Input('interval-component', 'n_intervals')])
-def update_output1(input_probe, input_value, n_intervals):
+     Input('value-dropdown', 'value'), Input('interval-component', 'n_intervals'), Input('time-dropdown', 'value')])
+def update_output1(input_probe, input_value, n_intervals, time):
     df_raw = load_data("liveupdates.pkl")
     df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
-
+    time = -1*int(time)  #Throwing a NoneType error with the time variable--fix!
     hall_probe = input_probe
     field_value = input_value
-    measured_field = df_raw[f'HP_{hall_probe}_{field_value}']
+    measured_field = df_raw[f'HP_{hall_probe}_{field_value}'][-1:time]
     measured_field = measured_field.astype(np.float)
-    numb = len(measured_field)
-    expected_field = df_expected[f'HP_{hall_probe}_{field_value}'][:numb]
+    numb = -1*len(measured_field)
+    expected_field = df_expected[f'HP_{hall_probe}_{field_value}'][-1:numb]
     expected_field = expected_field.astype(np.float)
 
-    fig1 = px.scatter(df_raw, x= 'TIMESTAMP', y = [expected_field, measured_field])
+    timestamp = df_expected['TIMESTAMP'][-1:time]
+
+    fig1 = px.scatter(df_raw[-1:time], x= 'TIMESTAMP', y = [expected_field, measured_field])
     #fig1.update_traces(marker=dict(color='purple'))
     fig1.update_xaxes(
             tickangle = 60,
@@ -262,8 +264,8 @@ def update_outputcontour(input_probe, input_value, input_intervals):
     expected_Y = df_expected[f'HP_{hall_probe}_Y']
 
     expected = expected.astype(np.float)
-    fig = go.Figure(data = [go.Surface(x = expected_X, y= expected_Z, z=expected)])
-    #fig = px.density_contour(df_expected, x = expected_X, y=expected, z = expected_Z)
+    #fig = go.Figure(data = [go.Surface(x = expected_X, y= expected_Z, z=expected)])
+    fig = px.density_contour(df_expected, x = expected_X, y=expected, z = expected_Z)
     return fig
 
 ## 2D Contour plot of measured data
@@ -272,22 +274,23 @@ def update_outputcontour(input_probe, input_value, input_intervals):
     [Input('probe-dropdown', 'value'),
      Input('value-dropdown', 'value'),
      Input('interval-component', 'n_intervals')])
+
 def update_outputcontour(input_probe, input_value, input_intervals):
     df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
     hall_probe = input_probe
     field_value = input_value
-    expected = df_expected[f'HP_{hall_probe}_{field_value}']
+    expected = df_expected[f'HP_{hall_probe}_Bz']
     #expected_field = np.reshape(expected, (-1,2))
     expected_Z = df_expected[f'HP_{hall_probe}_Z']
     expected_X = df_expected[f'HP_{hall_probe}_X']
     expected_Y = df_expected[f'HP_{hall_probe}_Y']
-    X,Z = meshgrid(expected_X,expected_Z)
+    #X,Z = meshgrid(expected_X,expected_Z)
 
     expected = expected.astype(np.float)
-    fig = go.Figure(data = [go.Surface(x = expected_X, y= expected_Z, z=expected)])
+    #fig = go.Figure(data = [go.Surface(x = expected_X, y= expected_Z, z=expected)])
     #data = [{ 'x' : X, 'y' :Z, 'z' : expected}]
     #fig = py.plot(data, filename ='liveupdates.pkl')
-    #fig = px.density_contour(df_expected, x = expected_X, y=expected, z = expected_Z)
+    fig = px.density_contour(df_expected, x = f'HP_{hall_probe}_Z', y = f'HP_{hall_probe}_X', z = f'HP_{hall_probe}_Bz')
     return fig
 
 
@@ -458,7 +461,7 @@ def update_output1(input_probe, n_intervals):
     fig8.update_traces(marker=dict(color='brown'))
     fig8.update_xaxes(
         tickangle=60,
-        title_text="Delta B_NMR",
+        title_text="Delta B_NMR", #change to mathmatical symbols + units
         title_font={"size": 20},
         title_standoff=25)
     fig8.update_yaxes(

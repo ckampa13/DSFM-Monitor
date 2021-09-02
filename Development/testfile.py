@@ -4,8 +4,9 @@ import numpy as np
 from nptdms import TdmsWriter, GroupObject, ChannelObject
 import pickle
 import pandas as pd
+
 import os
-import plotly_express as px
+#import plotly_express as px
 import dash
 
 
@@ -56,6 +57,7 @@ import dash
 #         title_text = "Time",
 #         title_font = {"size": 20},
 #         title_standoff = 25)
+'''
 groupnamelist = []
 with TdmsFile.open("../data/TestDataV2.tdms") as tdms_file:
     groups = tdms_file.groups()
@@ -82,6 +84,24 @@ with TdmsFile.open("../data/TestDataV2.tdms") as tdms_file:
             #     print(array)
 
 print(groupnamelist)
+'''
+datadir = '/home/shared_data/FMS_Monitor/'
 
-#fig2.show()
+def load_data(filename):
+    df_raw = pd.read_pickle(datadir + f"{filename}")
+    return df_raw
+
+df_raw = load_data("liveupdates.pkl")
+
+time_last_minute = (df_raw['TIMESTAMP'].iloc[-1]).minute
+time_last_hour = (df_raw['TIMESTAMP'].iloc[-1]).hour
+
+time_interval_minutes = 5
+minutes = time_last_minute - time_interval_minutes
+print((df_raw['TIMESTAMP'].iloc[1]).minute)
+
+#data_since_tim = df_raw.query('TIMESTAMP.minute >= @minutes')
+#data_since_tim = df_raw['TIMESTAMP'],minute
+print(df_raw[:51])
+
 
