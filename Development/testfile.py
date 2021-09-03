@@ -4,6 +4,10 @@ import numpy as np
 from nptdms import TdmsWriter, GroupObject, ChannelObject
 import pickle
 import pandas as pd
+import plotly.express as px
+import plotly.graph_objects as go
+import time
+from datetime import datetime, timedelta
 
 import os
 #import plotly_express as px
@@ -100,8 +104,81 @@ time_interval_minutes = 5
 minutes = time_last_minute - time_interval_minutes
 print((df_raw['TIMESTAMP'].iloc[1]).minute)
 
+def load_Bfield(df_raw):
+
+    probe_ids = ['SP1', 'SP2', 'SP3', 'BP1', 'BP2', 'BP3', 'BP4', 'BP5']
+    new_column_names = ['ID', 'X', 'Y', 'Z', 'Vx', 'Vy', 'Vz', 'Temperature',
+                    'Bx_Meas', 'By_Meas', 'Bz_Meas'
+                    ,'Br', 'Bphi' #, 'Bz',
+                    ]
+    results_dict = {key: [] for key in new_column_names}
+    results_dict['TIMESTAMP'] = []
+
+    for probe in probe_ids:
+        results_dict['TIMESTAMP'].append(df_raw['TIMESTAMP'].values)
+        for col in new_column_names:
+             results_dict[col].append(df_raw[f'HP_{probe}_{col}'].values)
+    for key in results_dict.keys():
+        results_dict[key] = np.concatenate(results_dict[key])
+    df_Bfield = pd.DataFrame(results_dict)
+    return df_Bfield
+df_Bfield = load_Bfield(df_raw)
+print("this is df_Bfield", df_Bfield[:51])
+print(df_Bfield.columns)
+
+minutes = int(time)
+df_raw = load_data("liveupdates.pkl")
+df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
+# now = datetime.now()
+now = df_raw['TIMESTAMP'].iloc[-1]
+min_time = now - timedelta(minutes)
+df_time = df_raw.query(f'TIMESTAMP > "{min_time}"')
+
+#time = -1*int(time)  #Throwing a NoneType error with the time variable--fix!
+
+
+'''
+if time = 0:
+    slice = ':'
+else: 
+    slice = -1:time
+    '''
+measured_field = df_time[f'HP_SP1_Bz_Meas']
+measured_field = measured_field.astype(np.float)
+#numb = len(measured_field)
+time0 = df_time[0]
+time1 = df_time[-1]
+df_expected_time = df_expected.query(f'"{time0}" <= TIMESTAMP <= "{time1}"')
+expected_field = df_expected_time[f'HP_SP1_Bz_Meas']  #[:numb]
+expected_field = expected_field.astype(np.float)
+
+#timestamp = df_expected['TIMESTAMP'][-1:time]
+
+fig1 = px.scatter(df_time, x= 'TIMESTAMP', y = [expected_field, measured_field])
+    #fig1.update_traces(marker=dict(color='purple'))
+fig1.update_xaxes(
+            tickangle = 60,
+            title_text = "Time",
+            title_font = {"size": 20},
+            title_standoff = 25)
+fig1.update_yaxes(
+        tickangle=60,
+        title_text=f"Bz_meas",
+        title_font={"size": 20},
+        title_standoff=25)
+#names = cycle(['Expected Value', 'Measured Value'])
+#fig1.for_each_trace(lambda t: t.update(name=next(names)))
+fig1
+
+
+
+
+
 #data_since_tim = df_raw.query('TIMESTAMP.minute >= @minutes')
 #data_since_tim = df_raw['TIMESTAMP'],minute
 print(df_raw[:51])
 
+
+df = load_data("DSFM_test_data_no_noise_v6.pkl")
+print(df)
 

@@ -74,7 +74,10 @@ def load_FMS_df(df_raw):
                 #     x = x.astype(np.float)
                 #     y = '{:.3e}'.format(x)
                 #     fms_dict[col].append(y)
-
+                if 'Temperature' in name:
+                    x = x.round(1)
+                if 'Br' or 'Bz' or 'Bphi' in name:
+                    x = x.round(4)
                 fms_dict[col].append(x)
 # for key in fms_dict.keys():
 #     fms_dict[key] = np.concatenate(fms_dict[key])

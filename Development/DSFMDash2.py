@@ -1,10 +1,8 @@
 import numpy as np
 import pandas as pd
 import pickle
-
 import plotly.graph_objects as go
 from plotly.graph_objs import *
-
 import plotly.express as px
 import dash
 import dash_core_components as dcc
@@ -12,6 +10,29 @@ import dash_html_components as html
 from itertools import cycle
 import os
 from dash.dependencies import Input, Output
+from datetime import datetime, timedelta
+
+
+def load_Bfield(dataframe):
+    df_raw = dataframe
+    probe_ids = ['SP1', 'SP2', 'SP3', 'BP1', 'BP2', 'BP3', 'BP4', 'BP5']
+    new_column_names = ['ID', 'X', 'Y', 'Z', 'Vx', 'Vy', 'Vz', 'Temperature',
+                    'Bx_Meas', 'By_Meas', 'Bz_Meas'
+                    ,'Br', 'Bphi' #, 'Bz',
+                    ]
+    results_dict = {key: [] for key in new_column_names}
+    results_dict['TIMESTAMP'] = []
+
+    for probe in probe_ids:
+        results_dict['TIMESTAMP'].append(df_raw['TIMESTAMP'].values)
+        for col in new_column_names:
+            results_dict[col].append(df_raw[f'HP_{probe}_{col}'].values)
+    for key in results_dict.keys():
+        results_dict[key] = np.concatenate(results_dict[key])
+    df_Bfield = pd.DataFrame(results_dict)
+    return df_Bfield
+
+
 
 
 # Framework for DSFM monitoring system Dash #2 page 1 aka Field Plots
@@ -76,14 +97,14 @@ app.layout = html.Div([
                  id='time-dropdown',
                 options=[
             {'label': 'Last Two Minutes', 'value': '2'},
-            {'label': 'Last Four Minutes', 'value': '3'},
-            {'label': 'Last Six Minutes', 'value': '4'},
-            {'label': 'Last Ten Minutes', 'value': '6'},
-            {'label': 'Last Thirty Minutes', 'value': '14'},
-            {'label': 'Last Hour', 'value': '29'},
-            {'label': 'Last Two Hours', 'value': '58'},
-            {'label': 'All Time', 'value': '0'}
-        ],
+            {'label': 'Last Four Minutes', 'value': '4'},
+            {'label': 'Last Six Minutes', 'value': '6'},
+            {'label': 'Last Ten Minutes', 'value': '10'},
+            {'label': 'Last Thirty Minutes', 'value': '30'},
+            {'label': 'Last Hour', 'value': '60'},
+            {'label': 'Last Two Hours', 'value': '120'},
+            {'label': 'All Time', 'value': ''}
+        ], value = '5',
                 placeholder="Time Interval",
                 style=dict(
                     width='40%',
@@ -186,20 +207,38 @@ app.layout = html.Div([
     [Input('probe-dropdown', 'value'),
      Input('value-dropdown', 'value'), Input('interval-component', 'n_intervals'), Input('time-dropdown', 'value')])
 def update_output1(input_probe, input_value, n_intervals, time):
+    minutes = int(time)
     df_raw = load_data("liveupdates.pkl")
     df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
-    time = -1*int(time)  #Throwing a NoneType error with the time variable--fix!
+    # now = datetime.now()
+    now = df_raw['TIMESTAMP'].iloc[-1]
+    min_time = now - timedelta(minutes)
+    df_time = df_raw.query(f'TIMESTAMP > "{min_time}"')
+
+    #time = -1*int(time)  #Throwing a NoneType error with the time variable--fix!
     hall_probe = input_probe
     field_value = input_value
-    measured_field = df_raw[f'HP_{hall_probe}_{field_value}'][-1:time]
+    '''
+    if time = 0:
+        slice = ':'
+    else: 
+        slice = -1:time
+    '''
+    measured_field = df_time[f'HP_{hall_probe}_{field_value}']
     measured_field = measured_field.astype(np.float)
-    numb = -1*len(measured_field)
-    expected_field = df_expected[f'HP_{hall_probe}_{field_value}'][-1:numb]
+    #numb = len(measured_field)
+    number = len(df_time)
+    z_value = df_time['Z'][0]
+    time0 = df_time[0]
+    time1 = df_time[-1]
+    df_expected_time = df_expected.query(f'Z >= "{z_value}"')    #df_expected.query(f'"{time0}" <= TIMESTAMP <= "{time1}"')
+
+    expected_field = df_expected_time[f'HP_{hall_probe}_{field_value}'][:number]  #[:numb]
     expected_field = expected_field.astype(np.float)
 
-    timestamp = df_expected['TIMESTAMP'][-1:time]
+    #timestamp = df_expected['TIMESTAMP'][-1:time]
 
-    fig1 = px.scatter(df_raw[-1:time], x= 'TIMESTAMP', y = [expected_field, measured_field])
+    fig1 = px.scatter(df_time, x= 'TIMESTAMP', y = [expected_field, measured_field])
     #fig1.update_traces(marker=dict(color='purple'))
     fig1.update_xaxes(
             tickangle = 60,
@@ -254,18 +293,54 @@ def update_output1(input_probe, input_value, n_intervals):
      Input('value-dropdown', 'value'),
      Input('interval-component', 'n_intervals')])
 def update_outputcontour(input_probe, input_value, input_intervals):
+    df = pd.read_pickle("/home/shared_data/Bmaps/Mu2e_DSMap_V13.p")
+    for coord in ['x', 'y', 'z', 'r', 'phi']:
+        df.eval(f"B{coord} = B{coord} / 10000", inplace=True)
+    df_plane = df.query('(Y==0.) & (R < 0.8) & (4. < Z < 14.)')
+    Lz = len(df_plane['Z'].unique())
+    Lx = len(df_plane['X'].unique())
+    x = df_plane['Z'].values.reshape(Lx, Lz)
+    y = df_plane['X'].values.reshape(Lx, Lz)
+    z = df_plane['Bz'].values.reshape(Lx, Lz)
+    fig = go.Figure(data=[go.Surface(z=z, x=x, y=y, colorscale='Viridis', colorbar=dict(title='Bz [T]'))])
+    fig.update_layout(title='Bz vs. X,Z for Y==0', autosize=False,
+                      width=500, height=500,
+                      margin=dict(l=65, r=50, b=65, t=90))
+    fig.update_layout(
+        scene=dict(
+            xaxis=dict(title='Z [m]'),
+            yaxis=dict(title='X [m]'),
+            zaxis=dict(title='Bz [Gauss]'),
+            aspectratio=dict(x=2, y=1, z=1),
+            aspectmode='manual',
+        )
+    )
+    fig.update_layout(
+        scene=dict(
+            camera=dict(
+                center=dict(x=0,
+                            y=0,
+                            z=-0.3),
+                eye=dict(x=3.44 / 1.2,
+                         y=-2.48 / 1.2,
+                         z=1.58 / 1.2))
+        )
+    )
+
+    '''
     df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
     hall_probe = input_probe
     field_value = input_value
-    expected = df_expected[f'HP_{hall_probe}_{field_value}']
+    expected = df_expected[f'HP_{hall_probe}_Bz']
     #expected_field = np.reshape(expected, (-1,2))
     expected_Z = df_expected[f'HP_{hall_probe}_Z']
     expected_X = df_expected[f'HP_{hall_probe}_X']
     expected_Y = df_expected[f'HP_{hall_probe}_Y']
 
     expected = expected.astype(np.float)
-    #fig = go.Figure(data = [go.Surface(x = expected_X, y= expected_Z, z=expected)])
-    fig = px.density_contour(df_expected, x = expected_X, y=expected, z = expected_Z)
+    fig = go.Figure(data = [go.Surface(x = expected_Z, y= expected_X, z=expected)])
+    #fig = px.density_contour(df_expected, x = expected_Z, y=expected_X, z = expected_Bz)
+    '''
     return fig
 
 ## 2D Contour plot of measured data
@@ -276,9 +351,29 @@ def update_outputcontour(input_probe, input_value, input_intervals):
      Input('interval-component', 'n_intervals')])
 
 def update_outputcontour(input_probe, input_value, input_intervals):
-    df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
+    original = load_data("liveupdates.pkl")
     hall_probe = input_probe
     field_value = input_value
+    df  = load_Bfield(original)
+    '''
+    for coord in ['X', 'Y', 'Z', 'r', 'phi']:
+        df.eval(f"B{coord} = B{coord} / 10000", inplace=True)
+        '''
+    df_plane = df.query('(Y==0.)  & (4. < Z < 14.)')
+    Lz = len(df_plane['Z'].unique())
+    Lx = len(df_plane['X'].unique())
+    if Lz % 2 == 0 and Lx % 2 == 0:
+        x = df_plane['Z'].values.reshape(Lx, Lz)
+        y = df_plane['X'].values.reshape(Lx, Lz)
+        z = df_plane['Bz_meas'].values.reshape(Lx, Lz)
+        fig = go.Figure(data=[go.Contour(z=z, x=x, y=y, colorscale='Viridis', colorbar=dict(title='Bz [T]'))])
+        fig.update_layout(title='Bz vs. X,Z for Y==0', autosize=False,
+                      width=500, height=500,
+                      margin=dict(l=65, r=50, b=65, t=90))
+    else:
+        dash.no_update
+        fig = go.Figure()
+    '''
     expected = df_expected[f'HP_{hall_probe}_Bz']
     #expected_field = np.reshape(expected, (-1,2))
     expected_Z = df_expected[f'HP_{hall_probe}_Z']
@@ -291,6 +386,7 @@ def update_outputcontour(input_probe, input_value, input_intervals):
     #data = [{ 'x' : X, 'y' :Z, 'z' : expected}]
     #fig = py.plot(data, filename ='liveupdates.pkl')
     fig = px.density_contour(df_expected, x = f'HP_{hall_probe}_Z', y = f'HP_{hall_probe}_X', z = f'HP_{hall_probe}_Bz')
+    '''
     return fig
 
 
