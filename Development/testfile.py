@@ -15,15 +15,15 @@ import dash
 
 
 #THIS IS TESTING FOR TDMS STUFF
-# with TdmsFile.open("../data/TestDataV2.tdms") as tdms_file:
+with TdmsFile.open("/home/shared_data/FMS_Monitor/TestDataV2.tdms") as tdms_file:
 #
-#     #all_groups = tdms_file.groups()
-#     for group in tdms_file.groups():
-#         print(group)
-#     #print(all_groups)
-#     #print(tdms_file["step:1.1.4"]["Measured Coordinates"][:])
-#     print(tdms_file["step:1.2.11"].channels())
-#     print(tdms_file["step:1.200.16"]['Mapper'][:])
+     all_groups = tdms_file.groups()
+     for group in tdms_file.groups():
+         print(group)
+     print(all_groups)
+     print(tdms_file["step:1.1.4"]["HallProbes"][:])
+ #    print(tdms_file["step:1.2.11"].channels())
+ #    print(tdms_file["step:1.200.16"]['Mapper'][:])
 
 # df_raw = pd.read_pickle('../data/')
 # print(df_raw.columns[110:])
@@ -104,12 +104,13 @@ time_interval_minutes = 5
 minutes = time_last_minute - time_interval_minutes
 print((df_raw['TIMESTAMP'].iloc[1]).minute)
 
+df_original = load_data("DSFM_test_data_1e-4_noise_v6.pkl")
 def load_Bfield(df_raw):
 
     probe_ids = ['SP1', 'SP2', 'SP3', 'BP1', 'BP2', 'BP3', 'BP4', 'BP5']
     new_column_names = ['ID', 'X', 'Y', 'Z', 'Vx', 'Vy', 'Vz', 'Temperature',
                     'Bx_Meas', 'By_Meas', 'Bz_Meas'
-                    ,'Br', 'Bphi' #, 'Bz',
+                    ,'Br', 'Bphi', 'Bz' #, 'Bz',
                     ]
     results_dict = {key: [] for key in new_column_names}
     results_dict['TIMESTAMP'] = []
@@ -123,9 +124,9 @@ def load_Bfield(df_raw):
     df_Bfield = pd.DataFrame(results_dict)
     return df_Bfield
 df_Bfield = load_Bfield(df_raw)
-print("this is df_Bfield", df_Bfield[:51])
-print(df_Bfield.columns)
-
+print("this is df_Bfield", df_Bfield['HP_SP2_Bz_Meas'][:])
+print("this is original", df_original['HP_SP1_Br'])
+'''
 minutes = int(time)
 df_raw = load_data("liveupdates.pkl")
 df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
@@ -137,12 +138,8 @@ df_time = df_raw.query(f'TIMESTAMP > "{min_time}"')
 #time = -1*int(time)  #Throwing a NoneType error with the time variable--fix!
 
 
-'''
-if time = 0:
-    slice = ':'
-else: 
-    slice = -1:time
-    '''
+
+    
 measured_field = df_time[f'HP_SP1_Bz_Meas']
 measured_field = measured_field.astype(np.float)
 #numb = len(measured_field)
@@ -181,4 +178,11 @@ print(df_raw[:51])
 
 df = load_data("DSFM_test_data_no_noise_v6.pkl")
 print(df)
+
+'''
+
+dff = load_data("DSFM_test_data_1e-4_noise_v6.pkl")
+print("this is original df with noise", dff)
+print(dff.columns[:40])
+
 

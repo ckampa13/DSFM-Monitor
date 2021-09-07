@@ -231,14 +231,15 @@ def update_output1(input_probe, input_value, n_intervals, time):
     z_value = df_time['Z'][0]
     time0 = df_time[0]
     time1 = df_time[-1]
-    df_expected_time = df_expected.query(f'Z >= "{z_value}"')    #df_expected.query(f'"{time0}" <= TIMESTAMP <= "{time1}"')
+    #df_expected_time = df_expected.query(f'Z >= "{z_value}"')    #df_expected.query(f'"{time0}" <= TIMESTAMP <= "{time1}"')
 
-    expected_field = df_expected_time[f'HP_{hall_probe}_{field_value}'][:number]  #[:numb]
-    expected_field = expected_field.astype(np.float)
+    expected_field = df_expected[f'HP_{hall_probe}_{field_value}'][:number]  #[:numb]
+    #expected_field = expected_field.astype(np.float)
 
     #timestamp = df_expected['TIMESTAMP'][-1:time]
 
-    fig1 = px.scatter(df_time, x= 'TIMESTAMP', y = [expected_field, measured_field])
+    fig1 = px.line(df_expected, x= 'TIMESTAMP', y = expected_field)
+    fig1.add_scatter(df_time, y = measured_field)
     #fig1.update_traces(marker=dict(color='purple'))
     fig1.update_xaxes(
             tickangle = 60,
@@ -360,19 +361,19 @@ def update_outputcontour(input_probe, input_value, input_intervals):
         df.eval(f"B{coord} = B{coord} / 10000", inplace=True)
         '''
     df_plane = df.query('(Y==0.)  & (4. < Z < 14.)')
-    Lz = len(df_plane['Z'].unique())
-    Lx = len(df_plane['X'].unique())
-    if Lz % 2 == 0 and Lx % 2 == 0:
-        x = df_plane['Z'].values.reshape(Lx, Lz)
-        y = df_plane['X'].values.reshape(Lx, Lz)
-        z = df_plane['Bz_meas'].values.reshape(Lx, Lz)
-        fig = go.Figure(data=[go.Contour(z=z, x=x, y=y, colorscale='Viridis', colorbar=dict(title='Bz [T]'))])
-        fig.update_layout(title='Bz vs. X,Z for Y==0', autosize=False,
+    #Lz = len(df_plane['Z'].unique())
+    #Lx = len(df_plane['X'].unique())
+    #if Lz % 2 == 0 and Lx % 2 == 0:
+    x = df_plane['Z']    #.values.reshape(Lx, Lz)
+    y = df_plane['X']    #.values.reshape(Lx, Lz)
+    z = df_plane['Bz_Meas']    #.values.reshape(Lx, Lz)
+    fig = go.Figure(data=[go.Contour(z=z, x=x, y=y, colorscale='Viridis', colorbar=dict(title='Bz [T]'))])
+    fig.update_layout(title='Bz vs. X,Z for Y==0', autosize=False,
                       width=500, height=500,
                       margin=dict(l=65, r=50, b=65, t=90))
-    else:
-        dash.no_update
-        fig = go.Figure()
+    #else:
+        #dash.no_update
+        #fig = go.Figure()
     '''
     expected = df_expected[f'HP_{hall_probe}_Bz']
     #expected_field = np.reshape(expected, (-1,2))
