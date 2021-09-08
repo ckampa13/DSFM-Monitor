@@ -203,17 +203,13 @@ while livedata == True:
          df = pd.DataFrame(dict_halls)
          for column in df.columns:
              if column != 'TIMESTAMP' and 'ID' not in column:
-                 print(column)
                  df[column] = df[column].astype(float)
          print(df['TIMESTAMP'][:])
 
          #df['TIMESTAMP'] = pd.to_datetime(df['TIMESTAMP'])
          df["TIMESTAMP"] = pd.to_datetime([str(i) for i in df["TIMESTAMP"]])
          #df["TIMESTAMP"] = pd.to_datetime(df["TIMESTAMP"].astype(str))
-
-
          print(dict_halls['TIMESTAMP'])
-
          df.to_pickle(filename)
          time.sleep(10)
 

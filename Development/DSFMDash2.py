@@ -8,6 +8,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from itertools import cycle
+from mapinterp import get_df_interp_func
 import os
 from dash.dependencies import Input, Output
 from datetime import datetime, timedelta
@@ -18,7 +19,7 @@ def load_Bfield(dataframe):
     probe_ids = ['SP1', 'SP2', 'SP3', 'BP1', 'BP2', 'BP3', 'BP4', 'BP5']
     new_column_names = ['ID', 'X', 'Y', 'Z', 'Vx', 'Vy', 'Vz', 'Temperature',
                     'Bx_Meas', 'By_Meas', 'Bz_Meas'
-                    ,'Br', 'Bphi' #, 'Bz',
+                    ,'Br', 'Bphi', 'Bz' #, 'Bz',
                     ]
     results_dict = {key: [] for key in new_column_names}
     results_dict['TIMESTAMP'] = []
@@ -69,7 +70,26 @@ for key in results_dict.keys():
 
 df_Bfield = pd.DataFrame(results_dict)
 
+##Interpolated data
 
+Br_list = []
+Bphi_list = []
+Bz_list = []
+for row in df_Bfield.itertuples():
+    x = df_Bfield.X
+    y = df_Bfield.Y
+    z = df_Bfield.Z
+    Br, Bphi, Bz = get_df_interp_func([x, y, z], df =df_Bfield, gauss =False) #Left off here with the interpolation!!
+    Br_list.append(Br)
+    Bphi_list.append(Bphi)
+    Bz_list.append(Bz)
+
+df_interpolated = pd.DataFrame({'X': df_Bfield.X,
+                            'Y': df_Bfield.Y,
+                            'Z': df_Bfield.Z,
+                            'Br': Br_list,
+                            'Bphi': Bphi_list,
+                            'Bz': Bz_list})
 
 # Dash app
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
@@ -83,7 +103,10 @@ app.layout = html.Div([
             id='interval-component',
             interval=5*1000,
             n_intervals = 0
-        ),
+        ), html.Div([
+html.I("Type the length of time into the past you would like to display data from:"),
+    dcc.Input(id="input1", type="number", placeholder="0", style={'marginRight':'10px'}),
+    '''
        html.Div(
         [
             html.Div(
@@ -113,8 +136,8 @@ app.layout = html.Div([
             )
         ],
         style=dict(display='flex')
-    ),
-        dcc.Dropdown(
+    ), ''' ,
+    dcc.Dropdown(
         id='probe-dropdown',
         options=[
             {'label': 'Hall Probe 1 (SP1)', 'value': 'SP1'},
@@ -142,7 +165,7 @@ app.layout = html.Div([
         html.Div([
         html.Div([
             html.H3('Plot of Expected and Measured Field'),
-            dcc.Graph(id='display-expected-values', config={'scrollZoom': True})
+            dcc.Graph(id='display-expected-values')
         ], className="six columns"),
         # html.Div([
         #     html.H3('Plot of Measured Values'),
@@ -150,16 +173,20 @@ app.layout = html.Div([
         #  className="six columns"),
         html.Div([
                 html.H3('Plot of Measured minus Expected Field'),
-                dcc.Graph(id='display-delta-values', config={'scrollZoom': True})
+                dcc.Graph(id='display-delta-values')
             ], className="six columns"),
-        ]),
+        ]),]),
         html.Div([
                 html.H3('Plot of Expected 3D contour'),
-                dcc.Graph(id='display-contour', config={'scrollZoom': True})
+                dcc.Graph(id='display-contour')
             ], className="six columns"),
         html.Div([
                 html.H3('Plot of 2D Contour Measured values'),
-                dcc.Graph(id='display-contour2D', config={'scrollZoom': True})
+                dcc.Graph(id='display-contour2D')
+            ], className="six columns"),
+        html.Div([
+                html.H3('Interpolated'),
+                dcc.Graph(id='display-contour-delta')
             ], className="six columns"),
         dcc.Dropdown(
         id='probe-dropdown2',
@@ -205,7 +232,7 @@ app.layout = html.Div([
 @app.callback(
     Output('display-expected-values', 'figure'),
     [Input('probe-dropdown', 'value'),
-     Input('value-dropdown', 'value'), Input('interval-component', 'n_intervals'), Input('time-dropdown', 'value')])
+     Input('value-dropdown', 'value'), Input('interval-component', 'n_intervals'), Input('input1', 'time')]) #Input('time-dropdown', 'value')])
 def update_output1(input_probe, input_value, n_intervals, time):
     minutes = int(time)
     df_raw = load_data("liveupdates.pkl")
@@ -218,42 +245,38 @@ def update_output1(input_probe, input_value, n_intervals, time):
     #time = -1*int(time)  #Throwing a NoneType error with the time variable--fix!
     hall_probe = input_probe
     field_value = input_value
-    '''
-    if time = 0:
-        slice = ':'
-    else: 
-        slice = -1:time
-    '''
+
     measured_field = df_time[f'HP_{hall_probe}_{field_value}']
     measured_field = measured_field.astype(np.float)
     #numb = len(measured_field)
-    number = len(df_time)
-    z_value = df_time['Z'][0]
-    time0 = df_time[0]
-    time1 = df_time[-1]
+    #number = len(df_time)
+    #z_value = df_time['Z'][0]
+    #time0 = df_time[0]
+    #time1 = df_time[-1]
     #df_expected_time = df_expected.query(f'Z >= "{z_value}"')    #df_expected.query(f'"{time0}" <= TIMESTAMP <= "{time1}"')
 
-    expected_field = df_expected[f'HP_{hall_probe}_{field_value}'][:number]  #[:numb]
+    expected_field = df_expected[f'HP_{hall_probe}_{field_value}'][:]   #[:number]  #[:numb]
     #expected_field = expected_field.astype(np.float)
 
     #timestamp = df_expected['TIMESTAMP'][-1:time]
 
-    fig1 = px.line(df_expected, x= 'TIMESTAMP', y = expected_field)
-    fig1.add_scatter(df_time, y = measured_field)
+    fig1 = px.line(df_expected, x='TIMESTAMP', y = expected_field)
+    fig2 = px.scatter(df_time, x='TIMESTAMP', y = measured_field)
+    fig3 = go.Figure(data = fig1.data + fig2.data)
     #fig1.update_traces(marker=dict(color='purple'))
-    fig1.update_xaxes(
+    fig3.update_xaxes(
             tickangle = 60,
             title_text = "Time",
             title_font = {"size": 20},
             title_standoff = 25)
-    fig1.update_yaxes(
+    fig3.update_yaxes(
         tickangle=60,
         title_text=f"{field_value}",
         title_font={"size": 20},
         title_standoff=25)
     names = cycle(['Expected Value', 'Measured Value'])
-    fig1.for_each_trace(lambda t: t.update(name=next(names)))
-    return  fig1
+    fig3.for_each_trace(lambda t: t.update(name=next(names)))
+    return  fig3
 
 #Callback for delta
 @app.callback(
@@ -366,7 +389,7 @@ def update_outputcontour(input_probe, input_value, input_intervals):
     #if Lz % 2 == 0 and Lx % 2 == 0:
     x = df_plane['Z']    #.values.reshape(Lx, Lz)
     y = df_plane['X']    #.values.reshape(Lx, Lz)
-    z = df_plane['Bz_Meas']    #.values.reshape(Lx, Lz)
+    z = df_plane['Bz']    #.values.reshape(Lx, Lz)
     fig = go.Figure(data=[go.Contour(z=z, x=x, y=y, colorscale='Viridis', colorbar=dict(title='Bz [T]'))])
     fig.update_layout(title='Bz vs. X,Z for Y==0', autosize=False,
                       width=500, height=500,
@@ -392,8 +415,48 @@ def update_outputcontour(input_probe, input_value, input_intervals):
 
 
 
-## 3D Scatter plot of measured minus expected values
+## 3D interpolation, minus - expected feild
 
+@app.callback(
+    Output('display-contour-delta', 'figure'),
+    [Input('probe-dropdown', 'value'),
+     Input('value-dropdown', 'value'),
+     Input('interval-component', 'n_intervals')])
+def update_outputcontour(input_probe, input_value, input_intervals):
+    df = df_interpolated# pd.read_pickle("/home/shared_data/Bmaps/Mu2e_DSMap_V13.p")
+    for coord in ['x', 'y', 'z', 'r', 'phi']:
+        df.eval(f"B{coord} = B{coord} / 10000", inplace=True)
+    df_plane = df.query('(Y==0.) & (R < 0.8) & (4. < Z < 14.)')
+    Lz = len(df_plane['Z'].unique())
+    Lx = len(df_plane['X'].unique())
+    x = df_plane['Z'].values.reshape(Lx, Lz)
+    y = df_plane['X'].values.reshape(Lx, Lz)
+    z = df_plane['Bz'].values.reshape(Lx, Lz)
+    fig = go.Figure(data=[go.Surface(z=z, x=x, y=y, colorscale='Viridis', colorbar=dict(title='Bz [T]'))])
+    fig.update_layout(title='Bz vs. X,Z for Y==0', autosize=False,
+                      width=500, height=500,
+                      margin=dict(l=65, r=50, b=65, t=90))
+    fig.update_layout(
+        scene=dict(
+            xaxis=dict(title='Z [m]'),
+            yaxis=dict(title='X [m]'),
+            zaxis=dict(title='Bz [Gauss]'),
+            aspectratio=dict(x=2, y=1, z=1),
+            aspectmode='manual',
+        )
+    )
+    fig.update_layout(
+        scene=dict(
+            camera=dict(
+                center=dict(x=0,
+                            y=0,
+                            z=-0.3),
+                eye=dict(x=3.44 / 1.2,
+                         y=-2.48 / 1.2,
+                         z=1.58 / 1.2))
+        )
+    )
+    return fig
 
 
 
