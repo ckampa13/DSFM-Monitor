@@ -71,7 +71,7 @@ for key in results_dict.keys():
 df_Bfield = pd.DataFrame(results_dict)
 
 ##Interpolated data
-
+'''
 Br_list = []
 Bphi_list = []
 Bz_list = []
@@ -90,7 +90,7 @@ df_interpolated = pd.DataFrame({'X': df_Bfield.X,
                             'Br': Br_list,
                             'Bphi': Bphi_list,
                             'Bz': Bz_list})
-
+'''
 # Dash app
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -423,6 +423,8 @@ def update_outputcontour(input_probe, input_value, input_intervals):
      Input('value-dropdown', 'value'),
      Input('interval-component', 'n_intervals')])
 def update_outputcontour(input_probe, input_value, input_intervals):
+    fig = go.Figure(data =[0,1,2])
+    '''
     df = df_interpolated# pd.read_pickle("/home/shared_data/Bmaps/Mu2e_DSMap_V13.p")
     for coord in ['x', 'y', 'z', 'r', 'phi']:
         df.eval(f"B{coord} = B{coord} / 10000", inplace=True)
@@ -455,7 +457,7 @@ def update_outputcontour(input_probe, input_value, input_intervals):
                          y=-2.48 / 1.2,
                          z=1.58 / 1.2))
         )
-    )
+    )'''
     return fig
 
 

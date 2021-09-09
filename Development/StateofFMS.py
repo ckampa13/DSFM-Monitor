@@ -104,7 +104,7 @@ df_dict = {'raw': df_raw, 'NMR': df_NMR, 'Hall Probes': df_Hall, 'Field at Locat
 image_filename = datadir + 'DSFMimage1.png'
 encoded_image = base64.b64encode(open(image_filename, 'rb').read())
 
-probes = datadir + 'Probes.png'
+probes = datadir + 'DSFM-Sketch.png'
 encoded_probes = base64.b64encode(open(probes, 'rb').read())
 
 z_loc = 400
@@ -128,6 +128,7 @@ app.layout = html.Div([
             interval=5*1000,
             n_intervals = 0
         ),
+        html.Div([html.Img(src='data:image/png;base64,{}'.format(encoded_probes.decode()))], className="four columns"),
         html.Div([  # html.H3(children = 'Hall Probe Status Datatable'),
         dash_table.DataTable(
             id='table-magnet',
@@ -174,7 +175,7 @@ app.layout = html.Div([
 
             ) ]),
 
-       # html.Div([html.Img(src='data:image/png;base64,{}'.format(encoded_probes.decode()))], className="four columns"),
+
         html.Div([     #html.H3(children = 'Hall Probe Status Datatable'),
         dash_table.DataTable(
         id='table',
