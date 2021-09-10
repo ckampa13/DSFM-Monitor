@@ -217,6 +217,12 @@ while livedata == True:
 
 
 
+
+
+
+
+
+
             # with open(filename, 'wb') as file:
             #     pickle.dump(df, file)
      #time.sleep(60.0 - ((time.time()- starttime) % 60.0))

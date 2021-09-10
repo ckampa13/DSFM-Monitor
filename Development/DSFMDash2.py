@@ -103,10 +103,10 @@ app.layout = html.Div([
             id='interval-component',
             interval=5*1000,
             n_intervals = 0
-        ), html.Div([
-html.I("Type the length of time into the past you would like to display data from:"),
+        ),  html.Div([
+   html.I("Type the length of time into the past you would like to display data from:"),
     dcc.Input(id="input1", type="number", placeholder="0", style={'marginRight':'10px'}),
-    '''
+    ''',
        html.Div(
         [
             html.Div(
@@ -136,7 +136,7 @@ html.I("Type the length of time into the past you would like to display data fro
             )
         ],
         style=dict(display='flex')
-    ), ''' ,
+    ), ''',
     dcc.Dropdown(
         id='probe-dropdown',
         options=[
@@ -232,8 +232,9 @@ html.I("Type the length of time into the past you would like to display data fro
 @app.callback(
     Output('display-expected-values', 'figure'),
     [Input('probe-dropdown', 'value'),
-     Input('value-dropdown', 'value'), Input('interval-component', 'n_intervals'), Input('input1', 'time')]) #Input('time-dropdown', 'value')])
+     Input('value-dropdown', 'value'), Input('interval-component', 'n_intervals'), Input('input1', 'value')]) #Input('time-dropdown', 'value')])
 def update_output1(input_probe, input_value, n_intervals, time):
+    return {'layout': go.Layout(height=700)}
     minutes = int(time)
     df_raw = load_data("liveupdates.pkl")
     df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
@@ -287,18 +288,14 @@ def update_output1(input_probe, input_value, n_intervals, time):
 def update_output1(input_probe, input_value, n_intervals):
     df_raw = load_data("liveupdates.pkl")
     df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
-
-
     hall_probe = input_probe
     field_value = input_value
-    measured = df_raw[f'HP_{hall_probe}_{field_value}']
-    measured = measured.astype(np.float)
+    measured = df_raw[f'HP_{hall_probe}_{field_value}'].values
     numb = len(measured)
-    expected = df_expected[f'HP_{hall_probe}_{field_value}'][: numb]
-    expected = expected.astype(np.float)
+    expected = df_expected[f'HP_{hall_probe}_{field_value}'][:numb].values
     delta = measured - expected
-
-    fig3 = px.scatter(df_raw, x='TIMESTAMP', y= delta)
+    df_raw['delta'] = delta
+    fig3 = px.scatter(df_raw, x='TIMESTAMP', y= 'delta')
     fig3.update_traces(marker=dict(color='orange'))
     fig3.update_xaxes(
         tickangle=60,
@@ -309,6 +306,7 @@ def update_output1(input_probe, input_value, n_intervals):
         title_text=f"Delta {field_value}",
         title_font={"size": 20},
         title_standoff=25)
+    fig3.update_layout(uirevision='constant')
     return fig3
 ## 3D contour plot
 @app.callback(
@@ -423,7 +421,8 @@ def update_outputcontour(input_probe, input_value, input_intervals):
      Input('value-dropdown', 'value'),
      Input('interval-component', 'n_intervals')])
 def update_outputcontour(input_probe, input_value, input_intervals):
-    fig = go.Figure(data =[0,1,2])
+
+    return {'layout': go.Layout(height=700)}
     '''
     df = df_interpolated# pd.read_pickle("/home/shared_data/Bmaps/Mu2e_DSMap_V13.p")
     for coord in ['x', 'y', 'z', 'r', 'phi']:
@@ -458,16 +457,6 @@ def update_outputcontour(input_probe, input_value, input_intervals):
                          z=1.58 / 1.2))
         )
     )'''
-    return fig
-
-
-
-
-
-
-
-
-
 
 
 
@@ -489,14 +478,15 @@ def update_output1(input_probe, n_intervals):
     df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
 
     hall_probe = input_probe
-    measured = df_raw[f'HP_{hall_probe}_Bz_Meas']
-    measured = measured.astype(np.float)
+    measured = df_raw[f'HP_{hall_probe}_Bz_Meas'].values
+    #measured = measured.astype(np.float)
     numb = len(measured)
-    expected = df_expected[f'HP_{hall_probe}_Bz_Meas'][: numb]
-    expected = expected.astype(np.float)
+    expected = df_expected[f'HP_{hall_probe}_Bz_Meas'][:numb].values
+    #expected = expected.astype(np.float)
     delta = measured - expected
-
-    fig4 = px.histogram(df_raw, x= delta, marginal = 'rug')
+    print(delta)
+    df_raw['delta'] = delta
+    fig4 = px.histogram(df_raw, x= 'delta', marginal = 'rug')
     fig4.update_traces(marker=dict(color='red'))
     fig4.update_xaxes(
         tickangle=60,
@@ -520,14 +510,15 @@ def update_output1(input_probe, n_intervals):
     df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
 
     hall_probe = input_probe
-    measured = df_raw[f'HP_{hall_probe}_Br']
-    measured = measured.astype(float)
-    numb = len(measured)
-    expected = df_expected[f'HP_{hall_probe}_Br'][:numb]
-    expected = expected.astype(float)
-    delta = measured - expected
+    measured = df_raw[f'HP_{hall_probe}_Br'].values
 
-    fig5 = px.histogram(df_raw, x= delta, marginal = 'rug')
+    numb = len(measured)
+    expected = df_expected[f'HP_{hall_probe}_Br'][:numb].values
+
+    delta = measured - expected
+    df_raw['delta'] = delta
+
+    fig5 = px.histogram(df_raw, x= 'delta', marginal = 'rug')
     fig5.update_traces(marker=dict(color='blue'))
     fig5.update_xaxes(
         tickangle=60,
@@ -541,23 +532,26 @@ def update_output1(input_probe, n_intervals):
     fig5.update_traces(alignmentgroup=0, selector=dict(type='histogram'))
     return fig5
 ##Histogram of Bx
+
 @app.callback(
     Output('histogram-of-bx', 'figure'),
     [Input('probe-dropdown2', 'value'),
      Input('interval-component', 'n_intervals')])
 def update_output1(input_probe, n_intervals):
+
     df_raw = load_data("liveupdates.pkl")
     df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
 
     hall_probe = input_probe
-    measured = df_raw[f'HP_{hall_probe}_Bx_Meas']
-    measured = measured.astype(float)
+    measured = df_raw[f'HP_{hall_probe}_Bx_Meas'].values
+
     numb = len(measured)
     expected = df_expected[f'HP_{hall_probe}_Bx_Meas'][:numb]
     expected = expected.astype(float)
     delta = measured - expected
+    df_raw['delta'] = delta
 
-    fig6 = px.histogram(df_raw, x= delta, marginal = 'rug')
+    fig6 = px.histogram(df_raw, x= 'delta', marginal = 'rug')
     fig6.update_traces(marker=dict(color='green'))
     fig6.update_xaxes(
         tickangle=60,
@@ -588,8 +582,9 @@ def update_output1(input_probe, n_intervals):
     expected = df_expected[f'HP_{hall_probe}_By_Meas'][: numb]
     expected = expected.astype(np.float)
     delta = measured - expected
+    df_raw['delta'] = delta
 
-    fig7 = px.histogram(df_raw, x=delta, marginal = 'rug')
+    fig7 = px.histogram(df_raw, x='delta', marginal = 'rug')
     fig7.update_traces(marker=dict(color='purple'))
     fig7.update_xaxes(
         tickangle=60,
@@ -618,8 +613,8 @@ def update_output1(input_probe, n_intervals):
     expected = df_expected['B_NMR'][:numb]
     expected = expected.astype(np.float)
     delta = measured - expected
-
-    fig8 = px.histogram(df_raw, x= delta, marginal = 'rug')
+    df_raw['delta'] = delta
+    fig8 = px.histogram(df_raw, x= 'delta', marginal = 'rug')
     fig8.update_traces(marker=dict(color='brown'))
     fig8.update_xaxes(
         tickangle=60,
