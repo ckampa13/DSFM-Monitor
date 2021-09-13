@@ -56,7 +56,7 @@ df_raw = load_data("liveupdates.pkl")
 probe_ids = ['SP1', 'SP2', 'SP3', 'BP1', 'BP2', 'BP3', 'BP4', 'BP5']
 new_column_names = ['ID', 'X', 'Y', 'Z', 'Vx', 'Vy', 'Vz', 'Temperature',
                     'Bx_Meas', 'By_Meas', 'Bz_Meas'
-                    ,'Br', 'Bphi' #, 'Bz',
+                    ,'Br', 'Bphi', #'Bz',
                     ]
 results_dict = {key: [] for key in new_column_names}
 results_dict['TIMESTAMP'] = []
@@ -103,10 +103,10 @@ app.layout = html.Div([
             id='interval-component',
             interval=5*1000,
             n_intervals = 0
-        ),  html.Div([
-   html.I("Type the length of time into the past you would like to display data from:"),
-    dcc.Input(id="input1", type="number", placeholder="0", style={'marginRight':'10px'}),
-    ''',
+        ),  #html.Div([
+   #html.I("Type the length of time into the past you would like to display data from:"),
+    #dcc.Input(id="input1", type="number", placeholder="0", style={'marginRight':'10px'}),
+    #,
        html.Div(
         [
             html.Div(
@@ -136,7 +136,7 @@ app.layout = html.Div([
             )
         ],
         style=dict(display='flex')
-    ), ''',
+    ),
     dcc.Dropdown(
         id='probe-dropdown',
         options=[
@@ -154,16 +154,18 @@ app.layout = html.Div([
     dcc.Dropdown(
         id='value-dropdown',
         options=[
-            {'label': 'Bz', 'value': 'Bz_Meas'},
+            {'label': 'Bz', 'value': 'Bz'},
             {'label': 'By', 'value': 'By_Meas'},
             {'label': 'Bx', 'value': 'Bx_Meas'},
             {'label': 'Br', 'value': 'Br'},
             {'label': 'Bphi', 'value': 'Bphi'}
-        ], value = 'Bz_Meas'
+        ], value = 'Bz'
     ),
 
+   # ]),
+
         html.Div([
-        html.Div([
+       html.Div([
             html.H3('Plot of Expected and Measured Field'),
             dcc.Graph(id='display-expected-values')
         ], className="six columns"),
@@ -175,32 +177,25 @@ app.layout = html.Div([
                 html.H3('Plot of Measured minus Expected Field'),
                 dcc.Graph(id='display-delta-values')
             ], className="six columns"),
-        ]),]),
-        html.Div([
-                html.H3('Plot of Expected 3D contour'),
-                dcc.Graph(id='display-contour')
-            ], className="six columns"),
-        html.Div([
-                html.H3('Plot of 2D Contour Measured values'),
-                dcc.Graph(id='display-contour2D')
-            ], className="six columns"),
-        html.Div([
-                html.H3('Interpolated'),
-                dcc.Graph(id='display-contour-delta')
-            ], className="six columns"),
-        dcc.Dropdown(
-        id='probe-dropdown2',
-        options=[
-            {'label': 'Hall Probe 1 (SP1)', 'value': 'SP1'},
-            {'label': 'Hall Probe 2 (SP2)', 'value': 'SP2'},
-            {'label': 'Hall Probe 3 (SP3)', 'value': 'SP3'},
-            {'label': 'Hall Probe 4 (BP1)', 'value': 'BP1'},
-            {'label': 'Hall Probe 5 (BP2)', 'value': 'BP2'},
-            {'label': 'Hall Probe 6 (BP3)', 'value': 'BP3'},
-            {'label': 'Hall Probe 7 (BP4)', 'value': 'BP4'},
-            {'label': 'Hall Probe 8 (BP5)', 'value': 'BP5'}
-        ], value = 'SP1'
-     ),
+        ]),
+
+        #html.Div([
+           #     html.H3('Interpolated'),
+          #      dcc.Graph(id='display-contour-delta')
+          #  ], className="six columns"),
+        #dcc.Dropdown(
+        #id='probe-dropdown2',
+        #options=[
+           # {'label': 'Hall Probe 1 (SP1)', 'value': 'SP1'},
+            #{'label': 'Hall Probe 2 (SP2)', 'value': 'SP2'},
+           # {'label': 'Hall Probe 3 (SP3)', 'value': 'SP3'},
+           # {'label': 'Hall Probe 4 (BP1)', 'value': 'BP1'},
+            #{'label': 'Hall Probe 5 (BP2)', 'value': 'BP2'},
+           # {'label': 'Hall Probe 6 (BP3)', 'value': 'BP3'},
+           # {'label': 'Hall Probe 7 (BP4)', 'value': 'BP4'},
+           # {'label': 'Hall Probe 8 (BP5)', 'value': 'BP5'}
+       # ], value = 'SP1'
+    # ),
         html.Div([
         html.Div([
             html.H3('Histogram of Bz'),
@@ -223,7 +218,17 @@ app.layout = html.Div([
         html.Div([
                 html.H3('Histogram of B_NMR'),
                 dcc.Graph(id='histogram-of-bnmr')],
-                className="six columns"),])
+                className="six columns"),]),
+        html.Div([
+        html.Div([
+               html.H3('Plot of Expected 3D contour'),
+                dcc.Graph(id='display-contour')
+            ], className="six columns"),
+        html.Div([
+               html.H3('Plot of 2D Contour Measured values'),
+            dcc.Graph(id='display-contour2D')
+            ], className="six columns"),]),
+
 
 
     ])
@@ -232,9 +237,9 @@ app.layout = html.Div([
 @app.callback(
     Output('display-expected-values', 'figure'),
     [Input('probe-dropdown', 'value'),
-     Input('value-dropdown', 'value'), Input('interval-component', 'n_intervals'), Input('input1', 'value')]) #Input('time-dropdown', 'value')])
+     Input('value-dropdown', 'value'), Input('interval-component', 'n_intervals'), Input('time-dropdown', 'value')]) #Input('time-dropdown', 'value')])
 def update_output1(input_probe, input_value, n_intervals, time):
-    return {'layout': go.Layout(height=700)}
+    #return {'layout': go.Layout(height=700)}
     minutes = int(time)
     df_raw = load_data("liveupdates.pkl")
     df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
@@ -262,7 +267,11 @@ def update_output1(input_probe, input_value, n_intervals, time):
     #timestamp = df_expected['TIMESTAMP'][-1:time]
 
     fig1 = px.line(df_expected, x='TIMESTAMP', y = expected_field)
+    fig1.update_traces(marker=dict(
+        color='red'))
     fig2 = px.scatter(df_time, x='TIMESTAMP', y = measured_field)
+    fig2.update_traces(marker=dict(
+        color='black'))
     fig3 = go.Figure(data = fig1.data + fig2.data)
     #fig1.update_traces(marker=dict(color='purple'))
     fig3.update_xaxes(
@@ -285,7 +294,7 @@ def update_output1(input_probe, input_value, n_intervals, time):
     [Input('probe-dropdown', 'value'),
      Input('value-dropdown', 'value'),
      Input('interval-component', 'n_intervals')])
-def update_output1(input_probe, input_value, n_intervals):
+def update_output6(input_probe, input_value, n_intervals):
     df_raw = load_data("liveupdates.pkl")
     df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
     hall_probe = input_probe
@@ -295,7 +304,8 @@ def update_output1(input_probe, input_value, n_intervals):
     expected = df_expected[f'HP_{hall_probe}_{field_value}'][:numb].values
     delta = measured - expected
     df_raw['delta'] = delta
-    fig3 = px.scatter(df_raw, x='TIMESTAMP', y= 'delta')
+    df_raw['B_error'] = 1e-4
+    fig3 = px.scatter(df_raw, x='TIMESTAMP', y= 'delta', error_y = 'B_error')
     fig3.update_traces(marker=dict(color='orange'))
     fig3.update_xaxes(
         tickangle=60,
@@ -314,7 +324,7 @@ def update_output1(input_probe, input_value, n_intervals):
     [Input('probe-dropdown', 'value'),
      Input('value-dropdown', 'value'),
      Input('interval-component', 'n_intervals')])
-def update_outputcontour(input_probe, input_value, input_intervals):
+def update_outputcontour2(input_probe, input_value, input_intervals):
     df = pd.read_pickle("/home/shared_data/Bmaps/Mu2e_DSMap_V13.p")
     for coord in ['x', 'y', 'z', 'r', 'phi']:
         df.eval(f"B{coord} = B{coord} / 10000", inplace=True)
@@ -372,7 +382,7 @@ def update_outputcontour(input_probe, input_value, input_intervals):
      Input('value-dropdown', 'value'),
      Input('interval-component', 'n_intervals')])
 
-def update_outputcontour(input_probe, input_value, input_intervals):
+def update_outputcontour1(input_probe, input_value, input_intervals):
     original = load_data("liveupdates.pkl")
     hall_probe = input_probe
     field_value = input_value
@@ -461,170 +471,148 @@ def update_outputcontour(input_probe, input_value, input_intervals):
 
 
 
-
-
-
-
-
-
-
 ##Histogram of Bz
 @app.callback(
     Output('histogram-of-bz', 'figure'),
-    [Input('probe-dropdown2', 'value'),
+    [Input('probe-dropdown', 'value'),
      Input('interval-component', 'n_intervals')])
-def update_output1(input_probe, n_intervals):
+def update_output2(input_probe, n_intervals):
     df_raw = load_data("liveupdates.pkl")
     df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
-
     hall_probe = input_probe
     measured = df_raw[f'HP_{hall_probe}_Bz_Meas'].values
-    #measured = measured.astype(np.float)
     numb = len(measured)
     expected = df_expected[f'HP_{hall_probe}_Bz_Meas'][:numb].values
-    #expected = expected.astype(np.float)
     delta = measured - expected
-    print(delta)
+    #print(delta)
     df_raw['delta'] = delta
+
     fig4 = px.histogram(df_raw, x= 'delta', marginal = 'rug')
     fig4.update_traces(marker=dict(color='red'))
-    fig4.update_xaxes(
-        tickangle=60,
-        title_text="Delta Bz",
-        title_font={"size": 20},
-        title_standoff=25)
-    fig4.update_yaxes(
-        title_text=f"Count",
-        title_font={"size": 20},
-        title_standoff=25)
+    #fig4.update_xaxes(
+       # tickangle=60,
+        #title_text="Delta Bz",
+        #title_font={"size": 20},
+        #title_standoff=25)
+   # fig4.update_yaxes(
+        #title_text=f"Count",
+        #title_font={"size": 20},
+        #title_standoff=25)
     fig4.update_traces(alignmentgroup=0, selector=dict(type='histogram'))
     return fig4
 
 ##Histogram of Br
 @app.callback(
     Output('histogram-of-br', 'figure'),
-    [Input('probe-dropdown2', 'value'),
+    [Input('probe-dropdown', 'value'),
      Input('interval-component', 'n_intervals')])
-def update_output1(input_probe, n_intervals):
+def update_output3(input_probe, n_intervals):
     df_raw = load_data("liveupdates.pkl")
     df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
-
     hall_probe = input_probe
     measured = df_raw[f'HP_{hall_probe}_Br'].values
-
     numb = len(measured)
     expected = df_expected[f'HP_{hall_probe}_Br'][:numb].values
-
     delta = measured - expected
     df_raw['delta'] = delta
 
     fig5 = px.histogram(df_raw, x= 'delta', marginal = 'rug')
     fig5.update_traces(marker=dict(color='blue'))
-    fig5.update_xaxes(
-        tickangle=60,
-        title_text="Delta Br",
-        title_font={"size": 20},
-        title_standoff=25)
-    fig5.update_yaxes(
-        title_text= "Count",
-        title_font={"size": 20},
-        title_standoff=25)
+    #fig5.update_xaxes(
+       # tickangle=60,
+        #title_text="Delta Br",
+       # title_font={"size": 20},
+       # title_standoff=25)
+    #fig5.update_yaxes(
+       # title_text= "Count",
+        #title_font={"size": 20},
+        #title_standoff=25)
     fig5.update_traces(alignmentgroup=0, selector=dict(type='histogram'))
     return fig5
 ##Histogram of Bx
 
 @app.callback(
     Output('histogram-of-bx', 'figure'),
-    [Input('probe-dropdown2', 'value'),
+    [Input('probe-dropdown', 'value'),
      Input('interval-component', 'n_intervals')])
-def update_output1(input_probe, n_intervals):
-
+def update_output4(input_probe, n_intervals):
     df_raw = load_data("liveupdates.pkl")
     df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
-
     hall_probe = input_probe
     measured = df_raw[f'HP_{hall_probe}_Bx_Meas'].values
-
     numb = len(measured)
-    expected = df_expected[f'HP_{hall_probe}_Bx_Meas'][:numb]
+    expected = df_expected[f'HP_{hall_probe}_Bx_Meas'][:numb].values
     expected = expected.astype(float)
     delta = measured - expected
     df_raw['delta'] = delta
 
     fig6 = px.histogram(df_raw, x= 'delta', marginal = 'rug')
     fig6.update_traces(marker=dict(color='green'))
-    fig6.update_xaxes(
-        tickangle=60,
-        title_text="Delta Bx",
-        title_font={"size": 20},
-        title_standoff=25)
-    fig6.update_yaxes(
-        title_text= "Count",
-        title_font={"size": 20},
-        title_standoff=25)
+    #fig6.update_xaxes(
+       # tickangle=60,
+        #title_text="Delta Bx",
+        #title_font={"size": 20},
+        #title_standoff=25)
+    #fig6.update_yaxes(
+        #title_text= "Count",
+        #title_font={"size": 20},
+        #title_standoff=25)
     fig6.update_traces(alignmentgroup=0, selector=dict(type='histogram'))
     return fig6
 
 ##Histogram of By
 @app.callback(
         Output('histogram-of-by', 'figure'),
-        [Input('probe-dropdown2', 'value'),
+        [Input('probe-dropdown', 'value'),
          Input('interval-component', 'n_intervals')])
-def update_output1(input_probe, n_intervals):
+def update_output5(input_probe, n_intervals):
     df_raw = load_data("liveupdates.pkl")
     df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
-
-
     hall_probe = input_probe
-    measured = df_raw[f'HP_{hall_probe}_By_Meas']
-    measured = measured.astype(np.float)
+    measured = df_raw[f'HP_{hall_probe}_By_Meas'].values
     numb = len(measured)
-    expected = df_expected[f'HP_{hall_probe}_By_Meas'][: numb]
-    expected = expected.astype(np.float)
+    expected = df_expected[f'HP_{hall_probe}_By_Meas'][:numb].values
     delta = measured - expected
     df_raw['delta'] = delta
-
     fig7 = px.histogram(df_raw, x='delta', marginal = 'rug')
     fig7.update_traces(marker=dict(color='purple'))
-    fig7.update_xaxes(
-        tickangle=60,
-        title_text="Delta By",
-        title_font={"size": 20},
-        title_standoff=25)
-    fig7.update_yaxes(
-        title_text=f"Count",
-        title_font={"size": 20},
-        title_standoff=25)
+    #fig7.update_xaxes(
+       # tickangle=60,
+        #title_text="Delta By",
+        #title_font={"size": 20},
+        #title_standoff=25)
+    #fig7.update_yaxes(
+        #title_text=f"Count",
+        #title_font={"size": 20},
+        #title_standoff=25)
     fig7.update_traces(alignmentgroup=0, selector=dict(type='histogram'))
     return fig7
 
 #Histogram of B_NMR
 @app.callback(Output('histogram-of-bnmr', 'figure'),
-        [Input('probe-dropdown2', 'value'),
+        [Input('probe-dropdown', 'value'),
          Input('interval-component', 'n_intervals')])
-def update_output1(input_probe, n_intervals):
+def update_output6(input_probe, n_intervals):
     df_raw = load_data("liveupdates.pkl")
     df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
-
     hall_probe = input_probe
-    measured = df_raw['B_NMR']
+    measured = df_raw['B_NMR'].values
     measured = measured.astype(np.float)
     numb = len(measured)
-    expected = df_expected['B_NMR'][:numb]
-    expected = expected.astype(np.float)
+    expected = df_expected['B_NMR'][:numb].values
     delta = measured - expected
     df_raw['delta'] = delta
     fig8 = px.histogram(df_raw, x= 'delta', marginal = 'rug')
     fig8.update_traces(marker=dict(color='brown'))
-    fig8.update_xaxes(
-        tickangle=60,
-        title_text="Delta B_NMR", #change to mathmatical symbols + units
-        title_font={"size": 20},
-        title_standoff=25)
-    fig8.update_yaxes(
-        title_text=f"Count",
-        title_font={"size": 20},
-        title_standoff=25)
+    #fig8.update_xaxes(
+        #tickangle=60,
+        #title_text="Delta B_NMR", #change to mathmatical symbols + units
+        #title_font={"size": 20},
+        #title_standoff=25)
+    #fig8.update_yaxes(
+        #title_text=f"Count",
+        #title_font={"size": 20},
+        #title_standoff=25)
     fig8.update_traces(alignmentgroup=0, selector=dict(type='histogram'))
     return fig8
 

@@ -93,7 +93,7 @@ while livedata == True:
             'HP_SP3_Vy' : new_array[45], 'HP_SP3_Vz' : new_array[44], 'HP_SP3_Temperature' : new_array[37], 'HP_SP3_Bx_Meas' : new_array[40], 'HP_SP3_By_Meas' : new_array[39], 'HP_SP3_Bz_Meas' : new_array[38], 'HP_SP3_Bz': new_array[43],
             'HP_SP3_Br' : new_array[41], 'HP_SP3_Bphi' : new_array[42], 'HP_BP1_ID' : new_array[70], 'HP_BP1_X' : new_array[66], 'HP_BP1_Y' : new_array[65], 'HP_BP1_Z' : new_array[64], 'HP_BP1_Vx' : new_array[64],
             'HP_BP1_Vy' : new_array[63], 'HP_BP1_Vz' : new_array[62], 'HP_BP1_Temperature' : new_array[55], 'HP_BP1_Bx_Meas' : new_array[58], 'HP_BP1_By_Meas' : new_array[57], 'HP_BP1_Bz_Meas' : new_array[56], 'HP_BP1_Bz': new_array[61], 'HP_BP1_Br' : new_array[59],
-            'HP_BP1_Bphi' : new_array[60],'HP_BP2_ID' : new_array[88], 'HP_BP2_X' : new_array[84],'HP_BP2_Y' : new_array[83], 'HP_BP2_Z' : new_array[82], 'HP_BP2_Vx' : new_array[81], 'HP_BP2_Vy' : new_array[80], 'HP_BP2_Vz' : new_array[79],
+            'HP_BP1_Bphi' : new_array[60],'HP_BP2_ID' : new_array[88], 'HP_BP2_X' : new_array[85],'HP_BP2_Y' : new_array[84], 'HP_BP2_Z' : new_array[83], 'HP_BP2_Vx' : new_array[82], 'HP_BP2_Vy' : new_array[81], 'HP_BP2_Vz' : new_array[80],
             'HP_BP2_Temperature' : new_array[73], 'HP_BP2_Bx_Meas' : new_array[75], 'HP_BP2_By_Meas' : new_array[75], 'HP_BP2_Bz_Meas' : new_array[74], 'HP_BP2_Bz': new_array[79], 'HP_BP2_Br' : new_array[77], 'HP_BP2_Bphi' : new_array[78],'HP_BP3_ID' : new_array[106],
             'HP_BP3_X' : new_array[103], 'HP_BP3_Y' : new_array[102], 'HP_BP3_Z' : new_array[101], 'HP_BP3_Vx' : new_array[100], 'HP_BP3_Vy' : new_array[99], 'HP_BP3_Vz' : new_array[98], 'HP_BP3_Temperature' : new_array[91], 'HP_BP3_Bx_Meas' : new_array[94],
             'HP_BP3_By_Meas' : new_array[93], 'HP_BP3_Bz_Meas' : new_array[92], 'HP_BP3_Bz': new_array[97], 'HP_BP3_Br' : new_array[95], 'HP_BP3_Bphi' : new_array[96], 'HP_BP4_ID' : new_array[124], 'HP_BP4_X' : new_array[121], 'HP_BP4_Y' : new_array[120], 'HP_BP4_Z' : new_array[119],
@@ -175,12 +175,16 @@ while livedata == True:
                             #     dict_halls[key] = (dict_halls[key], val)
             channel_chunk_current = tdms_file[f'{name}']['Current']
             arrayCurrent = np.array(channel_chunk_current[:])
+            time.sleep(1)
             if arrayCurrent.size > 0:
                 new_list_cur = []
                 column_list_cur = []  # column_array = np.array([])
                 # print(channel_chunk[:])
                 for item in arrayCurrent:
-                    if 'Timestamp' not in item:
+                    if 'Timestamp' in item:
+                        pass
+                    else:
+                        print(item)
                         x = item.split(':')[1]
                         y = item.split(':')[0]
                         #if y == 'Timestamp':
@@ -189,8 +193,7 @@ while livedata == True:
                     #else:
                         new_list_cur.append(x)  # np.append(arr = new_array, values = x)
                         column_list_cur.append(y)  # np.append(arr = column_array,values = y)
-                    else:
-                        pass
+
 
                 column_array_cur = np.array(column_list_cur)
                 new_array_cur = np.array(new_list_cur)
