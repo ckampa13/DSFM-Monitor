@@ -28,12 +28,16 @@ DS_car = get_df_interp_func(filename=datadir+'Mu2e_DSMap_V13.p',
 
 
 # measurement noise for field values
-sigma_Bi = 0.
-#sigma_Bi = 1e-4
+# sigma_Bi = 0.
+# sigma_NMR = 0.
+
+sigma_Bi = 1e-4
+sigma_NMR = 5e-6
 
 # solenoid current
 current_PS = 9200.
-current_TS = 1730.
+current_TSu = 1730.
+current_TSd = 1730.
 current_DS = 6114.
 
 sigma_current = 0.
@@ -202,6 +206,8 @@ def return_row(time, Z_ind, Phi_ind, ):
     B_NMR = np.linalg.norm(DS_car([X_NMR, Y_NMR, Zs_NMR[Z_ind]]))
     if B_NMR < 0.7: # NMR cutoff
         B_NMR = 0.0
+    if sigma_NMR > 0.:
+        B_NMR += np.random.normal(loc=0.0, scale=sigma_NMR)
     row['B_NMR'] = B_NMR
     # Hall probes
     # small propeller
@@ -318,14 +324,17 @@ def return_row(time, Z_ind, Phi_ind, ):
     # current
     if sigma_current > 0.:
         c_PS = current_PS + np.random.normal(loc=0.0, scale=sigma_current)
-        c_TS = current_TS + np.random.normal(loc=0.0, scale=sigma_current)
+        c_TSu = current_TSu + np.random.normal(loc=0.0, scale=sigma_current)
+        c_TSd = current_TSd + np.random.normal(loc=0.0, scale=sigma_current)
         c_DS = current_DS + np.random.normal(loc=0.0, scale=sigma_current)
     else:
         c_PS = current_PS
-        c_TS = current_TS
+        c_TSu = current_TSu
+        c_TSd = current_TSd
         c_DS = current_DS
     row['PS_Current'] = c_PS
-    row['TS_Current'] = c_TS
+    row['TSu_Current'] = c_TSu
+    row['TSd_Current'] = c_TSd
     row['DS_Current'] = c_DS
     return row
 
@@ -360,9 +369,10 @@ if __name__ == '__main__':
     # testfile_version = "3"
     # testfile_version = "4"
     #testfile_version = "5"
-    testfile_version = "6"
-    # noise = "1e-4_noise"
-    noise = "no_noise"
+    # testfile_version = "6"
+    testfile_version = "7"
+    noise = "1e-4_noise"
+    # noise = "no_noise"
     df_EMMA.to_pickle(datadir+f'DSFM_test_data_{noise}_v{testfile_version}.pkl')
     df_EMMA.to_csv(datadir+f'DSFM_test_data_{noise}_v{testfile_version}.csv')
 
