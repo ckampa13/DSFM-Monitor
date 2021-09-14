@@ -91,7 +91,7 @@ while livedata == True:
             'HP_SP2_Vy' : new_array[27], 'HP_SP2_Vz' : new_array[26], 'HP_SP2_Temperature' : new_array[19], 'HP_SP2_Bx_Meas' : new_array[22], 'HP_SP2_By_Meas' : new_list[21], 'HP_SP2_Bz_Meas' : new_array[20], 'HP_SP2_Bz': new_array[25],
             'HP_SP2_Br' : new_array[23], 'HP_SP2_Bphi' : new_array[24], 'HP_SP3_ID' : new_array[52], 'HP_SP3_X' : new_array[49], 'HP_SP3_Y' : new_array[48], 'HP_SP3_Z' : new_array[47], 'HP_SP3_Vx' : new_array[46],
             'HP_SP3_Vy' : new_array[45], 'HP_SP3_Vz' : new_array[44], 'HP_SP3_Temperature' : new_array[37], 'HP_SP3_Bx_Meas' : new_array[40], 'HP_SP3_By_Meas' : new_array[39], 'HP_SP3_Bz_Meas' : new_array[38], 'HP_SP3_Bz': new_array[43],
-            'HP_SP3_Br' : new_array[41], 'HP_SP3_Bphi' : new_array[42], 'HP_BP1_ID' : new_array[70], 'HP_BP1_X' : new_array[66], 'HP_BP1_Y' : new_array[65], 'HP_BP1_Z' : new_array[64], 'HP_BP1_Vx' : new_array[64],
+            'HP_SP3_Br' : new_array[41], 'HP_SP3_Bphi' : new_array[42], 'HP_BP1_ID' : new_array[70], 'HP_BP1_X' : new_array[66], 'HP_BP1_Y' : new_array[67], 'HP_BP1_Z' : new_array[65], 'HP_BP1_Vx' : new_array[64],
             'HP_BP1_Vy' : new_array[63], 'HP_BP1_Vz' : new_array[62], 'HP_BP1_Temperature' : new_array[55], 'HP_BP1_Bx_Meas' : new_array[58], 'HP_BP1_By_Meas' : new_array[57], 'HP_BP1_Bz_Meas' : new_array[56], 'HP_BP1_Bz': new_array[61], 'HP_BP1_Br' : new_array[59],
             'HP_BP1_Bphi' : new_array[60],'HP_BP2_ID' : new_array[88], 'HP_BP2_X' : new_array[85],'HP_BP2_Y' : new_array[84], 'HP_BP2_Z' : new_array[83], 'HP_BP2_Vx' : new_array[82], 'HP_BP2_Vy' : new_array[81], 'HP_BP2_Vz' : new_array[80],
             'HP_BP2_Temperature' : new_array[73], 'HP_BP2_Bx_Meas' : new_array[75], 'HP_BP2_By_Meas' : new_array[75], 'HP_BP2_Bz_Meas' : new_array[74], 'HP_BP2_Bz': new_array[79], 'HP_BP2_Br' : new_array[77], 'HP_BP2_Bphi' : new_array[78],'HP_BP3_ID' : new_array[106],
@@ -214,7 +214,7 @@ while livedata == True:
          #df["TIMESTAMP"] = pd.to_datetime(df["TIMESTAMP"].astype(str))
          print(dict_halls['TIMESTAMP'])
          df.to_pickle(filename)
-         time.sleep(10)
+         time.sleep(6)
 
 
 

@@ -125,10 +125,10 @@ app.layout = html.Div([
         html.H1(children = 'State of the FMS')])]),
         dcc.Interval(
             id='interval-component',
-            interval=5*1000,
+            interval=4*1000,
             n_intervals = 0
         ),
-        html.Div([html.Img(src='data:image/png;base64,{}'.format(encoded_probes.decode()))], className="four columns"),
+        html.Div([html.Img(src='data:image/png;base64,{}'.format(encoded_probes.decode()), style={'height':'80%'} )], className="four columns"),
         html.Div([  # html.H3(children = 'Hall Probe Status Datatable'),
         dash_table.DataTable(
             id='table-magnet',
@@ -445,8 +445,8 @@ def update_layout3(interval):
         paper_bgcolor='rgba(0,0,0,0)',
         plot_bgcolor='rgba(0,0,0,0)'
     )
-    # figimg.update_layout(yaxis={'visible': False, 'showticklabels': False},
-    #                      xaxis={'visible': False, 'showticklabels': False})
+    figimg.update_layout(yaxis={'visible': False, 'showticklabels': False},
+                        xaxis={'visible': False, 'showticklabels': False})
 
     figimg.update_layout(uirevision='constant')
     return figimg
@@ -516,4 +516,4 @@ def update_mapperplot(n):
 
 #Running the dashboard
 if __name__ == "__main__":
-    app.run_server(host='0.0.0.0', debug=True, port=8070)
+    app.run_server(host='0.0.0.0', debug= True, port=8070)

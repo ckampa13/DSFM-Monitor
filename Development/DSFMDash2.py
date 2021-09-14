@@ -12,7 +12,7 @@ from mapinterp import get_df_interp_func
 import os
 from dash.dependencies import Input, Output
 from datetime import datetime, timedelta
-
+from plotly.subplots import make_subplots
 
 def load_Bfield(dataframe):
     df_raw = dataframe
@@ -161,6 +161,14 @@ app.layout = html.Div([
             {'label': 'Bphi', 'value': 'Bphi'}
         ], value = 'Bz'
     ),
+    dcc.Dropdown(
+        id='field-values-dropdown',
+        options=[
+            {'label': 'Bz', 'value': 'Bz'},
+            {'label': 'Br', 'value': 'Br'},
+            {'label': 'Bphi', 'value': 'Bphi'},
+        ], value = 'Bz'
+    ),
 
    # ]),
 
@@ -204,7 +212,7 @@ app.layout = html.Div([
         html.Div([
                 html.H3('Histogram of Br'),
                 dcc.Graph(id='histogram-of-br')],
-                className="six columns"),], ),
+                className="six columns"),], className = "row", ),
         html.Div([
         html.Div([
                 html.H3('Histogram of Bx'),
@@ -213,21 +221,23 @@ app.layout = html.Div([
         html.Div([
                 html.H3('Histogram of By'),
                 dcc.Graph(id='histogram-of-by')],
-                className="six columns"),], ),
+                className="six columns"),], className = "row", ),
         html.Div([
         html.Div([
                 html.H3('Histogram of B_NMR'),
                 dcc.Graph(id='histogram-of-bnmr')],
-                className="six columns"),]),
+                className="six columns"),],className = "row",),
+
+
         html.Div([
         html.Div([
-               html.H3('Plot of Expected 3D contour'),
+               html.H3('Plot of Expected 3D Contour'),
                 dcc.Graph(id='display-contour')
             ], className="six columns"),
         html.Div([
-               html.H3('Plot of 2D Contour Measured values'),
+               html.H3('Plot of 2D Contour Measured Values'),
             dcc.Graph(id='display-contour2D')
-            ], className="six columns"),]),
+            ], className="six columns"),], className = "row",),
 
 
 
@@ -247,6 +257,7 @@ def update_output1(input_probe, input_value, n_intervals, time):
     now = df_raw['TIMESTAMP'].iloc[-1]
     min_time = now - timedelta(minutes)
     df_time = df_raw.query(f'TIMESTAMP > "{min_time}"')
+    df_time['B_error'] = 1e-4
 
     #time = -1*int(time)  #Throwing a NoneType error with the time variable--fix!
     hall_probe = input_probe
@@ -255,24 +266,38 @@ def update_output1(input_probe, input_value, n_intervals, time):
     measured_field = df_time[f'HP_{hall_probe}_{field_value}']
     measured_field = measured_field.astype(np.float)
     #numb = len(measured_field)
-    #number = len(df_time)
+    number = len(measured_field)
     #z_value = df_time['Z'][0]
     #time0 = df_time[0]
     #time1 = df_time[-1]
     #df_expected_time = df_expected.query(f'Z >= "{z_value}"')    #df_expected.query(f'"{time0}" <= TIMESTAMP <= "{time1}"')
 
-    expected_field = df_expected[f'HP_{hall_probe}_{field_value}'][:]   #[:number]  #[:numb]
+    expected_field = df_expected[f'HP_{hall_probe}_{field_value}'][:number]   #[:number]  #[:numb]
+
     #expected_field = expected_field.astype(np.float)
 
-    #timestamp = df_expected['TIMESTAMP'][-1:time]
+    timestamp = df_expected['TIMESTAMP'][:number]
 
-    fig1 = px.line(df_expected, x='TIMESTAMP', y = expected_field)
+    fig1 = px.line(df_expected, x= timestamp, y = expected_field)
     fig1.update_traces(marker=dict(
         color='red'))
-    fig2 = px.scatter(df_time, x='TIMESTAMP', y = measured_field)
+    fig2 = px.scatter(df_time, x='TIMESTAMP', y = measured_field, error_y = 'B_error')
     fig2.update_traces(marker=dict(
         color='black'))
-    fig3 = go.Figure(data = fig1.data + fig2.data)
+    #fig3 = go.Figure(data = fig1.data + fig2.data)
+    scatter = go.Scatter(
+        x=df_time['TIMESTAMP'],
+        y=measured_field,
+        mode = 'markers',
+        error_y=
+        dict(
+            type='constant',  # value of error bar given as percentage of y value
+            value= 1e-4,
+            visible=True))
+    line = go.Line(x= df_expected['TIMESTAMP'][:number],y=expected_field, mode= 'lines+markers')
+    fig3 = make_subplots(specs=[[{"secondary_y": True}]])
+    fig3.add_trace(scatter)
+    fig3.add_trace(line, secondary_y=True)
     #fig1.update_traces(marker=dict(color='purple'))
     fig3.update_xaxes(
             tickangle = 60,
@@ -286,6 +311,7 @@ def update_output1(input_probe, input_value, n_intervals, time):
         title_standoff=25)
     names = cycle(['Expected Value', 'Measured Value'])
     fig3.for_each_trace(lambda t: t.update(name=next(names)))
+    fig3.update_layout(uirevision='constant')
     return  fig3
 
 #Callback for delta
@@ -323,9 +349,10 @@ def update_output6(input_probe, input_value, n_intervals):
     Output('display-contour', 'figure'),
     [Input('probe-dropdown', 'value'),
      Input('value-dropdown', 'value'),
-     Input('interval-component', 'n_intervals')])
-def update_outputcontour2(input_probe, input_value, input_intervals):
+     Input('interval-component', 'n_intervals'), Input('field-values-dropdown', 'value')])
+def update_outputcontour2(input_probe, input_value, input_intervals, field):
     df = pd.read_pickle("/home/shared_data/Bmaps/Mu2e_DSMap_V13.p")
+    field_value = field
     for coord in ['x', 'y', 'z', 'r', 'phi']:
         df.eval(f"B{coord} = B{coord} / 10000", inplace=True)
     df_plane = df.query('(Y==0.) & (R < 0.8) & (4. < Z < 14.)')
@@ -333,16 +360,16 @@ def update_outputcontour2(input_probe, input_value, input_intervals):
     Lx = len(df_plane['X'].unique())
     x = df_plane['Z'].values.reshape(Lx, Lz)
     y = df_plane['X'].values.reshape(Lx, Lz)
-    z = df_plane['Bz'].values.reshape(Lx, Lz)
+    z = df_plane[f'{field_value}'].values.reshape(Lx, Lz)
     fig = go.Figure(data=[go.Surface(z=z, x=x, y=y, colorscale='Viridis', colorbar=dict(title='Bz [T]'))])
-    fig.update_layout(title='Bz vs. X,Z for Y==0', autosize=False,
+    fig.update_layout(title=f'{field_value} vs. X,Z for Y==0', autosize=False,
                       width=500, height=500,
                       margin=dict(l=65, r=50, b=65, t=90))
     fig.update_layout(
         scene=dict(
             xaxis=dict(title='Z [m]'),
             yaxis=dict(title='X [m]'),
-            zaxis=dict(title='Bz [Gauss]'),
+            zaxis=dict(title='Bz [T]'),
             aspectratio=dict(x=2, y=1, z=1),
             aspectmode='manual',
         )
@@ -373,6 +400,7 @@ def update_outputcontour2(input_probe, input_value, input_intervals):
     fig = go.Figure(data = [go.Surface(x = expected_Z, y= expected_X, z=expected)])
     #fig = px.density_contour(df_expected, x = expected_Z, y=expected_X, z = expected_Bz)
     '''
+    fig.update_layout(uirevision='constant')
     return fig
 
 ## 2D Contour plot of measured data
@@ -380,12 +408,13 @@ def update_outputcontour2(input_probe, input_value, input_intervals):
     Output('display-contour2D', 'figure'),
     [Input('probe-dropdown', 'value'),
      Input('value-dropdown', 'value'),
-     Input('interval-component', 'n_intervals')])
+     Input('interval-component', 'n_intervals'),Input('field-values-dropdown', 'value') ])
 
-def update_outputcontour1(input_probe, input_value, input_intervals):
+def update_outputcontour1(input_probe, input_value, input_intervals, field):
     original = load_data("liveupdates.pkl")
     hall_probe = input_probe
     field_value = input_value
+    fieldB = field
     df  = load_Bfield(original)
     '''
     for coord in ['X', 'Y', 'Z', 'r', 'phi']:
@@ -397,9 +426,9 @@ def update_outputcontour1(input_probe, input_value, input_intervals):
     #if Lz % 2 == 0 and Lx % 2 == 0:
     x = df_plane['Z']    #.values.reshape(Lx, Lz)
     y = df_plane['X']    #.values.reshape(Lx, Lz)
-    z = df_plane['Bz']    #.values.reshape(Lx, Lz)
+    z = df_plane[f'{fieldB}']    #.values.reshape(Lx, Lz)
     fig = go.Figure(data=[go.Contour(z=z, x=x, y=y, colorscale='Viridis', colorbar=dict(title='Bz [T]'))])
-    fig.update_layout(title='Bz vs. X,Z for Y==0', autosize=False,
+    fig.update_layout(title=f'{fieldB} vs. X,Z for Y==0', autosize=False,
                       width=500, height=500,
                       margin=dict(l=65, r=50, b=65, t=90))
     #else:
@@ -417,22 +446,23 @@ def update_outputcontour1(input_probe, input_value, input_intervals):
     #fig = go.Figure(data = [go.Surface(x = expected_X, y= expected_Z, z=expected)])
     #data = [{ 'x' : X, 'y' :Z, 'z' : expected}]
     #fig = py.plot(data, filename ='liveupdates.pkl')
-    fig = px.density_contour(df_expected, x = f'HP_{hall_probe}_Z', y = f'HP_{hall_probe}_X', z = f'HP_{hall_probe}_Bz')
-    '''
+    fig = px.density_contour(df_expected, x = f'HP_{hall_probe}_Z', y = f'HP_{hall_probe}_X', z = f'HP_{hall_probe}_Bz')'''
+    fig.update_layout(uirevision='constant')
+
     return fig
 
 
 
 ## 3D interpolation, minus - expected feild
 
-@app.callback(
-    Output('display-contour-delta', 'figure'),
-    [Input('probe-dropdown', 'value'),
-     Input('value-dropdown', 'value'),
-     Input('interval-component', 'n_intervals')])
-def update_outputcontour(input_probe, input_value, input_intervals):
+#@app.callback(
+    #Output('display-contour-delta', 'figure'),
+    #[Input('probe-dropdown', 'value'),
+     #Input('value-dropdown', 'value'),
+     #Input('interval-component', 'n_intervals')])
+#def update_outputcontour(input_probe, input_value, input_intervals):
 
-    return {'layout': go.Layout(height=700)}
+    #return {'layout': go.Layout(height=700)}
     '''
     df = df_interpolated# pd.read_pickle("/home/shared_data/Bmaps/Mu2e_DSMap_V13.p")
     for coord in ['x', 'y', 'z', 'r', 'phi']:
@@ -499,6 +529,7 @@ def update_output2(input_probe, n_intervals):
         #title_font={"size": 20},
         #title_standoff=25)
     fig4.update_traces(alignmentgroup=0, selector=dict(type='histogram'))
+    fig4.update_layout(uirevision='constant')
     return fig4
 
 ##Histogram of Br
@@ -528,6 +559,7 @@ def update_output3(input_probe, n_intervals):
         #title_font={"size": 20},
         #title_standoff=25)
     fig5.update_traces(alignmentgroup=0, selector=dict(type='histogram'))
+    fig5.update_layout(uirevision='constant')
     return fig5
 ##Histogram of Bx
 
@@ -558,6 +590,7 @@ def update_output4(input_probe, n_intervals):
         #title_font={"size": 20},
         #title_standoff=25)
     fig6.update_traces(alignmentgroup=0, selector=dict(type='histogram'))
+    fig6.update_layout(uirevision='constant')
     return fig6
 
 ##Histogram of By
@@ -586,6 +619,7 @@ def update_output5(input_probe, n_intervals):
         #title_font={"size": 20},
         #title_standoff=25)
     fig7.update_traces(alignmentgroup=0, selector=dict(type='histogram'))
+    fig7.update_layout(uirevision='constant')
     return fig7
 
 #Histogram of B_NMR
@@ -614,7 +648,8 @@ def update_output6(input_probe, n_intervals):
         #title_font={"size": 20},
         #title_standoff=25)
     fig8.update_traces(alignmentgroup=0, selector=dict(type='histogram'))
+    fig8.update_layout(uirevision='constant')
     return fig8
 
 if __name__ == "__main__":
-    app.run_server(host='0.0.0.0', debug=True, port=8030)
+    app.run_server(host='0.0.0.0', debug= True, port=8030)
