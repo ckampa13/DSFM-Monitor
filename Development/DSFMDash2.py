@@ -309,7 +309,7 @@ def update_output1(input_probe, input_value, n_intervals, time):
         title_text=f"{field_value}",
         title_font={"size": 20},
         title_standoff=25)
-    names = cycle(['Expected Value', 'Measured Value'])
+    names = cycle(['Measured Value', 'Expected Value'])
     fig3.for_each_trace(lambda t: t.update(name=next(names)))
     fig3.update_layout(uirevision='constant')
     return  fig3
