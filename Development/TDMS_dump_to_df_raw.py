@@ -42,29 +42,40 @@ print(map_dict)
 
 # loop through mapping dictionary
 df_raw_dict = {}
+
+
 for key in map_dict.keys():
-    item =  map_dict[key]
-    if item[0] in df.columns:
-        if item[2] == True:
-            df[item[0]] = df[item[0]].astype[float]
+    item =  map_dict[key] #get item
+    if item[0] in df.columns: #check if column exists
+        if item[1] == True: #check condition to convert to float or not
+            df[item[0]] = df[item[0]].astype(float)
             #df_raw_dict[key] = df[item[0]]
             df_raw_dict.update({key: df[item[0]]})
-        if item[2] == False:
+        else:
             df_raw_dict.update({key: df[item[0]]})
           #       df_raw_dict[key] = df[item[0]]
 
-    else:
-        print(f"not found {key}")
+    else: #make new array with bad values
+        length = df.index[-1]
+        replacement = np.full(shape = [length,1], fill_value = item[2], dtype = float)
+        df_raw_dict.update({key: replacement})
+
+        #numpy array with item[2]
+        #print(f"not found {key}")
 
 #for checking the column names
-for value in df.columns:
-    if 'Mapper' in value:
-        print(value)
-print(df_raw_dict)
+#for value in df.columns:
+    #if 'Mapper' in value:
+        #print(value)
+#print(df_raw_dict)
 
 
 # dataframe + pickle file
-df = pd.DataFrame(df_raw_dict)
+dff = pd.DataFrame(df_raw_dict)
+
+
+
+print(dff)
 df.to_pickle(filename2)
 
 
