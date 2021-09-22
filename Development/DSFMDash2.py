@@ -39,9 +39,9 @@ def load_Bfield(dataframe):
 # Framework for DSFM monitoring system Dash #2 page 1 aka Field Plots
 
 #for the soft link to data file
-#scriptdir = os.path.dirname(os.path.realpath(__file__))
-#datadir = os.path.join(scriptdir, '..', 'data/')
-datadir = '/home/shared_data/FMS_Monitor/'
+scriptdir = os.path.dirname(os.path.realpath(__file__))
+datadir = os.path.join(scriptdir, '..', 'data/')
+# datadir = '/home/shared_data/FMS_Monitor/'
 
 def load_data(filename):
     df_raw = pd.read_pickle(datadir + f"{filename}")
@@ -351,7 +351,7 @@ def update_output6(input_probe, input_value, n_intervals):
      Input('value-dropdown', 'value'),
      Input('interval-component', 'n_intervals'), Input('field-values-dropdown', 'value')])
 def update_outputcontour2(input_probe, input_value, input_intervals, field):
-    df = pd.read_pickle("/home/shared_data/Bmaps/Mu2e_DSMap_V13.p")
+    df = pd.read_pickle(datadir+"Mu2e_DSMap_V13.p")
     field_value = field
     for coord in ['x', 'y', 'z', 'r', 'phi']:
         df.eval(f"B{coord} = B{coord} / 10000", inplace=True)

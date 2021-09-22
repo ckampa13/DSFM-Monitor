@@ -10,8 +10,8 @@ from shutil import copyfile
 
 scriptdir = os.path.dirname(os.path.realpath(__file__))
 datadir = os.path.join(scriptdir, '..', 'data/')
-#filename = datadir + 'liveupdates.pkl'
-filename = '/home/shared_data/FMS_Monitor/liveupdates.pkl'
+filename = datadir + 'liveupdates.pkl'
+# filename = '/home/shared_data/FMS_Monitor/liveupdates.pkl'
 # with open(filename, 'rb') as file:
 #     variable_dict = pickle.load(file)
 livedata = True
@@ -19,8 +19,8 @@ livedata = True
 
 starttime = time.time()
 
-file_original = '/home/shared_data/FMS_Monitor/TestDataV2.tdms'
-file_copied = '/home/shared_data/FMS_Monitor/COPYTestDataV2.tdms'
+file_original = datadir+'TestDataV2.tdms'
+file_copied = datadir+'COPYTestDataV2.tdms'
 
 
 while livedata == True:

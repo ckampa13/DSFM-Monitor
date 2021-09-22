@@ -13,9 +13,12 @@ import os
 #import plotly_express as px
 import dash
 
+# directories and files
+scriptdir = os.path.dirname(os.path.realpath(__file__))
+datadir = os.path.join(scriptdir, '..', 'data/')
 
 #THIS IS TESTING FOR TDMS STUFF
-with TdmsFile.open("/home/shared_data/FMS_Monitor/TestDataV2.tdms") as tdms_file:
+with TdmsFile.open(datadir+"TestDataV2.tdms") as tdms_file:
 #
      all_groups = tdms_file.groups()
      #for group in tdms_file.groups():
@@ -89,7 +92,7 @@ with TdmsFile.open("../data/TestDataV2.tdms") as tdms_file:
 
 print(groupnamelist)
 '''
-datadir = '/home/shared_data/FMS_Monitor/'
+#datadir = '/home/shared_data/FMS_Monitor/'
 
 def load_data(filename):
     df_raw = pd.read_pickle(datadir + f"{filename}")
@@ -139,7 +142,7 @@ df_time = df_raw.query(f'TIMESTAMP > "{min_time}"')
 
 
 
-    
+
 measured_field = df_time[f'HP_SP1_Bz_Meas']
 measured_field = measured_field.astype(np.float)
 #numb = len(measured_field)

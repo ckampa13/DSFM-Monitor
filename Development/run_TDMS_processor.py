@@ -19,8 +19,14 @@ pklfile_processed = datadir + 'TDMS_processed.pkl'
 pklfile_raw = datadir + 'liveupdates.pkl'
 
 # PUT REAL TDMS FIILENAME HERE
-tdms_file_original = datadir + 'TestDataV2.tdms'
-tdms_file_copied = datadir + 'COPYTestDataV2.tdms'
+
+# normal EMMA simulator
+# tdms_file_original = datadir + 'TestDataV2.tdms'
+# tdms_file_copied = datadir + 'COPYTestDataV2.tdms'
+
+# missing data test
+tdms_file_original = datadir + 'TestDataV2_missing_data.tdms'
+tdms_file_copied = datadir + 'COPYTestDataV2_missing_data.tdms'
 
 # other globals
 default_group='step:1.1.1'
