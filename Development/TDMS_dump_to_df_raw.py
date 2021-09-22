@@ -29,6 +29,7 @@ def format_df_raw(df):
     map_dict.update({f"HP_{probe}_Temperature":[f"HallProbes_Temperature_{probe}", True, -100] for probe in probes})
     map_dict.update({f"HP_{probe}_Address":[f"HallProbes_Address_{probe}", False, -100] for probe in probes})
     map_dict.update({f"HP_{probe}_Status":[f"HallProbes_Status_{probe}", False, -100] for probe in probes})
+    map_dict.update({f"HP_{probe}_ID":[f"HallProbes_Sensor.ID_{probe}", False, -100] for probe in probes})
     #map_dict.update({f"HP_{probe}_Sensor.name":[f"HallProbes_Sensor.name_{probe}", False, -100] for probe in probes})
     map_dict.update({f"TIMESTAMP":[f"HallProbes_Timestamp_SP1", False, -100]})
     map_dict.update({f"PS_Current":["Current_PS_Current", True, -100]})
@@ -61,6 +62,9 @@ def format_df_raw(df):
             df_raw_dict.update({key: replacement})
         #dff = pd.DataFrame(df_raw_dict)
     dff = pd.DataFrame(df_raw_dict)
+    # convert TIMESTAMP to datetime if we didn't use the default value
+    if dff['TIMESTAMP'].iloc[0] != map_dict['TIMESTAMP'][2]:
+        dff["TIMESTAMP"] = pd.to_datetime([str(i) for i in dff["TIMESTAMP"]])
     # debugging
     # try:
     #     dff = pd.DataFrame(df_raw_dict)
