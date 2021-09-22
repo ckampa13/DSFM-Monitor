@@ -8,7 +8,7 @@ from nptdms import TdmsFile
 # import from each step in the processing
 from TDMS_check import find_default_structure, check_group_structure
 from TDMS_dump import process_step_channel, make_TDMS_dump
-# imports from Lillie
+from TDMS_dump_to_df_raw import format_df_raw
 
 # directories and files
 scriptdir = os.path.dirname(os.path.realpath(__file__))
@@ -25,8 +25,13 @@ tdms_file_copied = datadir + 'COPYTestDataV2.tdms'
 # other globals
 default_group='step:1.1.1'
 time_delay = 5. # seconds
+# pseudo-delay (only if we get full TDMS file and want to pretend it's live)
+pseudo_delay = 0. # seconds
 
 # FIXME! see below
+# this is a dumb object to add a "name" attribute, converted from a string.
+# the current processing funtions (TDMS_dump.py) assume "group" and "channel"
+# are objects in nptdms, and grabs the "name" attribute
 class NAME_OBJ(object):
     def __init__(self, string):
         self.name = string
@@ -84,22 +89,18 @@ if __name__ == '__main__':
                     data_list.append(data_dict)
                     # update list of processed groups
                     processed_groups.append(group_str)
+                # pseudo delay
+                time.sleep(pseudo_delay)
         # create dataframes and save pickles
         df_struct = pd.DataFrame(struct_list)
         df_dump = pd.DataFrame(data_list)
         df_processed = pd.DataFrame({'group': processed_groups})
+        df_raw = format_df_raw(df_dump)
         # pickle
         df_struct.to_pickle(pklfile_structure)
         df_dump.to_pickle(pklfile_dump)
         df_processed.to_pickle(pklfile_processed)
-        # CONVERT TO df_raw HERE? (Lillie)
-        '''
-        if df_raw is None:
-            df_raw = dump_to_raw_df(df_dump)
-        else:
-            df_raw.append(dump_to_raw_df(df_dump), ignore_index=True)
         df_raw.to_pickle(pklfile_raw)
-        '''
 
         # pause
         time.sleep(time_delay)
