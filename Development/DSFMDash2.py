@@ -39,9 +39,9 @@ def load_Bfield(dataframe):
 # Framework for DSFM monitoring system Dash #2 page 1 aka Field Plots
 
 #for the soft link to data file
-#scriptdir = os.path.dirname(os.path.realpath(__file__))
-#datadir = os.path.join(scriptdir, '..', 'data/')
-datadir = '/home/shared_data/FMS_Monitor/'
+scriptdir = os.path.dirname(os.path.realpath(__file__))
+datadir = os.path.join(scriptdir, '..', 'data/')
+# datadir = '/home/shared_data/FMS_Monitor/'
 
 def load_data(filename):
     df_raw = pd.read_pickle(datadir + f"{filename}")
@@ -257,6 +257,7 @@ def update_output1(input_probe, input_value, n_intervals, time):
     now = df_raw['TIMESTAMP'].iloc[-1]
     min_time = now - timedelta(minutes)
     df_time = df_raw.query(f'TIMESTAMP > "{min_time}"')
+    df_expected = df_expected.query(f'TIMESTAMP > "{min_time}"')
     df_time['B_error'] = 1e-4
 
     #time = -1*int(time)  #Throwing a NoneType error with the time variable--fix!
@@ -272,11 +273,13 @@ def update_output1(input_probe, input_value, n_intervals, time):
     #time1 = df_time[-1]
     #df_expected_time = df_expected.query(f'Z >= "{z_value}"')    #df_expected.query(f'"{time0}" <= TIMESTAMP <= "{time1}"')
 
-    expected_field = df_expected[f'HP_{hall_probe}_{field_value}'][:number]   #[:number]  #[:numb]
+    ##expected_field = df_expected[f'HP_{hall_probe}_{field_value}'][:number]   #[:number]  #[:numb]
+    expected_field = df_expected[f'HP_{hall_probe}_{field_value}']
 
     #expected_field = expected_field.astype(np.float)
 
-    timestamp = df_expected['TIMESTAMP'][:number]
+    # timestamp = df_expected['TIMESTAMP'][:number]
+    timestamp = df_expected['TIMESTAMP']
 
     fig1 = px.line(df_expected, x= timestamp, y = expected_field)
     fig1.update_traces(marker=dict(
@@ -295,9 +298,11 @@ def update_output1(input_probe, input_value, n_intervals, time):
             value= 1e-4,
             visible=True))
     line = go.Line(x= df_expected['TIMESTAMP'][:number],y=expected_field, mode= 'lines+markers')
-    fig3 = make_subplots(specs=[[{"secondary_y": True}]])
+    #fig3 = make_subplots(specs=[[{"secondary_y": True}]])
+    fig3 = make_subplots(specs=[[{"secondary_y": False}]])
     fig3.add_trace(scatter)
-    fig3.add_trace(line, secondary_y=True)
+    #fig3.add_trace(line, secondary_y=True)
+    fig3.add_trace(line, secondary_y=False)
     #fig1.update_traces(marker=dict(color='purple'))
     fig3.update_xaxes(
             tickangle = 60,
@@ -351,7 +356,7 @@ def update_output6(input_probe, input_value, n_intervals):
      Input('value-dropdown', 'value'),
      Input('interval-component', 'n_intervals'), Input('field-values-dropdown', 'value')])
 def update_outputcontour2(input_probe, input_value, input_intervals, field):
-    df = pd.read_pickle("/home/shared_data/Bmaps/Mu2e_DSMap_V13.p")
+    df = pd.read_pickle(datadir+"Mu2e_DSMap_V13.p")
     field_value = field
     for coord in ['x', 'y', 'z', 'r', 'phi']:
         df.eval(f"B{coord} = B{coord} / 10000", inplace=True)

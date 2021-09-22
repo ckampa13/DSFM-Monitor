@@ -13,9 +13,9 @@ from PIL import Image
 from dash.dependencies import Input, Output
 
 #opening the pickle file
-#scriptdir = os.path.dirname(os.path.realpath(__file__))
-#datadir = os.path.join(scriptdir, '..', 'data/')
-datadir = '/home/shared_data/FMS_Monitor/'
+scriptdir = os.path.dirname(os.path.realpath(__file__))
+datadir = os.path.join(scriptdir, '..', 'data/')
+# datadir = '/home/shared_data/FMS_Monitor/'
 #df_raw = pd.read_pickle(datadir + "liveupdates.pkl")
 
 def load_data(filename):
@@ -109,7 +109,8 @@ encoded_probes = base64.b64encode(open(probes, 'rb').read())
 
 z_loc = 400
 df_FMS.to_dict('records')
-datadir2 = r'/home/shared_data/FMS_Monitor/'
+# datadir2 = r'/home/shared_data/FMS_Monitor/'
+datadir2 = datadir
 #load images
 img_coil = Image.open(datadir2 + 'coils.png')
 img_mapper = Image.open(datadir2 + 'DSFM_YZ_sketch.png')
@@ -491,8 +492,10 @@ def update_mapperplot(n):
     ))
     figimgpropeller.add_layout_image(dict(
         source=img,
-        x=0.74,
-        y=0.03,
+        # x=0.74,
+        x=0.745,
+        # y=0.03,
+        y=0.0,
     )
     )
     figimgpropeller.update_layout_images(dict(

@@ -5,8 +5,9 @@ import numpy as np
 import os
 import time
 
-
-
+# directories and files
+scriptdir = os.path.dirname(os.path.realpath(__file__))
+datadir = os.path.join(scriptdir, '..', 'data/')
 
 def format_df_raw(df):
     # first dictionary with list comprehensions
@@ -28,6 +29,7 @@ def format_df_raw(df):
     map_dict.update({f"HP_{probe}_Temperature":[f"HallProbes_Temperature_{probe}", True, -100] for probe in probes})
     map_dict.update({f"HP_{probe}_Address":[f"HallProbes_Address_{probe}", False, -100] for probe in probes})
     map_dict.update({f"HP_{probe}_Status":[f"HallProbes_Status_{probe}", False, -100] for probe in probes})
+    map_dict.update({f"HP_{probe}_ID":[f"HallProbes_Sensor.ID_{probe}", False, -100] for probe in probes})
     #map_dict.update({f"HP_{probe}_Sensor.name":[f"HallProbes_Sensor.name_{probe}", False, -100] for probe in probes})
     map_dict.update({f"TIMESTAMP":[f"HallProbes_Timestamp_SP1", False, -100]})
     map_dict.update({f"PS_Current":["Current_PS_Current", True, -100]})
@@ -49,16 +51,26 @@ def format_df_raw(df):
             if item[1] == True: #check condition to convert to float or not
                 df[item[0]] = df[item[0]].astype(float)
                 #df_raw_dict[key] = df[item[0]]
-                df_raw_dict.update({key: df[item[0]]})
-            else:
-                df_raw_dict.update({key: df[item[0]]})
+            df_raw_dict.update({key: df[item[0]]})
               #       df_raw_dict[key] = df[item[0]]
 
         else: #make new array with bad values
-            length = df.index[-1]
-            replacement = np.full(shape = [length,1], fill_value = item[2], dtype = float)
+            #length = df.index[-1]
+            length = len(df)
+            #replacement = np.full(shape = [length,1], fill_value = item[2], dtype = float)
+            replacement = item[2]*np.ones(length)
             df_raw_dict.update({key: replacement})
-        dff = pd.DataFrame(df_raw_dict)
+        #dff = pd.DataFrame(df_raw_dict)
+    dff = pd.DataFrame(df_raw_dict)
+    # convert TIMESTAMP to datetime if we didn't use the default value
+    if dff['TIMESTAMP'].iloc[0] != map_dict['TIMESTAMP'][2]:
+        dff["TIMESTAMP"] = pd.to_datetime([str(i) for i in dff["TIMESTAMP"]])
+    # debugging
+    # try:
+    #     dff = pd.DataFrame(df_raw_dict)
+    # except Exception as e:
+    #     print(df_raw_dict)
+    #     print(e)
     return dff
         #numpy array with item[2]
         #print(f"not found {key}")
@@ -76,8 +88,8 @@ def format_df_raw(df):
 print("TDMS_dump_to_df_raw __name__ is set to: {}" .format(__name__))
 
 while __name__ == '__main__' :
-    filename = '/home/shared_data/FMS_Monitor/TDMS_dump.pkl'
-    filename2 = '/home/shared_data/FMS_Monitor/liveupdates.pkl'
+    filename = datadir+'TDMS_dump.pkl'
+    filename2 = datadir+'liveupdates.pkl'
     df = pd.read_pickle(filename)
 
     dff = format_df_raw(df)
