@@ -15,13 +15,16 @@ from dash.dependencies import Input, Output
 #opening the pickle file
 scriptdir = os.path.dirname(os.path.realpath(__file__))
 datadir = os.path.join(scriptdir, '..', 'data/')
+pklfile_raw = 'liveupdates.pkl'
+# pklfile_raw = 'IntegrationTests/liveupdates.pkl'
+
 # datadir = '/home/shared_data/FMS_Monitor/'
 #df_raw = pd.read_pickle(datadir + "liveupdates.pkl")
 
 def load_data(filename):
     df_raw = pd.read_pickle(datadir + f"{filename}")
     return df_raw
-df_raw = load_data("liveupdates.pkl")
+df_raw = load_data(pklfile_raw)
 
 #formatting new dataframes
 
@@ -319,7 +322,7 @@ app.layout = html.Div([
      Input('interval-component', 'n_intervals')])
 def update_output1(value, interval):
 
-    df_raw = load_data("liveupdates.pkl")
+    df_raw = load_data(pklfile_raw)
 
     hall_probe = value
 
@@ -346,7 +349,7 @@ def update_output1(value, interval):
     [Input('demo-dropdown', 'value'),
      Input('interval-component', 'n_intervals')])
 def update_layout2(value, interval):
-    df_raw = load_data("liveupdates.pkl")
+    df_raw = load_data(pklfile_raw)
 
     hall_probe = value
 
@@ -365,7 +368,7 @@ def update_layout2(value, interval):
     dash.dependencies.Output('display-selected-values3', 'figure'),
     [dash.dependencies.Input('demo-dropdown', 'value'), dash.dependencies.Input('interval-component', 'n_intervals')])
 def update_layout3(value, interval):
-    df_raw = load_data("liveupdates.pkl")
+    df_raw = load_data(pklfile_raw)
 
 
     hall_probe = value
@@ -385,7 +388,7 @@ def update_layout3(value, interval):
     dash.dependencies.Output('display-selected-values4', 'figure'),
     [dash.dependencies.Input('demo-dropdown', 'value'), dash.dependencies.Input('interval-component', 'n_intervals')])
 def update_layout3(value, interval):
-    df_raw = load_data("liveupdates.pkl")
+    df_raw = load_data(pklfile_raw)
 
     hall_probe = value
     fig4 = px.scatter(df_raw, x='TIMESTAMP', y= f'HP_{hall_probe}_Temperature')
@@ -404,7 +407,7 @@ def update_layout3(value, interval):
     [dash.dependencies.Input('interval-component', 'n_intervals')])
 def update_layout3(interval):
     # plot coils
-    df_raw = load_data("liveupdates.pkl")
+    df_raw = load_data(pklfile_raw)
     #figimg = go.Figure()
     figimg = px.imshow(img_coil)
     #z_loc = df_raw['Mapper_Z'].iloc[-1].split('.')
@@ -457,7 +460,7 @@ def update_layout3(interval):
     dash.dependencies.Output('table', 'data'),
     [dash.dependencies.Input('interval-component', 'n_intervals')])
 def update_table(interval):
-    df_raw = load_data("liveupdates.pkl")
+    df_raw = load_data(pklfile_raw)
     df_FMS = load_FMS_df(df_raw) #edit
     data = df_FMS.to_dict('records')
     return data
@@ -466,7 +469,7 @@ def update_table(interval):
     dash.dependencies.Output('table-magnet', 'data'),
     [dash.dependencies.Input('interval-component', 'n_intervals')])
 def update_table(interval):
-    df_raw = load_data("liveupdates.pkl")
+    df_raw = load_data(pklfile_raw)
     df = load_magnet_df(df_raw) #edit
     data = df.to_dict('records')
     return data
@@ -477,7 +480,7 @@ def update_table(interval):
     [dash.dependencies.Input('interval-component', 'n_intervals')]
 )
 def update_mapperplot(n):
-    df_raw = load_data("liveupdates.pkl")
+    df_raw = load_data(pklfile_raw)
     #figimgpropeller = px.imshow(img_xy)
     figimgpropeller = go.Figure()
     angle = float(df_raw['Mapper_Angle'].iloc[-1])

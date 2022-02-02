@@ -30,14 +30,20 @@ def process_channel_multiple_devices(tdms_file, group, channel, data_dict):
     data = tdms_file[group.name][channel.name][:]
     dict_temp = defaultdict(list)
     dict_temp = process_channel_general(tdms_file, group, channel, dict_temp)
+    # DEBUG
+    print(dict_temp)
     if channel.name == 'HallProbes':
         dev_key = 'HallProbes_Sensor.name'
+        # dev_key = 'Sensor.name'
     else:
-        dev_key = 'Measured Coordinates_Reflector ID'
+        # dev_key = 'Measured Coordinates_Reflector ID'
+        dev_key = f'{channel.name}_Reflector ID'
+        # dev_key = 'Reflector ID'
     devices = dict_temp[dev_key]
+    N_devices = len(devices)
     for index, device in enumerate(devices):
         for key, val in dict_temp.items():
-            if key != dev_key:
+            if (key != dev_key) and (len(val) == N_devices):
                 data_dict[f'{key}_{device}'].append(val[index])
     return data_dict
 

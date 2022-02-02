@@ -43,13 +43,16 @@ scriptdir = os.path.dirname(os.path.realpath(__file__))
 datadir = os.path.join(scriptdir, '..', 'data/')
 # datadir = '/home/shared_data/FMS_Monitor/'
 
+pklfile_raw = 'liveupdates.pkl'
+# pklfile_raw = 'IntegrationTests/liveupdates.pkl'
+
 def load_data(filename):
     df_raw = pd.read_pickle(datadir + f"{filename}")
     return df_raw
 
 
 #open datafile
-df_raw = load_data("liveupdates.pkl")
+df_raw = load_data(pklfile_raw)
 
 #write data frame for field plot
 
@@ -251,7 +254,7 @@ app.layout = html.Div([
 def update_output1(input_probe, input_value, n_intervals, time):
     #return {'layout': go.Layout(height=700)}
     minutes = int(time)
-    df_raw = load_data("liveupdates.pkl")
+    df_raw = load_data(pklfile_raw)
     df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
     # now = datetime.now()
     now = df_raw['TIMESTAMP'].iloc[-1]
@@ -326,7 +329,7 @@ def update_output1(input_probe, input_value, n_intervals, time):
      Input('value-dropdown', 'value'),
      Input('interval-component', 'n_intervals')])
 def update_output6(input_probe, input_value, n_intervals):
-    df_raw = load_data("liveupdates.pkl")
+    df_raw = load_data(pklfile_raw)
     df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
     hall_probe = input_probe
     field_value = input_value
@@ -416,7 +419,7 @@ def update_outputcontour2(input_probe, input_value, input_intervals, field):
      Input('interval-component', 'n_intervals'),Input('field-values-dropdown', 'value') ])
 
 def update_outputcontour1(input_probe, input_value, input_intervals, field):
-    original = load_data("liveupdates.pkl")
+    original = load_data(pklfile_raw)
     hall_probe = input_probe
     field_value = input_value
     fieldB = field
@@ -512,7 +515,7 @@ def update_outputcontour1(input_probe, input_value, input_intervals, field):
     [Input('probe-dropdown', 'value'),
      Input('interval-component', 'n_intervals')])
 def update_output2(input_probe, n_intervals):
-    df_raw = load_data("liveupdates.pkl")
+    df_raw = load_data(pklfile_raw)
     df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
     hall_probe = input_probe
     measured = df_raw[f'HP_{hall_probe}_Bz_Meas'].values
@@ -543,7 +546,7 @@ def update_output2(input_probe, n_intervals):
     [Input('probe-dropdown', 'value'),
      Input('interval-component', 'n_intervals')])
 def update_output3(input_probe, n_intervals):
-    df_raw = load_data("liveupdates.pkl")
+    df_raw = load_data(pklfile_raw)
     df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
     hall_probe = input_probe
     measured = df_raw[f'HP_{hall_probe}_Br'].values
@@ -573,7 +576,7 @@ def update_output3(input_probe, n_intervals):
     [Input('probe-dropdown', 'value'),
      Input('interval-component', 'n_intervals')])
 def update_output4(input_probe, n_intervals):
-    df_raw = load_data("liveupdates.pkl")
+    df_raw = load_data(pklfile_raw)
     df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
     hall_probe = input_probe
     measured = df_raw[f'HP_{hall_probe}_Bx_Meas'].values
@@ -604,7 +607,7 @@ def update_output4(input_probe, n_intervals):
         [Input('probe-dropdown', 'value'),
          Input('interval-component', 'n_intervals')])
 def update_output5(input_probe, n_intervals):
-    df_raw = load_data("liveupdates.pkl")
+    df_raw = load_data(pklfile_raw)
     df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
     hall_probe = input_probe
     measured = df_raw[f'HP_{hall_probe}_By_Meas'].values
@@ -632,7 +635,7 @@ def update_output5(input_probe, n_intervals):
         [Input('probe-dropdown', 'value'),
          Input('interval-component', 'n_intervals')])
 def update_output6(input_probe, n_intervals):
-    df_raw = load_data("liveupdates.pkl")
+    df_raw = load_data(pklfile_raw)
     df_expected = load_data("DSFM_test_data_no_noise_v6.pkl")
     hall_probe = input_probe
     measured = df_raw['B_NMR'].values

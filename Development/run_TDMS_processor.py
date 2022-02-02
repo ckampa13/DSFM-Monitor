@@ -13,20 +13,38 @@ from TDMS_dump_to_df_raw import format_df_raw
 # directories and files
 scriptdir = os.path.dirname(os.path.realpath(__file__))
 datadir = os.path.join(scriptdir, '..', 'data/')
+# sim
 pklfile_structure = datadir + 'TDMS_structure.pkl'
 pklfile_dump = datadir + 'TDMS_dump.pkl'
 pklfile_processed = datadir + 'TDMS_processed.pkl'
 pklfile_raw = datadir + 'liveupdates.pkl'
+###
+# integration test
+# pklfile_structure = datadir + 'IntegrationTests/TDMS_structure.pkl'
+# pklfile_dump = datadir + 'IntegrationTests/TDMS_dump.pkl'
+# pklfile_processed = datadir + 'IntegrationTests/TDMS_processed.pkl'
+# pklfile_raw = datadir + 'IntegrationTests/liveupdates.pkl'
 
 # PUT REAL TDMS FIILENAME HERE
 
 # normal EMMA simulator
-# tdms_file_original = datadir + 'TestDataV2.tdms'
-# tdms_file_copied = datadir + 'COPYTestDataV2.tdms'
+tdms_file_original = datadir + 'TestDataV2.tdms'
+tdms_file_copied = datadir + 'COPYTestDataV2.tdms'
 
 # missing data test
-tdms_file_original = datadir + 'TestDataV2_missing_data.tdms'
-tdms_file_copied = datadir + 'COPYTestDataV2_missing_data.tdms'
+#tdms_file_original = datadir + 'TestDataV2_missing_data.tdms'
+#tdms_file_copied = datadir + 'COPYTestDataV2_missing_data.tdms'
+
+# integration test 2021
+# file 1
+# tdms_file_original = datadir + 'IntegrationTests/FMSSystemTest_R_20210924_103536_ACs_Field.tdms'
+# tdms_file_copied = datadir + 'IntegrationTests/COPY_FMSSystemTest_R_20210924_103536_ACs_Field.tdms'
+# file 2
+# tdms_file_original = datadir + 'IntegrationTests/FMSSystemTest_R_20210924_105603_ACs_Field.tdms'
+# tdms_file_copied = datadir + 'IntegrationTests/COPY_FMSSystemTest_R_20210924_105603_ACs_Field.tdms'
+# file 3
+# tdms_file_original = datadir + 'IntegrationTests/FMSSystemTest_R_20210924_121807_ACs_Field.tdms'
+# tdms_file_copied = datadir + 'IntegrationTests/COPY_FMSSystemTest_R_20210924_121807_ACs_Field.tdms'
 
 # other globals
 default_group='step:1.1.1'
@@ -70,6 +88,8 @@ if __name__ == '__main__':
                 if group in processed_groups:
                     continue
                 else:
+                    # DEBUG
+                    print(f'Start Process: {group}')
                     # FIXME! A bad workaround...
                     group_str = group
                     group = NAME_OBJ(group_str)
@@ -84,9 +104,13 @@ if __name__ == '__main__':
                     for channel in channels:
                         # FIXME! A bad workaround...
                         channel = NAME_OBJ(channel)
+                        # DEBUG
+                        print(f'Start Channel: {channel.name}')
                         # decide how to process group data based on data quality
                         # if struct['data_quality_passed']:
                         data_dict = process_step_channel(tdms_file, group, channel, data_dict)
+                        # DEBUG
+                        print(f'End Channel: {channel.name}')
                     # loop through keys to make key: value rather than key: [value]
                     # FIXME! can make this clearer and faster
                     for key in data_dict.keys():
@@ -95,6 +119,8 @@ if __name__ == '__main__':
                     data_list.append(data_dict)
                     # update list of processed groups
                     processed_groups.append(group_str)
+                    # DEBUG
+                    print(f'End Process: {group}')
                 # pseudo delay
                 time.sleep(pseudo_delay)
         # create dataframes and save pickles
