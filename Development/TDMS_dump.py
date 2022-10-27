@@ -50,8 +50,8 @@ def process_channel_multiple_devices(tdms_file, group, channel, data_dict):
 def process_step_channel(tdms_file, group, channel, data_dict):
     if (channel.name == 'HallProbes') or (channel.name == 'Measured Coordinates') or (channel.name == 'Predicted Coordinates'):
         data_dict = process_channel_multiple_devices(tdms_file, group, channel, data_dict)
-    elif (channel.name == 'StepID'):
-        data_dict['StepID'].append(tdms_file[group.name][channel.name][0])
+    elif (channel.name == 'StepID') or (channel.name == 'Timestamp'):
+        data_dict[channel.name].append(tdms_file[group.name][channel.name][0])
     elif (channel.name == 'QC'):
         d_ = tdms_file[group.name][channel.name][:]
         if len(''.join(d_)) == 0:

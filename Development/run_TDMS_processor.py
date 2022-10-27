@@ -60,79 +60,100 @@ class NAME_OBJ(object):
     def __init__(self, string):
         self.name = string
 
+def process_file(fname, default_structure=None, processed_groups=[], struct_list=[],
+                 data_list=[], groups=None, channels=None, pseudo_delay=0.):
+    # default_structure = None
+    # processed_groups = []
+    # struct_list = []
+    # data_list = []
+    # df_raw = None
+    if default_structure is None:
+        groups, channels, default_structure = find_default_structure(fname, default_group)
+        # if still no default structure, wait and start the loop again
+        if default_structure is None:
+            time.sleep(time_delay)
+            print(f'{datetime.now()} Exiting loop: Default group not found\n')
+            # continue
+            return default_structure, processed_groups, struct_list, data_list, groups, channels,\
+    None, None, None, None
+    # grab only groups with "step" in the name
+    step_groups = [g for g in groups if "step" in g]
+    # open the copied TDMS file and process
+    with TdmsFile.open(fname) as tdms_file:
+        # struct_list = []
+        # loop through step groups and process, only if they have not been processed yet
+        for group in step_groups:
+            if group in processed_groups:
+                continue
+            else:
+                # DEBUG
+                print(f'Start Process: {group}')
+                # FIXME! A bad workaround...
+                group_str = group
+                group = NAME_OBJ(group_str)
+                # convert group to name object
+                # check structure
+                struct = check_group_structure(group_str, tdms_file, default_structure)
+                struct_list.append(struct)
+                # parse channels
+                channels = [s for s in struct.keys() if not s in ['group', 'data_quality_passed']]
+                data_dict = defaultdict(list)
+                # loop through channels to append this row of the dataframe
+                for channel in channels:
+                    # FIXME! A bad workaround...
+                    channel = NAME_OBJ(channel)
+                    # DEBUG
+                    print(f'Start Channel: {channel.name}')
+                    # decide how to process group data based on data quality
+                    # if struct['data_quality_passed']:
+                    data_dict = process_step_channel(tdms_file, group, channel, data_dict)
+                    # DEBUG
+                    print(f'End Channel: {channel.name}')
+                # loop through keys to make key: value rather than key: [value]
+                # FIXME! can make this clearer and faster
+                for key in data_dict.keys():
+                    if type(data_dict[key]) is list:
+                        data_dict[key] = data_dict[key][0]
+                data_list.append(data_dict)
+                # update list of processed groups
+                processed_groups.append(group_str)
+                # DEBUG
+                print(f'End Process: {group}')
+            # pseudo delay
+            time.sleep(pseudo_delay)
+    # create dataframes and save pickles
+    df_struct = pd.DataFrame(struct_list)
+    df_dump = pd.DataFrame(data_list)
+    df_processed = pd.DataFrame({'group': processed_groups})
+    df_raw = format_df_raw(df_dump)
+    # pickle
+    df_struct.to_pickle(pklfile_structure)
+    df_dump.to_pickle(pklfile_dump)
+    df_processed.to_pickle(pklfile_processed)
+    df_raw.to_pickle(pklfile_raw)
+
+    return default_structure, processed_groups, struct_list, data_list, groups, channels,\
+    df_struct, df_dump, df_processed, df_raw
+
+
 if __name__ == '__main__':
     default_structure = None
     processed_groups = []
     struct_list = []
     data_list = []
-    df_raw = None
+    groups = None
+    channels = None
     while(True):
         print(f'{datetime.now()} Processing loop start')
         # copy TDMS file
         copyfile(tdms_file_original, tdms_file_copied)
-        # find the default structure if it has not been found yet
-        if default_structure is None:
-            groups, channels, default_structure = find_default_structure(tdms_file_copied, default_group)
-            # if still no default structure, wait and start the loop again
-            if default_structure is None:
-                time.sleep(time_delay)
-                print(f'{datetime.now()} Exiting loop: Default group not found\n')
-                continue
-        # grab only groups with "step" in the name
-        step_groups = [g for g in groups if "step" in g]
-        # open the copied TDMS file and process
-        with TdmsFile.open(tdms_file_copied) as tdms_file:
-            # struct_list = []
-            # loop through step groups and process, only if they have not been processed yet
-            for group in step_groups:
-                if group in processed_groups:
-                    continue
-                else:
-                    # DEBUG
-                    print(f'Start Process: {group}')
-                    # FIXME! A bad workaround...
-                    group_str = group
-                    group = NAME_OBJ(group_str)
-                    # convert group to name object
-                    # check structure
-                    struct = check_group_structure(group_str, tdms_file, default_structure)
-                    struct_list.append(struct)
-                    # parse channels
-                    channels = [s for s in struct.keys() if not s in ['group', 'data_quality_passed']]
-                    data_dict = defaultdict(list)
-                    # loop through channels to append this row of the dataframe
-                    for channel in channels:
-                        # FIXME! A bad workaround...
-                        channel = NAME_OBJ(channel)
-                        # DEBUG
-                        print(f'Start Channel: {channel.name}')
-                        # decide how to process group data based on data quality
-                        # if struct['data_quality_passed']:
-                        data_dict = process_step_channel(tdms_file, group, channel, data_dict)
-                        # DEBUG
-                        print(f'End Channel: {channel.name}')
-                    # loop through keys to make key: value rather than key: [value]
-                    # FIXME! can make this clearer and faster
-                    for key in data_dict.keys():
-                        if type(data_dict[key]) is list:
-                            data_dict[key] = data_dict[key][0]
-                    data_list.append(data_dict)
-                    # update list of processed groups
-                    processed_groups.append(group_str)
-                    # DEBUG
-                    print(f'End Process: {group}')
-                # pseudo delay
-                time.sleep(pseudo_delay)
-        # create dataframes and save pickles
-        df_struct = pd.DataFrame(struct_list)
-        df_dump = pd.DataFrame(data_list)
-        df_processed = pd.DataFrame({'group': processed_groups})
-        df_raw = format_df_raw(df_dump)
-        # pickle
-        df_struct.to_pickle(pklfile_structure)
-        df_dump.to_pickle(pklfile_dump)
-        df_processed.to_pickle(pklfile_processed)
-        df_raw.to_pickle(pklfile_raw)
+        # process file
+        _ =  process_file(tdms_file_copied, default_structure=default_structure,
+                          processed_groups=processed_groups, struct_list=struct_list,
+                          data_list=data_list, groups=groups, channels=channels,
+                          pseudo_delay=pseudo_delay)
+        default_structure, processed_groups, struct_list, data_list, groups, channels,\
+        df_struct, df_dump, df_processed, df_raw = _
 
         # pause
         time.sleep(time_delay)

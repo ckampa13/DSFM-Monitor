@@ -64,7 +64,17 @@ def format_df_raw(df):
     dff = pd.DataFrame(df_raw_dict)
     # convert TIMESTAMP to datetime if we didn't use the default value
     if dff['TIMESTAMP'].iloc[0] != map_dict['TIMESTAMP'][2]:
-        dff["TIMESTAMP"] = pd.to_datetime([str(i) for i in dff["TIMESTAMP"]])
+        try:
+            dff["TIMESTAMP"] = pd.to_datetime([str(i) for i in dff["TIMESTAMP"]])
+        except:
+            try:
+                dff["TIMESTAMP"] = pd.to_datetime([str(i) for i in dff["TIMESTAMP"]], format='%Y-%m-%d %H:%M:%S:%f')
+            except:
+                try:
+                    dff["TIMESTAMP"] = pd.to_datetime([str(i) for i in dff["TIMESTAMP"]], format='%m/%d/%Y:%H:%M:%S.%f')
+                except:
+                    dff["TIMESTAMP"] = pd.to_datetime([str(i) for i in dff["TIMESTAMP"]])
+                    # raise ValueError("Unable to parse a TIMESTAMP from the TDMS file.")
     # debugging
     # try:
     #     dff = pd.DataFrame(df_raw_dict)
